@@ -3,6 +3,7 @@ import Axon
 import matplotlib.pyplot as plt
 
 import Neuron
+import Backprop
 import random
 import numpy as np
 
@@ -15,7 +16,6 @@ class NeuronSpace():
         self.ticks = 0
         self.generate = False
         self.Visualization = Visualization
-        self.spawn_neurons_axons()
 
     def new_positions_spherical_coordinates(self):
         phi = random.uniform(0, 2 * np.pi)
@@ -115,27 +115,35 @@ class NeuronSpace():
         srtd = sorted(distdict.items())
         return [i[1] for i in srtd[:x]]
 
-    def draw_brain(self, active_axons):
+    def draw_brain(self):
+        out_list = []
+        weight_list = []
+        for neuron in self.neurons:
+            out_list.append(neuron.output)
+            if type(neuron) != Neuron.Input_Neuron:
+                for parent in neuron.parent_connections.values():
+                    weight_list.append(neuron.get_weight(parent[0]))
+
+        cmap = plt.get_cmap('cool')
+        norm_out = plt.Normalize(min(out_list), max(out_list))
+        norm_weight = plt.Normalize(min(weight_list), max(weight_list))
+
         # visualize the neurons
         # TODO change this to display neuron activation
         for key in self.neuron_dot_dict:
             value = self.neuron_dot_dict[key]
-            if value[1].active:
-                value[0].set_color("red")
-            else:
-                value[0].set_color("grey")
-            value[0].set_sizes([50 * value[1].signal_modification])
+            color = cmap(norm_out(value[1].output))
+            value[0].set_color(color)
 
         # TODO change this to display weight value
         for key in self.axon_line_dict:
             value = self.axon_line_dict[key]
-            if value[1].active:
-                value[0][0].set_color("red")
-            else:
-                value[0][0].set_color("grey")
+            color = cmap(norm_weight(value[1].get_weight()))
+
+            value[0][0].set_color(color)
+
         self.fig.savefig('..//Bilder//temp'+str(self.ticks)+'.png', dpi=self.fig.dpi)
-        self.grown_axons=[]
-        self.new_axons = []
+
 
     def start_vis(self):
         plt.ion()
@@ -180,13 +188,13 @@ class NeuronSpace():
 
         I = []
         for i in np.arange(1):  # how many neurons do we want
-            I = self.ordered_input_neurons(height = 8, width = 8, plane_end=-(size/2))
+            I = self.ordered_input_neurons(height = 1, width = 4, plane_end=-(size/2))
             #y, z = self.new_positions_circular_coordinates()
             #V.append(Coordinates.Coordinate(-(size/2), y, z))
 
         # choose cluster of coordinates in the middle of the neuron space for processing neurons, set P
         P = []
-        for p in np.arange(5):
+        for p in np.arange(8):
             x, y, z = self.new_positions_spherical_coordinates()
             P.append(Coordinates.Coordinate(x, y, z))
 
@@ -194,7 +202,7 @@ class NeuronSpace():
         # that only connect to processing neurons
         O = []
         for o in np.arange(1):  # how many neurons do we want
-            O = self.ordered_output_neurons(height=10, width=1, plane_end=size/2)
+            O = self.ordered_output_neurons(height=1, width=1, plane_end=size/2)
             #y, z = self.new_positions_circular_coordinates()
             #np.random.multivariate_normal(mean, cov, 1).T
             #I.append(Coordinates.Coordinate(size/2, y, z))
@@ -221,7 +229,7 @@ class NeuronSpace():
         # axons generation from Perception to 1 nearest neurons in processing neuron set
         # perceptives should only connect to a processing neuron that is not directly connected to another perceptive
         for o in self.output_set:
-            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=25, x=1)
+            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=25, x=5)
             for n in Ns:
                 self.create_Axon(o, n)
 
@@ -249,6 +257,8 @@ class NeuronSpace():
         for o in self.output_set:
             self.output_neuron_dict[o.name] = o
 
+        self.neurons = self.input_set + self.hidden_set + self.output_set
+
         self.Neuron_dict = self.hidden_neuron_dict.copy()
         self.Neuron_dict.update(self.input_neuron_dict)
         self.Neuron_dict.update(self.output_neuron_dict)
@@ -261,5 +271,6 @@ class NeuronSpace():
             print("done")
             #self.draw_brain(active_axons={})
 
-n = NeuronSpace()
-n.spawn_neurons_axons()
+
+
+

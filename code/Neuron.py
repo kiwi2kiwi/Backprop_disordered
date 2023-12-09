@@ -67,7 +67,7 @@ class Neuron():
 
             print("weight: ", round(parent_connection[1],2), " adjust: ", round(sum(parent_connection[2]),2))
         self.change_weight()
-        self.reset_neuron()
+#        self.reset_neuron()
 
 
     def activation_function(self, z):
@@ -122,6 +122,12 @@ class Input_Neuron():
         self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)])
         self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
+
+    def reset_neuron(self):
+        pass
+
+    def wire(self):
+        pass
 
     def gradient_descent(self, a, b):
         pass

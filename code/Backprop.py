@@ -1,105 +1,71 @@
 from Neuron import *
 import numpy as np
 
-from sklearn import datasets
-iris = datasets.load_iris()
-from sklearn.utils import shuffle
 
-X = np.array(iris.data)
-y = np.array(iris.target)
-X, y = shuffle(X, y)
-X_train = X[:100]
-X_test = X[100:]
-y_train = np.array([y[:100]])
-y_test = np.array([y[100:]])
 
-train_data = np.concatenate((X_train, y_train.T), axis=1)
-test_data = np.concatenate((X_test, y_test.T), axis=1)
+class Backpropagation:
+    def __init__(self, base_space):
+        super(Backpropagation, self).__init__()
+        self.base_space = base_space
 
-input_layer = [Input_Neuron(0), Input_Neuron(1), Input_Neuron(2), Input_Neuron(3)]
-neuron_number = 4
-
-weights = []
-
-layer_layout = [[1]]
-
-layers = []
-active_neurons = []
-for idx, l in enumerate(layer_layout):
-    layer = []
-    for neur in l:
-        n = Neuron(neuron_number)
-        neuron_number += 1
-
-        if idx == 0:
-            for i in input_layer:
-                n.parent_connections[i] = [i, 100, []]
-        else:
-            for i in layers[idx-1]:
-                n.parent_connections[i] = [i, 100, []]
-        layer.append(n)
-        active_neurons.append(n)
-    layers.append(layer)
-
-for layer in layers:
-    for n in layer:
-        n.wire()
+        for neuron in self.base_space.Neuron_dict.values():
+            neuron.wire()
 
 
 
-def error_function(pre,tar):
-    return round((pre - tar)**2,3)
+    def error_function(self, pre,tar):
+        return round((pre - tar)**2,3)
 
-def deriv_error_function(pre,tar):
-    return 2*(pre - tar)
+    def deriv_error_function(self, pre,tar):
+        return 2*(pre - tar)
 
-def compute_error(target):
-    for idx, n in enumerate(layers[-1]):
-        pred = n.activation()
-        print("error: ", error_function(pred, target[idx]))
+    def compute_error(self, target):
+        for idx, n in enumerate(self.base_space.output_set):
+            pred = n.activation()
+            print("error: ", self.error_function(pred, target[idx]))
 
-def predict(slice_of_data):
-    for idx, inp in enumerate(input_layer):
-        inp.set_input(slice_of_data[idx])
-    prediction = []
-    for i in layers[-1]:
-        prediction.append(i.activation())
-    return prediction
-
-
-def backprop(target):
-    compute_error(target)
-    learning_rate = 0.005
-    for idx, n in enumerate(layers[-1]):
-        error_through_a_zero = deriv_error_function(n.activation(), target[idx])
-        n.gradient_descent(error_through_a_zero, learning_rate)
+    def predict(self, slice_of_data):
+        for idx, input_neuron in enumerate(self.base_space.input_set):
+            input_neuron.set_input(slice_of_data[idx])
+        prediction = []
+        for i in self.base_space.output_set:
+            prediction.append(i.activation())
+        return prediction
 
 
-def train(data):
-
-    for ds in data:
-        predict(ds[:-1])
-        backprop([ds[-1]])
-
-
-train(train_data)
-
-def do_test(data):
-    pred = []
-    for ds in data:
-        pred.append(round(predict(ds[:-1])[0],0))
-        for a in active_neurons:
-            a.reset_neuron()
-    target = data[:,-1]
-
-    from sklearn.metrics import accuracy_score
-    print("accuraccy: ", accuracy_score(target, pred))
-    visual = np.concatenate((np.array([pred]), [target]), axis=0)
-    print("done")
+    def backprop(self, target):
+        self.compute_error(target)
+        learning_rate = 0.005
+        for idx, n in enumerate(self.base_space.output_set):
+            error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
+            n.gradient_descent(error_through_a_zero, learning_rate)
 
 
+    def train(self, data):
 
-do_test(test_data)
+        for ds in data:
+            self.predict(ds[:-1])
+            self.backprop([ds[-1]])
+            self.base_space.draw_brain()
+            for n in self.base_space.neurons:
+                n.reset_neuron()
 
 
-print("end")
+    def do_test(self, data):
+        pred = []
+        for ds in data:
+            pred.append(round(self.predict(ds[:-1])[0],0))
+            for a in self.neurons:
+                a.reset_neuron()
+        target = data[:,-1]
+
+        from sklearn.metrics import accuracy_score
+        print("accuraccy: ", accuracy_score(target, pred))
+        visual = np.concatenate((np.array([pred]), [target]), axis=0)
+        print("done")
+
+
+
+#do_test(test_data)
+#train(train_data)
+#print("end")
