@@ -9,7 +9,6 @@ n.spawn_neurons_axons()
 bp = Backprop.Backpropagation(n)
 
 
-
 from sklearn import datasets
 iris = datasets.load_iris()
 from sklearn.utils import shuffle
