@@ -28,6 +28,7 @@ test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 
 bp.train(train_data)
+bp.evaluation(test_data)
 
 def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.

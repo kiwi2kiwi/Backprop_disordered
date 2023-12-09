@@ -35,7 +35,7 @@ class Backpropagation:
 
     def backprop(self, target):
         self.compute_error(target)
-        learning_rate = 0.005
+        learning_rate = 0.001
         for idx, n in enumerate(self.base_space.output_set):
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
             n.gradient_descent(error_through_a_zero, learning_rate)
@@ -51,11 +51,11 @@ class Backpropagation:
                 n.reset_neuron()
 
 
-    def do_test(self, data):
+    def evaluation(self, data):
         pred = []
         for ds in data:
             pred.append(round(self.predict(ds[:-1])[0],0))
-            for a in self.neurons:
+            for a in self.base_space.neurons:
                 a.reset_neuron()
         target = data[:,-1]
 

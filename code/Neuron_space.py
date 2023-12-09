@@ -6,7 +6,7 @@ import Neuron
 import Backprop
 import random
 import numpy as np
-
+import time
 
 size = 100
 class NeuronSpace():
@@ -28,7 +28,7 @@ class NeuronSpace():
         x = r * np.sin(theta) * np.cos(phi)
         y = r * np.sin(theta) * np.sin(phi)
         z = r * np.cos(theta)
-        return (x, y, z)
+        return (round(x, 3), round(y, 3), round(z, 3))
 
     def new_positions_circular_coordinates(self):
         phi = random.uniform(0, 2 * np.pi)
@@ -42,7 +42,7 @@ class NeuronSpace():
         x = r * np.sin(theta) * np.cos(phi)
         y = r * np.sin(theta) * np.sin(phi)
         #z = r * np.cos(theta)
-        return (x, y)
+        return (round(x,3), round(y,3))
 
     def ordered_input_neurons(self, height, width, plane_end):
         global size
@@ -71,31 +71,33 @@ class NeuronSpace():
         return V
 
     def create_Axon(self, i, n):
-        in_name_v_first = True
+        is_n_parent = True
         if i.coordinate.x < n.coordinate.x:
-            in_name_v_first = False
+            is_n_parent = False
         elif i.coordinate.x == n.coordinate.x:
             if i.coordinate.y < n.coordinate.y:
-                in_name_v_first = False
+                is_n_parent = False
             elif i.coordinate.y == n.coordinate.y:
                 if i.coordinate.z < n.coordinate.z:
-                    in_name_v_first = False
-        name = ""
-        if in_name_v_first:
-            name = i.name + "," + n.name
+                    is_n_parent = False
+
+        if is_n_parent:
+            name = n.name + i.name
             if name not in self.Axon_dict.keys():
-                axon = Axon.Axon(i, n, name=name, base_space=self)
+                weight = round(random.uniform(0, 1), 2)
+                axon = Axon.Axon(n, i, name=name, base_space=self, weight=weight, new_weights=[])
                 self.Axon_dict[name] = axon
-                i.parent_connections[n] = [n, 100, []]
-#                n.children_connections[i] = [i, 100, []]
+                i.parent_connections[n.name] = axon
+                n.children_connections[i.name] = axon
                 return axon
         else:
-            name = n.name + "," + i.name
+            name = i.name + n.name
             if name not in self.Axon_dict.keys():
-                axon = Axon.Axon(i, n, name=name, base_space=self)
+                weight = round(random.uniform(0, 1), 2)
+                axon = Axon.Axon(i, n, name=name, base_space=self, weight=weight, new_weights=[])
                 self.Axon_dict[name] = axon
-                #i.children_connections[n] = [n, 100, []]
-                n.parent_connections[i] = [i, 100, []]
+                i.children_connections[n.name] = axon
+                n.parent_connections[i.name] = axon
                 return axon
 
     def find_x_nearest(self, neuron, setB, connection_limit=8, x=5): # finds x nearest Neurons of setB to Neuron
@@ -121,8 +123,8 @@ class NeuronSpace():
         for neuron in self.neurons:
             out_list.append(neuron.output)
             if type(neuron) != Neuron.Input_Neuron:
-                for parent in neuron.parent_connections.values():
-                    weight_list.append(neuron.get_weight(parent[0]))
+                for p_axon in neuron.parent_connections.values():
+                    weight_list.append(p_axon.get_weight())
 
         cmap = plt.get_cmap('cool')
         norm_out = plt.Normalize(min(out_list), max(out_list))
@@ -142,7 +144,7 @@ class NeuronSpace():
 
             value[0][0].set_color(color)
 
-        self.fig.savefig('..//Bilder//temp'+str(self.ticks)+'.png', dpi=self.fig.dpi)
+        #self.fig.savefig('..//Bilder//temp'+str(self.ticks)+'.png', dpi=self.fig.dpi)
 
 
     def start_vis(self):
@@ -173,9 +175,9 @@ class NeuronSpace():
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
 
         for a in self.Axon_dict.values():
-            self.axon_line_dict[a.name] = [(self.ax.plot3D([a.neuron1.coordinate.x, a.neuron2.coordinate.x],
-                                                           [a.neuron1.coordinate.y, a.neuron2.coordinate.y],
-                                                           [a.neuron1.coordinate.z, a.neuron2.coordinate.z], linewidth=1,
+            self.axon_line_dict[a.name] = [(self.ax.plot3D([a.parent.coordinate.x, a.child.coordinate.x],
+                                                           [a.parent.coordinate.y, a.child.coordinate.y],
+                                                           [a.parent.coordinate.z, a.child.coordinate.z], linewidth=1,
                                                            c='grey')), a]
 
         self.grown_axons = []
@@ -194,7 +196,7 @@ class NeuronSpace():
 
         # choose cluster of coordinates in the middle of the neuron space for processing neurons, set P
         P = []
-        for p in np.arange(8):
+        for p in np.arange(4):
             x, y, z = self.new_positions_spherical_coordinates()
             P.append(Coordinates.Coordinate(x, y, z))
 
@@ -247,7 +249,7 @@ class NeuronSpace():
 
         self.hidden_neuron_dict = {}
         for h in self.hidden_set:
-            self.hidden_neuron_dict[p.name] = h
+            self.hidden_neuron_dict[h.name] = h
 
         self.input_neuron_dict = {}
         for i in self.input_set:
