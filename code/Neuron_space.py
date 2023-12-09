@@ -70,16 +70,15 @@ class NeuronSpace():
                 V.append(Coordinates.Coordinate(plane_end, y, 0))
         return V
 
-
     def create_Axon(self, i, n):
         in_name_v_first = True
-        if i.coordinates.x < n.coordinates.x:
+        if i.coordinate.x < n.coordinate.x:
             in_name_v_first = False
-        elif i.coordinates.x == n.coordinates.x:
-            if i.coordinates.y < n.coordinates.y:
+        elif i.coordinate.x == n.coordinate.x:
+            if i.coordinate.y < n.coordinate.y:
                 in_name_v_first = False
-            elif i.coordinates.y == n.coordinates.y:
-                if i.coordinates.z < n.coordinates.z:
+            elif i.coordinate.y == n.coordinate.y:
+                if i.coordinate.z < n.coordinate.z:
                     in_name_v_first = False
         name = ""
         if in_name_v_first:
@@ -99,22 +98,20 @@ class NeuronSpace():
                 n.parent_connections[i] = [i, 100, []]
                 return axon
 
-
-    def find_x_nearest(self, Neuron, setB, connection_limit=8, x=5): # finds x nearest Neurons of setB to Neuron
+    def find_x_nearest(self, neuron, setB, connection_limit=8, x=5): # finds x nearest Neurons of setB to Neuron
         distdict={}
         for i in setB:
-            if i != Neuron and len(i.parent_connections) < connection_limit and sum([(type(c.other_side(i)) == Neuron.Input_Neuron or c.other_side(i).output) for c in i.parent_connections]) == 0:
+            if i != neuron and len(i.parent_connections) < connection_limit: # and sum([(type(c.other_side(i)) == Neuron.Input_Neuron or c.other_side(i).output) for c in i.parent_connections]) == 0:
                 # check if neuron is perceptive and if i already connected to perceptive
                 # this should ensure that one perceptive neuron does not connect to a processing neuron thats already connected to a perceptive neuron
-                if type(Neuron) == Neuron.Input_Neuron:
-                    input_connections = [(type(connections_of_i.other_side(connections_of_i)) == Neuron.Input_Neuron) for connections_of_i in i.connection]
-                    if sum(input_connections) == 0:
-                        distdict[Coordinates.distance_finder(Neuron.coordinate, i.coordinate)] = i
+                if type(neuron) == Neuron.Input_Neuron:
+                    if len(i.parent_connections) == 0:
+                        distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
                     # Debug output
 #                    else:
 #                        print("prevented perceptives connecting to same neuron")
                 else:
-                    distdict[Coordinates.distance_finder(Neuron.coordinates, i.coordinates)] = i
+                    distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
         srtd = sorted(distdict.items())
         return [i[1] for i in srtd[:x]]
 
@@ -140,9 +137,8 @@ class NeuronSpace():
         self.grown_axons=[]
         self.new_axons = []
 
-
     def start_vis(self):
-        #plt.ion()
+        plt.ion()
         self.neuron_dot_dict = {}  # name: (neuron, punkt auf plot)
         self.axon_line_dict = {}  # name: (axon, linie auf plot)
         self.fig = plt.figure(figsize=(8, 8))
@@ -150,28 +146,28 @@ class NeuronSpace():
         self.ax.set_xlim(-(size / 2), size / 2)
         self.ax.set_ylim(-(size / 2), size / 2)
         self.ax.set_zlim(-(size / 2), size / 2)
-        for i in self.Vset:  # plot perceptive neurons
-            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinates.x, i.coordinates.y, i.coordinates.z, c="grey",
-                                                             s=10 * i.signal_modification)), i]
+        for i in self.input_set:  # plot perceptive neurons
+            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
+                                                             s=10)), i]
         #    for c in i.connections:
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
 
-        for i in self.Pset:  # plot processing neurons
-            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinates.x, i.coordinates.y, i.coordinates.z, c="grey",
-                                                             s=10 * i.signal_modification)), i]
+        for i in self.hidden_set:  # plot processing neurons
+            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
+                                                             s=10)), i]
         #    for c in i.connections:
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
 
-        for i in self.Iset:  # plot interaction neurons
-            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinates.x, i.coordinates.y, i.coordinates.z, c="grey",
-                                                             s=10 * i.signal_modification)), i]
+        for i in self.output_set:  # plot interaction neurons
+            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
+                                                             s=10)), i]
         #    for c in i.connections:
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
 
         for a in self.Axon_dict.values():
-            self.axon_line_dict[a.name] = [(self.ax.plot3D([a.neuron1.coordinates.x, a.neuron2.coordinates.x],
-                                                           [a.neuron1.coordinates.y, a.neuron2.coordinates.y],
-                                                           [a.neuron1.coordinates.z, a.neuron2.coordinates.z], linewidth=1,
+            self.axon_line_dict[a.name] = [(self.ax.plot3D([a.neuron1.coordinate.x, a.neuron2.coordinate.x],
+                                                           [a.neuron1.coordinate.y, a.neuron2.coordinate.y],
+                                                           [a.neuron1.coordinate.z, a.neuron2.coordinate.z], linewidth=1,
                                                            c='grey')), a]
 
         self.grown_axons = []
@@ -190,7 +186,7 @@ class NeuronSpace():
 
         # choose cluster of coordinates in the middle of the neuron space for processing neurons, set P
         P = []
-        for p in np.arange(20):
+        for p in np.arange(5):
             x, y, z = self.new_positions_spherical_coordinates()
             P.append(Coordinates.Coordinate(x, y, z))
 
@@ -261,6 +257,7 @@ class NeuronSpace():
         self.new_axons = []
         if self.Visualization:
             self.start_vis()
+            plt.show()
             print("done")
             #self.draw_brain(active_axons={})
 
