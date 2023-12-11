@@ -46,7 +46,8 @@ class Backpropagation:
         for ds in data:
             self.predict(ds[:-1])
             self.backprop([ds[-1]])
-            self.base_space.draw_brain()
+            if not self.base_space.fast:
+                self.base_space.draw_brain()
             for n in self.base_space.neurons:
                 n.reset_neuron()
 

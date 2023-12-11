@@ -3,7 +3,9 @@ import Backprop
 
 import numpy as np
 
-n = Neuron_space.NeuronSpace()
+# Do you want visualization? Do you want the learning to me fast?
+
+n = Neuron_space.NeuronSpace(fast = True, neuron_number = 10)
 n.spawn_neurons_axons()
 
 bp = Backprop.Backpropagation(n)
@@ -29,10 +31,4 @@ test_data = np.concatenate((X_test, y_test.T), axis=1)
 bp.train(train_data)
 bp.evaluation(test_data)
 
-def print_hi(name):
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+print("Simulation done")

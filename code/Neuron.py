@@ -47,14 +47,20 @@ class Neuron():
 
     def gradient_normalisation(self, gradient):
         #return gradient
-        return max(min(0.5,gradient),-0.5)
+        return max(min(0.1,gradient),-0.1)
         #return ((1. / (1 + np.exp(-gradient)))-0.5) * 1
 
     def change_weight(self):
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
-            parent_connection.weight = parent_connection.get_weight() - self.gradient_normalisation(sum(parent_connection.new_weights))
+            new_weight = parent_connection.get_weight() - self.gradient_normalisation(sum(parent_connection.new_weights))
+            #if abs(new_weight)>0.5:
+            #    print("stop")
+            parent_connection.weight = new_weight
             self.parent_connections[p] = parent_connection
+            if not self.base_space.fast:
+                print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ",
+                  round(self.gradient_normalisation(sum(parent_connection.new_weights)), 2))
 
     #            parent = parent_connection.parent
     #            new_weight_to_parent = parent_connection.get_weight() - sum(parent_connection.new_weights)
@@ -70,16 +76,16 @@ class Neuron():
         ab_hier = self.a_null_a_eins() * bis_hier
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
-            self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
+            if not self.base_space.fast:
+                self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
 
             self.parent_connections[p].parent.gradient_descent(ab_hier, learning_rate)
-
-            self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
+            if not self.base_space.fast:
+                self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
             error_durch_w = self.a_null_w_parent(parent_connection.parent) * bis_hier
 
             self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * error_durch_w))
 
-            print("weight: ", round(parent_connection.get_weight(),2), " adjust: ", round(sum(parent_connection.new_weights),2))
         self.change_weight()
     #        self.reset_neuron()
 

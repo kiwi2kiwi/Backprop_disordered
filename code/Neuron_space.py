@@ -10,12 +10,13 @@ import time
 
 size = 100
 class NeuronSpace():
-    def __init__(self, Visualization = True):
+    def __init__(self, Visualization = True, fast = False, neuron_number = 10):
         super(NeuronSpace, self).__init__()
-        self.iter = 0
-        self.ticks = 0
-        self.generate = False
+        self.fast = fast
         self.Visualization = Visualization
+        if self.fast:
+            self.Visualization = False
+        self.neuron_number = neuron_number
 
     def new_positions_spherical_coordinates(self):
         phi = random.uniform(0, 2 * np.pi)
@@ -196,7 +197,7 @@ class NeuronSpace():
 
         # choose cluster of coordinates in the middle of the neuron space for processing neurons, set P
         P = []
-        for p in np.arange(4):
+        for p in np.arange(self.neuron_number):
             x, y, z = self.new_positions_spherical_coordinates()
             P.append(Coordinates.Coordinate(x, y, z))
 
