@@ -8,6 +8,7 @@ import numpy as np
 n = Neuron_space.NeuronSpace(fast = True, neuron_number = 2)
 n.spawn_neurons_axons()
 
+
 bp = Backprop.Backpropagation(n)
 
 

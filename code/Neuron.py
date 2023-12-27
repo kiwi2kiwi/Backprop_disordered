@@ -5,18 +5,20 @@ import time
 
 
 class Neuron():
-    def __init__(self, coordinate, base_space, output_neuron = False, name = "not_set"):
+    def __init__(self, coordinate, base_space, output_neuron = False, name = "not_set", bias = 1):
         super(Neuron, self).__init__()
-        #        self.name = name
+        self.name = name
         self.parent_connections = {} # closer to input
         self.children_connections = {} # closer to output
         self.output = 0
         self.activated = False
         self.output_neuron = output_neuron
         self.calculated_gradient = False
+        self.bias = bias
 
         self.coordinate = coordinate
-        self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
+        if name == "not_set":
+            self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
         self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
         print("Hey, im a neuron!")
@@ -47,7 +49,7 @@ class Neuron():
 
 
     def gradient_normalisation(self, gradient):
-        #return gradient
+        return gradient
         return max(min(0.1,gradient),-0.1)
         #return ((1. / (1 + np.exp(-gradient)))-0.5) * 1
 
@@ -98,10 +100,12 @@ class Neuron():
 
             if not self.base_space.fast:
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
+
+            self.parent_connections[p].parent.gradient_descent(learning_rate = learning_rate)
+
             if not self.base_space.fast:
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
-            self.parent_connections[p].parent.gradient_descent(learning_rate = learning_rate)
 
             error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
             self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * error_through_w))
@@ -111,12 +115,13 @@ class Neuron():
 
 
     def activation_function(self, z):
-        return z
+#        return z
 
-    #        return 1. / (1 + np.exp(-z))
+        return 1. / (1 + np.exp(-z))
 
     def deri_activation_function(self, z):
-        return z
+#        return z
+        return self.activation_function(z) * (1 - self.activation_function(z))
 
     def activation(self):
         if self.activated:
@@ -126,8 +131,10 @@ class Neuron():
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
             summation += parent_connection.parent.activation() * parent_connection.get_weight()
-        self.output = self.activation_function(summation)
+        self.output = self.activation_function(summation) + self.bias
         self.activated = True
+        if not self.base_space.fast:
+            print(self.name, " activation: ", self.output)
         return self.output
 
     def deri_activation(self):
@@ -172,17 +179,21 @@ class Input_Neuron():
     def wire(self):
         pass
 
-    def gradient_descent(self, learning_rate):
+    def gradient_descent(self, learning_rate, error_for_output_neuron = 0):
         pass
 
     def set_input(self, input):
-        self.activated = True
         self.output = input
 
     def activation_function(z):
         return 1. / (1 + np.exp(-z))
 
     def activation(self):
+        if self.activated:
+            return self.output
+        self.activated = True
+        if not self.base_space.fast:
+            print(self.name, " activation: ", self.output)
         return self.output
 
     def deri_activation(self):

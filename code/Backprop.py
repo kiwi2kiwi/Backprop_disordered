@@ -37,15 +37,16 @@ class Backpropagation:
         self.compute_error(target)
         learning_rate = 0.001
         for idx, n in enumerate(self.base_space.output_set):
+
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
             n.gradient_descent(error_through_a_zero, learning_rate)
 
 
-    def train(self, data):
+    def train(self, x, y):
 
-        for ds in data:
-            self.predict(ds[:-1])
-            self.backprop([ds[-1]])
+        for ds in np.arange(x.len):
+            self.predict(x[ds])
+            self.backprop([y[ds]])
             if not self.base_space.fast:
                 self.base_space.draw_brain()
             for n in self.base_space.neurons:
