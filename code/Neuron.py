@@ -15,6 +15,7 @@ class Neuron():
         self.output_neuron = output_neuron
         self.calculated_gradient = False
         self.bias = bias
+        self.started = False
 
         self.coordinate = coordinate
         if name == "not_set":
@@ -62,8 +63,8 @@ class Neuron():
             parent_connection.weight = new_weight
             self.parent_connections[p] = parent_connection
             if not self.base_space.fast:
-                print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ",
-                  round(self.gradient_normalisation(sum(parent_connection.new_weights)), 2))
+                print("weight: ", round(parent_connection.get_weight(), 6), " adjust by: ",
+                  round(self.gradient_normalisation(sum(parent_connection.new_weights)), 6))
 
     #            parent = parent_connection.parent
     #            new_weight_to_parent = parent_connection.get_weight() - sum(parent_connection.new_weights)
@@ -74,8 +75,13 @@ class Neuron():
     def get_weight(self, parent):
         return self.parent_connections[parent + self].get_weight()
 
-    def gradient_descent(self, learning_rate, error_for_output_neuron = 0):
+    def gradient_descent(self, learning_rate):
+        self.started = True
+        if self.name == "o21":
+            print("stop")
 
+        if self.name == "h10":
+            print("stop")
 #        self.ab_hier = self.a_null_a_eins() * bis_hier
 
         self.delta_error_through_delta_neuron_output = 0
@@ -90,25 +96,31 @@ class Neuron():
         self.calculated_gradient = True
 
         if self.output_neuron:
-            self.delta_error_through_delta_neuron_output = error_for_output_neuron
+            self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
 
-
+        self.delta_out_through_delta_net = self.deri_activation_function(self.output)
 
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
 
-
             if not self.base_space.fast:
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
 
-            self.parent_connections[p].parent.gradient_descent(learning_rate = learning_rate)
+            #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
+            delta_net_through_delta_w = parent_connection.parent.output
+            delta_error_through_delta_net = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
+            gradient = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net * delta_net_through_delta_w
+
+
+            self.parent_connections[p].new_weights.append(learning_rate * gradient)
+#            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
+            if not parent_connection.parent.started:
+                parent_connection.parent.gradient_descent(learning_rate = learning_rate)
 
             if not self.base_space.fast:
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
 
-            error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
-            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * error_through_w))
 
         self.change_weight()
     #        self.reset_neuron()
@@ -121,7 +133,7 @@ class Neuron():
 
     def deri_activation_function(self, z):
 #        return z
-        return self.activation_function(z) * (1 - self.activation_function(z))
+        return self.activation() * (1 - self.activation())
 
     def activation(self):
         if self.activated:
@@ -131,7 +143,7 @@ class Neuron():
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
             summation += parent_connection.parent.activation() * parent_connection.get_weight()
-        self.output = self.activation_function(summation) + self.bias
+        self.output = self.activation_function(summation + self.bias)
         self.activated = True
         if not self.base_space.fast:
             print(self.name, " activation: ", self.output)
@@ -166,6 +178,7 @@ class Input_Neuron():
         self.children_connections = {} # closer to output
         self.output = 0
         self.activated = False
+        self.started = False
 #        self.name = name
 
         self.coordinate = coordinate

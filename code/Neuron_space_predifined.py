@@ -198,7 +198,7 @@ class NeuronSpace():
                 self.create_Axon(o, h, weight_list[cnt])
                 cnt += 1
 
-        weight_list = [0.15, 0.2, 0.25, 0.3]
+        weight_list = [0.15, 0.25, 0.2, 0.3]
         cnt = 0
         for i in self.input_set:
             for h in self.hidden_set:

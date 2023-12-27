@@ -14,10 +14,10 @@ class Backpropagation:
 
 
     def error_function(self, pre,tar):
-        return round((pre - tar)**2,3)
+        return 0.5*(pre - tar)**2
 
     def deriv_error_function(self, pre,tar):
-        return 2*(pre - tar)
+        return (pre - tar)
 
     def compute_error(self, target):
         for idx, n in enumerate(self.base_space.output_set):
@@ -35,11 +35,13 @@ class Backpropagation:
 
     def backprop(self, target):
         self.compute_error(target)
-        learning_rate = 0.001
+        learning_rate = 0.5
         for idx, n in enumerate(self.base_space.output_set):
 
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
-            n.gradient_descent(error_through_a_zero, learning_rate)
+            n.error_for_output_neuron = error_through_a_zero
+        for idx, n in enumerate(self.base_space.output_set):
+            n.gradient_descent(learning_rate)
 
 
     def train(self, x, y):

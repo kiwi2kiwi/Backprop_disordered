@@ -17,6 +17,27 @@ x = [0.05, 0.1]
 y = [0.01, 0.99]
 
 bp.predict(x)
+bp.backprop(y)
+for ns in n.neurons:
+    ns.reset_neuron()
+
+bp.predict(x)
+bp.backprop(y)
+for ns in n.neurons:
+    ns.reset_neuron()
+
+bp.predict(x)
+bp.backprop(y)
+for ns in n.neurons:
+    ns.reset_neuron()
+
+
+
+
+
+
+
+
 bp.backprop([y])
 
 bp.train(x,y)
