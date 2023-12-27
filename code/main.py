@@ -5,7 +5,7 @@ import numpy as np
 
 # Do you want visualization? Do you want the learning to me fast?
 
-n = Neuron_space.NeuronSpace(fast = True, neuron_number = 10)
+n = Neuron_space.NeuronSpace(fast = True, neuron_number = 2)
 n.spawn_neurons_axons()
 
 bp = Backprop.Backpropagation(n)
