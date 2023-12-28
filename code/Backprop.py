@@ -35,7 +35,7 @@ class Backpropagation:
 
     def backprop(self, target):
         self.compute_error(target)
-        learning_rate = 0.5
+        learning_rate = 0.6
         for idx, n in enumerate(self.base_space.output_set):
 
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])

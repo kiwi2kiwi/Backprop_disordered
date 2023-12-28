@@ -63,6 +63,7 @@ class Neuron():
             parent_connection.weight = new_weight
             self.parent_connections[p] = parent_connection
             if not self.base_space.fast:
+                print("from ", self.name, " to ", parent_connection.parent.name)
                 print("weight: ", round(parent_connection.get_weight(), 6), " adjust by: ",
                   round(self.gradient_normalisation(sum(parent_connection.new_weights)), 6))
 
@@ -80,45 +81,55 @@ class Neuron():
         if self.name == "o21":
             print("stop")
 
-        if self.name == "h10":
+        if self.name == "h11":
             print("stop")
 #        self.ab_hier = self.a_null_a_eins() * bis_hier
 
-        self.delta_error_through_delta_neuron_output = 0
 
+        self.delta_error_through_delta_neuron_output_array = np.array([])
         for c in self.children_connections.keys():
             children_connection = self.children_connections[c]
             if children_connection.child.calculated_gradient:
-                self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_output
+                self.delta_error_through_delta_neuron_output_array = np.concatenate((self.delta_error_through_delta_neuron_output_array.ravel(), np.array([children_connection.child.delta_error_through_delta_neuron_output_array])))
             else:
                 children_connection.child.gradient_descent(learning_rate)
-                self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_output
+                self.delta_error_through_delta_neuron_output_array = np.concatenate((self.delta_error_through_delta_neuron_output_array.ravel(), np.array([children_connection.child.delta_error_through_delta_neuron_output_array])))
         self.calculated_gradient = True
 
         if self.output_neuron:
-            self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
+            self.delta_error_through_delta_neuron_output_array = np.array(self.error_for_output_neuron)
+
 
         self.delta_out_through_delta_net = self.deri_activation_function(self.output)
 
-        for p in self.parent_connections.keys():
-            parent_connection = self.parent_connections[p]
-
-            if not self.base_space.fast:
-                self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
-
-            #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
-            delta_net_through_delta_w = parent_connection.parent.output
-            delta_error_through_delta_net = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
-            gradient = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net * delta_net_through_delta_w
+        self.delta_error_through_delta_neuron_net_array = np.array([])
+        for i in self.delta_error_through_delta_neuron_output_array:
+            self.delta_error_through_delta_neuron_net_array = np.concatenate(self.delta_error_through_delta_neuron_net_array, np.array([i * self.deri_activation_function()]))
 
 
-            self.parent_connections[p].new_weights.append(learning_rate * gradient)
-#            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
-            if not parent_connection.parent.started:
-                parent_connection.parent.gradient_descent(learning_rate = learning_rate)
+        for delta_error_through_delta_neuron_output in self.delta_error_through_delta_neuron_output_array.ravel():
 
-            if not self.base_space.fast:
-                self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
+            for p in self.parent_connections.keys():
+                parent_connection = self.parent_connections[p]
+                if self.name == "h11":
+                    print("stop")
+                if not self.base_space.fast:
+                    self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
+
+                #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
+                delta_net_through_delta_w = parent_connection.parent.output
+
+                delta_error_through_delta_net = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
+                gradient = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net * delta_net_through_delta_w
+
+
+                self.parent_connections[p].new_weights.append(learning_rate * gradient)
+    #            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
+                if not parent_connection.parent.started:
+                    parent_connection.parent.gradient_descent(learning_rate = learning_rate)
+
+                if not self.base_space.fast:
+                    self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
 
 
@@ -179,10 +190,11 @@ class Input_Neuron():
         self.output = 0
         self.activated = False
         self.started = False
-#        self.name = name
+        self.name = name
 
         self.coordinate = coordinate
-        self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
+        if name == "not_set":
+            self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
         self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
 

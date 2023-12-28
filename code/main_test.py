@@ -13,8 +13,8 @@ n.spawn_neurons_axons()
 
 bp = Backprop.Backpropagation(n)
 
-x = [0.05, 0.1]
-y = [0.01, 0.99]
+x = [0.1, 0.5]
+y = [0.05, 0.95]
 
 bp.predict(x)
 bp.backprop(y)
