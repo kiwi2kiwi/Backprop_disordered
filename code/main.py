@@ -5,7 +5,7 @@ import numpy as np
 
 # Do you want visualization? Do you want the learning to me fast?
 
-n = Neuron_space.NeuronSpace(fast = False, Visualization=False, neuron_number = 10)
+n = Neuron_space.NeuronSpace(fast = False, Visualization=False, neuron_number = 1)
 n.spawn_neurons_axons()
 
 
@@ -38,19 +38,21 @@ test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 losses = np.array([])
 validation_losses = np.array([])
-for i in np.arange(0,10):
-    losses = np.concatenate((losses, bp.train(X_train, y_train.T, learning_rate = 0.1)))
+for i in np.arange(0,2):
+    losses = np.concatenate((losses, bp.train(X_train, y_train.T, learning_rate = 1)))
     validation_losses = np.concatenate((validation_losses, bp.train(X_test, y_test.T, learning_rate=0)))
 
 import matplotlib.pyplot as plt
-fig, ax = plt.subplots()
-
+fig1, ax1 = plt.subplots()
+fig2, ax2 = plt.subplots()
 # smoothing loss curve
 #losses = [np.average(i) for i in np.array_split(losses, round(len(losses)/3,0))]
-ax.plot(np.arange(len(losses)), losses, label='train losses')
-ax.plot(np.arange(len(validation_losses)), validation_losses, label='test losses')
-ax.set_title("error")
-fig.show()
+ax1.plot(np.arange(len(losses)), losses, label='train losses')
+ax2.plot(np.arange(len(validation_losses)), validation_losses, label='test losses')
+ax1.set_title("error")
+ax2.set_title("error")
+fig1.show()
+#fig2.show()
 bp.evaluation(X_test, y_test.T*2)
 
 print("Simulation done")
