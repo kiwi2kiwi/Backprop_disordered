@@ -17,4 +17,6 @@ neuron_number is the total number of hidden neurons.\
 Anything above 10 will hardly converge due to exploding gradients.\
 Above 10 will take very very long to learn due to exploding learning parameters.\
 
-This was not done to create a new advance network. It's just a lil project.
+This was not done to create a new fancy advanced network. It's just a funny lil project.
+
+You're not allowed to use this for commercial purposes.
