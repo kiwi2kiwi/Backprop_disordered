@@ -37,17 +37,18 @@ test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 
 losses = np.array([])
+validation_losses = np.array([])
 for i in np.arange(0,10):
-    losses = np.concatenate((losses, bp.train(X_train, y_train.T)))
-
-
+    losses = np.concatenate((losses, bp.train(X_train, y_train.T, learning_rate = 0.1)))
+    validation_losses = np.concatenate((validation_losses, bp.train(X_test, y_test.T, learning_rate=0)))
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()
 
 # smoothing loss curve
 #losses = [np.average(i) for i in np.array_split(losses, round(len(losses)/3,0))]
-ax.plot(np.arange(len(losses)), losses)
+ax.plot(np.arange(len(losses)), losses, label='train losses')
+ax.plot(np.arange(len(validation_losses)), validation_losses, label='test losses')
 ax.set_title("error")
 fig.show()
 bp.evaluation(X_test, y_test.T*2)

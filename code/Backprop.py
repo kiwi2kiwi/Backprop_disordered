@@ -39,8 +39,7 @@ class Backpropagation:
         return prediction
 
 
-    def backprop(self, target):
-        learning_rate = 0.1
+    def backprop(self, target, learning_rate):
 #        self.compute_error(target)
         for idx, n in enumerate(self.base_space.output_set):
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
@@ -50,12 +49,13 @@ class Backpropagation:
             n.gradient_descent(learning_rate)
 
 
-    def train(self, x, y):
+    def train(self, x, y, learning_rate = 0.1):
         loss_array = []#[[] for i in np.arange(len(y))]
         for ds in np.arange(len(x)):
             self.predict(x[ds])
             loss_array = np.hstack([loss_array, self.compute_error(y[ds])])
-            self.backprop(y[ds])
+            if learning_rate != 0:
+                self.backprop(y[ds], learning_rate)
             if self.base_space.Visualization:
                 self.base_space.draw_brain()
 
