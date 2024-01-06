@@ -5,7 +5,7 @@ import numpy as np
 
 # Do you want visualization? Do you want the learning to me fast?
 
-n = Neuron_space.NeuronSpace(fast = False, Visualization=False, neuron_number = 1)
+n = Neuron_space.NeuronSpace(fast = False, Visualization=False, neuron_number = 10)
 n.spawn_neurons_axons()
 
 
@@ -19,7 +19,7 @@ from sklearn.preprocessing import StandardScaler
 
 X = np.array(iris.data)
 y = np.array(iris.target)
-y = y
+y = y/2
 X, y = shuffle(X, y)
 X_train = X[:100]
 X_test = X[100:]
@@ -28,8 +28,8 @@ y_test = np.array([y[100:]])
 
 std_slc = StandardScaler()
 std_slc.fit(X_train)
-X_train = std_slc.transform(X_train)
-X_test = std_slc.transform(X_test)
+#X_train = std_slc.transform(X_train)
+#X_test = std_slc.transform(X_test)
 
 
 train_data = np.concatenate((X_train, y_train.T), axis=1)
@@ -44,8 +44,12 @@ for i in np.arange(0,2):
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()
+
+# smoothing loss curve
+#losses = [np.average(i) for i in np.array_split(losses, round(len(losses)/3,0))]
 ax.plot(np.arange(len(losses)), losses)
+ax.set_title("error")
 fig.show()
-bp.evaluation(X_test, y_test.T)
+bp.evaluation(X_test, y_test.T*2)
 
 print("Simulation done")
