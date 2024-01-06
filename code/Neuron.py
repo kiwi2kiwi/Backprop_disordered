@@ -74,6 +74,7 @@ class Neuron():
             parent_connection.weight = new_weight
             self.parent_connections[p] = parent_connection
 
+
     #            parent = parent_connection.parent
     #            new_weight_to_parent = parent_connection.get_weight() - sum(parent_connection.new_weights)
     #            parent.children_connections[self.__hash__()] = [self, new_weight_to_parent, [new_weight_to_parent]]
@@ -137,6 +138,8 @@ class Neuron():
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
 
+        self.bias -= round((learning_rate * self.delta_error_through_delta_neuron_net),4)
+        print("bias: ", self.bias)
 
         self.change_weight()
     #        self.reset_neuron()

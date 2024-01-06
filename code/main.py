@@ -37,7 +37,7 @@ test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 
 losses = np.array([])
-for i in np.arange(0,20):
+for i in np.arange(0,2):
     losses = np.concatenate((losses, bp.train(X_train, y_train.T)))
 
 

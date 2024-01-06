@@ -217,11 +217,11 @@ class NeuronSpace():
         # spawn a bunch of output neurons on coordinate set output_set
         self.output_set = []
         for o in O:
-            self.output_set.append(Neuron.Neuron(o, self, True))
+            self.output_set.append(Neuron.Neuron(o, self, True, bias=0))
         # spawn a bunch of Processing neurons on coordinate set P
         self.hidden_set = []
         for h in P:
-            self.hidden_set.append(Neuron.Neuron(h, base_space = self))
+            self.hidden_set.append(Neuron.Neuron(h, base_space = self, bias=0))
         # spawn a bunch of input neurons on coordinate set I
         self.input_set = []
         for idx, i in enumerate(I):
