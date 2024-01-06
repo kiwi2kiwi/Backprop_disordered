@@ -5,7 +5,7 @@ import time
 
 
 class Neuron():
-    def __init__(self, coordinate, base_space, output_neuron = False, name = "not_set", bias = 1):
+    def __init__(self, coordinate, base_space, output_neuron = False, name = "not_set", bias = 0):
         super(Neuron, self).__init__()
         self.name = name
         self.parent_connections = {} # closer to input
@@ -16,6 +16,7 @@ class Neuron():
         self.calculated_gradient = False
         self.bias = bias
         self.started = False
+        self.error_for_output_neuron = 0
 
         self.coordinate = coordinate
         if name == "not_set":
@@ -26,7 +27,13 @@ class Neuron():
 
     def reset_neuron(self):
         self.output = 0
+        self.calculated_gradient = False
+        self.started = False
         self.activated = False
+        self.error_for_output_neuron = 0
+        self.delta_error_through_delta_neuron_output = 0
+        self.delta_error_through_delta_neuron_net = 0
+        self.delta_out_through_delta_net = 0
         for p in self.parent_connections.keys():
             self.parent_connections[p].new_weights = []
         for c in self.children_connections.keys():
@@ -50,22 +57,23 @@ class Neuron():
 
 
     def gradient_normalisation(self, gradient):
-        return gradient
+        #return gradient
         return max(min(0.1,gradient),-0.1)
-        #return ((1. / (1 + np.exp(-gradient)))-0.5) * 1
+        #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
     def change_weight(self):
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
-            new_weight = parent_connection.get_weight() - self.gradient_normalisation(sum(parent_connection.new_weights))
+            gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
+            if not self.base_space.fast:
+                #                print("from ", self.name, " to ", parent_connection.parent.name)
+                print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(gradient, 4))
+                continue
+            new_weight = parent_connection.get_weight() - gradient
             #if abs(new_weight)>0.5:
             #    print("stop")
             parent_connection.weight = new_weight
             self.parent_connections[p] = parent_connection
-            if not self.base_space.fast:
-                print("from ", self.name, " to ", parent_connection.parent.name)
-                print("weight: ", round(parent_connection.get_weight(), 6), " adjust by: ",
-                  round(self.gradient_normalisation(sum(parent_connection.new_weights)), 6))
 
     #            parent = parent_connection.parent
     #            new_weight_to_parent = parent_connection.get_weight() - sum(parent_connection.new_weights)
@@ -78,58 +86,56 @@ class Neuron():
 
     def gradient_descent(self, learning_rate):
         self.started = True
-        if self.name == "o21":
-            print("stop")
+        #        if self.name == "o21":
+        #            print("stop")
 
-        if self.name == "h11":
-            print("stop")
-#        self.ab_hier = self.a_null_a_eins() * bis_hier
+        #        if self.name == "h11":
+        #            print("stop")
+        #        self.ab_hier = self.a_null_a_eins() * bis_hier
+        #        if self.output_neuron:
+        #            self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
 
+        self.delta_error_through_delta_neuron_output = 0
 
-        self.delta_error_through_delta_neuron_output_array = np.array([])
         for c in self.children_connections.keys():
             children_connection = self.children_connections[c]
-            if children_connection.child.calculated_gradient:
-                self.delta_error_through_delta_neuron_output_array = np.concatenate((self.delta_error_through_delta_neuron_output_array.ravel(), np.array([children_connection.child.delta_error_through_delta_neuron_output_array])))
-            else:
+            if not children_connection.child.calculated_gradient:
                 children_connection.child.gradient_descent(learning_rate)
-                self.delta_error_through_delta_neuron_output_array = np.concatenate((self.delta_error_through_delta_neuron_output_array.ravel(), np.array([children_connection.child.delta_error_through_delta_neuron_output_array])))
-        self.calculated_gradient = True
+
+            self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_net
 
         if self.output_neuron:
-            self.delta_error_through_delta_neuron_output_array = np.array(self.error_for_output_neuron)
+            self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
+
+        self.calculated_gradient = True
+
+        self.delta_out_through_delta_net = self.deri_activation_function()
+        self.delta_error_through_delta_neuron_net = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
 
 
-        self.delta_out_through_delta_net = self.deri_activation_function(self.output)
-
-        self.delta_error_through_delta_neuron_net_array = np.array([])
-        for i in self.delta_error_through_delta_neuron_output_array:
-            self.delta_error_through_delta_neuron_net_array = np.concatenate(self.delta_error_through_delta_neuron_net_array, np.array([i * self.deri_activation_function()]))
 
 
-        for delta_error_through_delta_neuron_output in self.delta_error_through_delta_neuron_output_array.ravel():
-
-            for p in self.parent_connections.keys():
-                parent_connection = self.parent_connections[p]
-                if self.name == "h11":
-                    print("stop")
-                if not self.base_space.fast:
-                    self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
+        for p in self.parent_connections.keys():
+            parent_connection = self.parent_connections[p]
+            #            if self.name == "h11":
+            #                print("stop")
+            if self.base_space.Visualization:
+                self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
 
                 #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
-                delta_net_through_delta_w = parent_connection.parent.output
+            delta_net_through_delta_w = parent_connection.parent.activation()
 
-                delta_error_through_delta_net = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
-                gradient = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net * delta_net_through_delta_w
+            #            delta_error_through_delta_net = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
+            gradient = self.delta_error_through_delta_neuron_net * delta_net_through_delta_w
 
 
-                self.parent_connections[p].new_weights.append(learning_rate * gradient)
-    #            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
-                if not parent_connection.parent.started:
-                    parent_connection.parent.gradient_descent(learning_rate = learning_rate)
+            self.parent_connections[p].new_weights.append(learning_rate * gradient)
+            #            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
+            if not parent_connection.parent.started:
+                parent_connection.parent.gradient_descent(learning_rate = learning_rate)
 
-                if not self.base_space.fast:
-                    self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
+            if self.base_space.Visualization:
+                self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
 
 
@@ -138,13 +144,13 @@ class Neuron():
 
 
     def activation_function(self, z):
-#        return z
+        return z
 
-        return 1. / (1 + np.exp(-z))
+#        return 1. / (1 + np.exp(-z))
 
-    def deri_activation_function(self, z):
-#        return z
-        return self.activation() * (1 - self.activation())
+    def deri_activation_function(self):
+        return self.activation()
+#        return self.activation() * (1 - self.activation())
 
     def activation(self):
         if self.activated:
@@ -156,8 +162,8 @@ class Neuron():
             summation += parent_connection.parent.activation() * parent_connection.get_weight()
         self.output = self.activation_function(summation + self.bias)
         self.activated = True
-        if not self.base_space.fast:
-            print(self.name, " activation: ", self.output)
+#        if not self.base_space.fast:
+#            print(self.name, " activation: ", self.output)
         return self.output
 
     def deri_activation(self):
@@ -184,7 +190,7 @@ class Neuron():
 
 
 class Input_Neuron():
-    def __init__(self, coordinate, base_space, name = "not set"):
+    def __init__(self, coordinate, base_space, name = "not_set"):
         super(Input_Neuron, self).__init__()
         self.children_connections = {} # closer to output
         self.output = 0
@@ -214,11 +220,8 @@ class Input_Neuron():
         return 1. / (1 + np.exp(-z))
 
     def activation(self):
-        if self.activated:
-            return self.output
-        self.activated = True
-        if not self.base_space.fast:
-            print(self.name, " activation: ", self.output)
+#        if not self.base_space.fast:
+#            print(self.name, " activation: ", self.output)
         return self.output
 
     def deri_activation(self):

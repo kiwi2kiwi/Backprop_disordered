@@ -17,58 +17,67 @@ class Backpropagation:
         return 0.5*(pre - tar)**2
 
     def deriv_error_function(self, pre,tar):
+        #return ((1. / (1 + np.exp(-(pre - tar))))-0.5)
         return (pre - tar)
 
     def compute_error(self, target):
+        errors = []
         for idx, n in enumerate(self.base_space.output_set):
             pred = n.activation()
             print("error: ", self.error_function(pred, target[idx]))
+            errors.append(self.error_function(pred, target[idx]))
+        return errors
 
     def predict(self, slice_of_data):
+        self.reset_neurons()
         for idx, input_neuron in enumerate(self.base_space.input_set):
             input_neuron.set_input(slice_of_data[idx])
         prediction = []
-        for i in self.base_space.output_set:
-            prediction.append(i.activation())
+        for o in self.base_space.output_set:
+            prediction.append(o.activation())
+
         return prediction
 
 
     def backprop(self, target):
-        self.compute_error(target)
-        learning_rate = 0.6
+        learning_rate = 0.1
+#        self.compute_error(target)
         for idx, n in enumerate(self.base_space.output_set):
-
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
             n.error_for_output_neuron = error_through_a_zero
+
         for idx, n in enumerate(self.base_space.output_set):
             n.gradient_descent(learning_rate)
 
 
     def train(self, x, y):
-
-        for ds in np.arange(x.len):
+        loss_array = []#[[] for i in np.arange(len(y))]
+        for ds in np.arange(len(x)):
             self.predict(x[ds])
-            self.backprop([y[ds]])
-            if not self.base_space.fast:
+            loss_array = np.hstack([loss_array, self.compute_error(y[ds])])
+            self.backprop(y[ds])
+            if self.base_space.Visualization:
                 self.base_space.draw_brain()
-            for n in self.base_space.neurons:
-                n.reset_neuron()
+
+        return loss_array
 
 
-    def evaluation(self, data):
+    def evaluation(self, x, y):
         pred = []
-        for ds in data:
-            pred.append(round(self.predict(ds[:-1])[0],0))
+        for ds in x:
+            pred.append(round(self.predict(ds)[0][0],0))
             for a in self.base_space.neurons:
                 a.reset_neuron()
-        target = data[:,-1]
+        target = y
 
         from sklearn.metrics import accuracy_score
         print("accuraccy: ", accuracy_score(target, pred))
         visual = np.concatenate((np.array([pred]), [target]), axis=0)
         print("done")
 
-
+    def reset_neurons(self):
+        for n in self.base_space.neurons:
+            n.reset_neuron()
 
 #do_test(test_data)
 #train(train_data)

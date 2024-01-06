@@ -102,13 +102,14 @@ class NeuronSpace():
                 return axon
 
     def find_x_nearest(self, neuron, setB, connection_limit=8, x=5): # finds x nearest Neurons of setB to Neuron
+        perceptive_connection_limit = 4
         distdict={}
         for i in setB:
             if i != neuron and len(i.parent_connections) < connection_limit: # and sum([(type(c.other_side(i)) == Neuron.Input_Neuron or c.other_side(i).output) for c in i.parent_connections]) == 0:
                 # check if neuron is perceptive and if i already connected to perceptive
                 # this should ensure that one perceptive neuron does not connect to a processing neuron thats already connected to a perceptive neuron
                 if type(neuron) == Neuron.Input_Neuron:
-                    if len(i.parent_connections) == 0:
+                    if len(i.parent_connections) < perceptive_connection_limit:
                         distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
                     # Debug output
 #                    else:
@@ -238,7 +239,7 @@ class NeuronSpace():
 
         # axons generation from Interaction to 3 nearest neurons in processing neuron set
         for i in self.input_set:
-            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=25, x=1)
+            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=25, x=4)
             for n in Ns:
                 self.create_Axon(i, n)
 

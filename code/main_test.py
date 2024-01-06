@@ -4,7 +4,7 @@ import Backprop
 
 import numpy as np
 
-# Do you want visualization? Do you want the learning to me fast?
+# Do you want visualization? Do you want the learning to be fast?
 
 
 n = Neuron_space_predifined.NeuronSpace(fast = False)
@@ -13,23 +13,17 @@ n.spawn_neurons_axons()
 
 bp = Backprop.Backpropagation(n)
 
-x = [0.1, 0.5]
-y = [0.05, 0.95]
+x = [[0.1, 0.5]]
+y = [[0.05, 0.95]]
 
-bp.predict(x)
-bp.backprop(y)
-for ns in n.neurons:
-    ns.reset_neuron()
+for i in np.arange(1,10):
+    bp.predict(x[0])
+    bp.compute_error(y[0])
+    bp.backprop(y[0])
+    for ns in n.neurons:
+        ns.reset_neuron()
 
-bp.predict(x)
-bp.backprop(y)
-for ns in n.neurons:
-    ns.reset_neuron()
 
-bp.predict(x)
-bp.backprop(y)
-for ns in n.neurons:
-    ns.reset_neuron()
 
 
 
