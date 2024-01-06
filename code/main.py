@@ -5,7 +5,7 @@ import numpy as np
 
 # Do you want visualization? Do you want the learning to me fast?
 
-n = Neuron_space.NeuronSpace(fast = False, Visualization=True, neuron_number = 1)
+n = Neuron_space.NeuronSpace(fast = False, Visualization=False, neuron_number = 1)
 n.spawn_neurons_axons()
 
 
@@ -19,7 +19,7 @@ from sklearn.preprocessing import StandardScaler
 
 X = np.array(iris.data)
 y = np.array(iris.target)
-y = y/2
+y = y
 X, y = shuffle(X, y)
 X_train = X[:100]
 X_test = X[100:]
@@ -37,7 +37,7 @@ test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 
 losses = np.array([])
-for i in np.arange(0,2):
+for i in np.arange(0,20):
     losses = np.concatenate((losses, bp.train(X_train, y_train.T)))
 
 

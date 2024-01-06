@@ -57,7 +57,7 @@ class Neuron():
 
 
     def gradient_normalisation(self, gradient):
-        #return gradient
+        return gradient
         return max(min(0.1,gradient),-0.1)
         #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
@@ -67,8 +67,7 @@ class Neuron():
             gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
             if not self.base_space.fast:
                 #                print("from ", self.name, " to ", parent_connection.parent.name)
-                print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(gradient, 4))
-                continue
+                print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(-gradient, 4))
             new_weight = parent_connection.get_weight() - gradient
             #if abs(new_weight)>0.5:
             #    print("stop")
@@ -144,13 +143,12 @@ class Neuron():
 
 
     def activation_function(self, z):
+        return 1. / (1 + np.exp(-z))
         return z
 
-#        return 1. / (1 + np.exp(-z))
-
     def deri_activation_function(self):
+        return self.activation() * (1 - self.activation())
         return self.activation()
-#        return self.activation() * (1 - self.activation())
 
     def activation(self):
         if self.activated:

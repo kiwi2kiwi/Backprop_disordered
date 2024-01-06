@@ -14,17 +14,17 @@ class Backpropagation:
 
 
     def error_function(self, pre,tar):
-        return 0.5*(pre - tar)**2
+        return (pre - tar)**2
 
     def deriv_error_function(self, pre,tar):
         #return ((1. / (1 + np.exp(-(pre - tar))))-0.5)
-        return (pre - tar)
+        return 2*(pre - tar)
 
     def compute_error(self, target):
         errors = []
         for idx, n in enumerate(self.base_space.output_set):
             pred = n.activation()
-            print("error: ", self.error_function(pred, target[idx]))
+            print("error: ", round(self.error_function(pred, target[idx]),4), " pred: ", pred, " targ: ", target[idx])
             errors.append(self.error_function(pred, target[idx]))
         return errors
 
@@ -40,7 +40,7 @@ class Backpropagation:
 
 
     def backprop(self, target):
-        learning_rate = 0.1
+        learning_rate = 0.5
 #        self.compute_error(target)
         for idx, n in enumerate(self.base_space.output_set):
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
@@ -65,14 +65,14 @@ class Backpropagation:
     def evaluation(self, x, y):
         pred = []
         for ds in x:
-            pred.append(round(self.predict(ds)[0][0],0))
+            pred.append(round(self.predict(ds)[0],0))
             for a in self.base_space.neurons:
                 a.reset_neuron()
         target = y
 
         from sklearn.metrics import accuracy_score
         print("accuraccy: ", accuracy_score(target, pred))
-        visual = np.concatenate((np.array([pred]), [target]), axis=0)
+#        visual = np.concatenate((np.array([pred]), [target]), axis=0)
         print("done")
 
     def reset_neurons(self):
