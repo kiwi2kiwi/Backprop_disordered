@@ -3,9 +3,9 @@ import Backprop
 
 import numpy as np
 
-# Do you want visualization? Do you want the learning to me fast?
+# Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = False, Visualization=False, neuron_number = 1)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 50)
 n.spawn_neurons_axons()
 
 
@@ -35,24 +35,36 @@ std_slc.fit(X_train)
 train_data = np.concatenate((X_train, y_train.T), axis=1)
 test_data = np.concatenate((X_test, y_test.T), axis=1)
 
-
+epochs = 100
 losses = np.array([])
+epoch_losses = []
 validation_losses = np.array([])
-for i in np.arange(0,2):
-    losses = np.concatenate((losses, bp.train(X_train, y_train.T, learning_rate = 1)))
-    validation_losses = np.concatenate((validation_losses, bp.train(X_test, y_test.T, learning_rate=0)))
+epoch_validation_losses = []
+
+for i in np.arange(0,epochs):
+    loss = bp.train(X_train, y_train.T, learning_rate = 1)
+    epoch_losses.append(np.average(loss))
+    losses = np.concatenate((losses, loss))
+
+    validation_loss = bp.train(X_test, y_test.T, learning_rate=0)
+    epoch_validation_losses.append(np.average(validation_loss))
+    validation_losses = np.concatenate((validation_losses, validation_loss))
 
 import matplotlib.pyplot as plt
 fig1, ax1 = plt.subplots()
 fig2, ax2 = plt.subplots()
-# smoothing loss curve
-#losses = [np.average(i) for i in np.array_split(losses, round(len(losses)/3,0))]
-ax1.plot(np.arange(len(losses)), losses, label='train losses')
-ax2.plot(np.arange(len(validation_losses)), validation_losses, label='test losses')
-ax1.set_title("error")
-ax2.set_title("error")
+
+#fig3, ax3 = plt.subplots()
+#ax3.plot(np.arange(len(losses)), losses, label='2 train losses')
+
+ax1.plot(np.arange(len(epoch_losses)), epoch_losses, label='train losses')
+ax2.plot(np.arange(len(epoch_validation_losses)), epoch_validation_losses, label='test losses')
+ax1.set_title("training error")
+ax1.set_xlabel("epochs")
+ax2.set_title("testing error")
+ax2.set_xlabel("epochs")
 fig1.show()
-#fig2.show()
+fig2.show()
 bp.evaluation(X_test, y_test.T*2)
 
 # neurons coloured by their bias

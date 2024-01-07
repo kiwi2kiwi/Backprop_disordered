@@ -139,7 +139,8 @@ class Neuron():
 
 
         self.bias -= round((learning_rate * self.delta_error_through_delta_neuron_net),4)
-        print("bias: ", self.bias)
+        if not self.base_space.fast:
+            print("bias: ", self.bias)
 
         self.change_weight()
     #        self.reset_neuron()

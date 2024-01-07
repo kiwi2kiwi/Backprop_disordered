@@ -24,7 +24,8 @@ class Backpropagation:
         errors = []
         for idx, n in enumerate(self.base_space.output_set):
             pred = n.activation()
-            print("error: ", round(self.error_function(pred, target[idx]),4), " pred: ", pred, " targ: ", target[idx])
+            if not self.base_space.fast:
+                print("error: ", round(self.error_function(pred, target[idx]),4), " pred: ", pred, " targ: ", target[idx])
             errors.append(self.error_function(pred, target[idx]))
         return errors
 
@@ -65,7 +66,7 @@ class Backpropagation:
     def evaluation(self, x, y):
         pred = []
         for ds in x:
-            pred.append(round(self.predict(ds)[0],0))
+            pred.append(round(self.predict(ds)[0]*2,0))
             for a in self.base_space.neurons:
                 a.reset_neuron()
         target = y
