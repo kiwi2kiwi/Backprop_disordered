@@ -5,7 +5,7 @@ import numpy as np
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 50)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 10)
 n.spawn_neurons_axons()
 
 
@@ -41,30 +41,29 @@ epoch_losses = []
 validation_losses = np.array([])
 epoch_validation_losses = []
 
-for i in np.arange(0,epochs):
-    loss = bp.train(X_train, y_train.T, learning_rate = 1)
-    epoch_losses.append(np.average(loss))
-    losses = np.concatenate((losses, loss))
-
+for idx,i in enumerate(np.arange(0,epochs)):
     validation_loss = bp.train(X_test, y_test.T, learning_rate=0)
     epoch_validation_losses.append(np.average(validation_loss))
     validation_losses = np.concatenate((validation_losses, validation_loss))
 
+    loss = bp.train(X_train, y_train.T, learning_rate = 1)
+    epoch_losses.append(np.average(loss))
+    losses = np.concatenate((losses, loss))
+
+    print("epoch: ", (idx+1), "/", epochs)
+
 import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
 fig1, ax1 = plt.subplots()
 fig2, ax2 = plt.subplots()
 
-#fig3, ax3 = plt.subplots()
-#ax3.plot(np.arange(len(losses)), losses, label='2 train losses')
+ax.plot(np.arange(len(epoch_losses)), epoch_losses, label='train losses')
+ax.plot(np.arange(len(epoch_validation_losses)), epoch_validation_losses, label='test losses')
+ax1.set_title("Iris dataset losses")
+ax.set_xlabel("epochs")
+fig.legend()
+fig.show()
 
-ax1.plot(np.arange(len(epoch_losses)), epoch_losses, label='train losses')
-ax2.plot(np.arange(len(epoch_validation_losses)), epoch_validation_losses, label='test losses')
-ax1.set_title("training error")
-ax1.set_xlabel("epochs")
-ax2.set_title("testing error")
-ax2.set_xlabel("epochs")
-fig1.show()
-fig2.show()
 bp.evaluation(X_test, y_test.T*2)
 
 # neurons coloured by their bias
