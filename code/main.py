@@ -55,4 +55,9 @@ fig1.show()
 #fig2.show()
 bp.evaluation(X_test, y_test.T*2)
 
+# neurons coloured by their bias
+# axons coloured by their weight
+n.start_vis()
+n.draw_brain()
+
 print("Simulation done")

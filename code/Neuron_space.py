@@ -120,23 +120,23 @@ class NeuronSpace():
         return [i[1] for i in srtd[:x]]
 
     def draw_brain(self):
-        out_list = []
+        bias_list = []
         weight_list = []
         for neuron in self.neurons:
-            out_list.append(neuron.output)
+            bias_list.append(neuron.bias)
             if type(neuron) != Neuron.Input_Neuron:
                 for p_axon in neuron.parent_connections.values():
                     weight_list.append(p_axon.get_weight())
 
         cmap = plt.get_cmap('cool')
-        norm_out = plt.Normalize(min(out_list), max(out_list))
+        norm_out = plt.Normalize(min(bias_list), max(bias_list))
         norm_weight = plt.Normalize(min(weight_list), max(weight_list))
 
         # visualize the neurons
         # TODO change this to display neuron activation
         for key in self.neuron_dot_dict:
             value = self.neuron_dot_dict[key]
-            color = cmap(norm_out(value[1].output))
+            color = cmap(norm_out(value[1].bias))
             value[0].set_color(color)
 
         # TODO change this to display weight value

@@ -198,6 +198,7 @@ class Input_Neuron():
         self.activated = False
         self.started = False
         self.name = name
+        self.bias = 0
 
         self.coordinate = coordinate
         if name == "not_set":
