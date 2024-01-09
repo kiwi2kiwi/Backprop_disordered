@@ -6,40 +6,42 @@ np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 5)
-n.spawn_neurons_axons()
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 50)
+n.spawn_neurons_axons(input_number=64, output_number=10)
 
 
 bp = Backprop.Backpropagation(n)
 
 
 from sklearn import datasets
-iris = datasets.load_iris()
+mnist = datasets.load_digits()
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
 
-X = np.array(iris.data)
-X[:,0] = 0
-#X[:,1] = 0
-X[:,2] = 0
-X[:,3] = 0
-y = np.array(iris.target)
-y = y/2
+X = np.array(mnist.data)
+y = np.array(mnist.target)
+
+f = np.zeros([len(y),10])
+for idx, i in enumerate(y):
+    f[idx, i] = 1
+
+y = f
+
 X, y = shuffle(X, y, random_state=1)
 X_train = X[:100]
-X_test = X[100:]
-y_train = np.array([y[:100]])
-y_test = np.array([y[100:]])
+X_test = X[100:150]
+y_train = np.array(y[:100])
+y_test = np.array(y[100:150])
 
 std_slc = StandardScaler()
 std_slc.fit(X_train)
-#X_train = std_slc.transform(X_train)
-#X_test = std_slc.transform(X_test)
+X_train = std_slc.transform(X_train)
+X_test = std_slc.transform(X_test)
 
 
-train_data = np.concatenate((X_train, y_train.T), axis=1)
-test_data = np.concatenate((X_test, y_test.T), axis=1)
+#train_data = np.concatenate((X_train, y_train.T), axis=1)
+#test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 epochs = 100
 train_acc = []
@@ -51,15 +53,15 @@ validation_losses = np.array([])
 epoch_validation_losses = []
 
 for idx,i in enumerate(np.arange(0,epochs)):
-    validation_loss = bp.train(X_test, y_test.T, learning_rate=0)
+    validation_loss = bp.train(X_test, y_test, learning_rate=0)
     epoch_validation_losses.append(np.average(validation_loss))
     validation_losses = np.concatenate((validation_losses, validation_loss))
-    test_acc.append(bp.evaluation(X_test, y_test.T * 2))
+    test_acc.append(bp.evaluation(X_test, y_test))
 
-    loss = bp.train(X_train, y_train.T, learning_rate = 1)
+    loss = bp.train(X_train, y_train, learning_rate = 1)
     epoch_losses.append(np.average(loss))
     losses = np.concatenate((losses, loss))
-    train_acc.append(bp.evaluation(X_train, y_train.T * 2))
+    train_acc.append(bp.evaluation(X_train, y_train))
 
     print("epoch: ", (idx+1), "/", epochs)
 
@@ -69,19 +71,19 @@ fig1, ax1 = plt.subplots()
 
 ax.plot(np.arange(len(epoch_losses)), epoch_losses, label='train losses')
 ax.plot(np.arange(len(epoch_validation_losses)), epoch_validation_losses, label='test losses')
-ax.set_title("Iris dataset losses")
+ax.set_title("MNIST dataset losses")
 ax.set_xlabel("epochs")
 fig.legend()
 fig.show()
 
 ax1.plot(np.arange(len(train_acc)), train_acc, label='train accuracy')
 ax1.plot(np.arange(len(test_acc)), test_acc, label='test accuracy')
-ax1.set_title("Iris dataset accuracy")
+ax1.set_title("MNIST dataset accuracy")
 ax1.set_xlabel("epochs")
 fig1.legend()
 fig1.show()
 
-print("accuraccy: ", bp.evaluation(X_test, y_test.T*2))
+print("accuraccy: ", bp.evaluation(X_test, y_test.T))
 
 # neurons coloured by their bias
 # axons coloured by their weight

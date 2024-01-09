@@ -1,6 +1,6 @@
 from Neuron import *
 import numpy as np
-
+from sklearn.metrics import accuracy_score
 
 
 class Backpropagation:
@@ -52,13 +52,14 @@ class Backpropagation:
 
     def train(self, x, y, learning_rate = 0.1):
         loss_array = []#[[] for i in np.arange(len(y))]
-        for ds in np.arange(len(x)):
-            self.predict(x[ds])
-            loss_array = np.hstack([loss_array, self.compute_error(y[ds])])
+        for idx, ds in enumerate(x):
+            self.predict(ds)
+            loss_array = np.hstack([loss_array, self.compute_error(y[idx])])
             if learning_rate != 0:
                 self.backprop(y[ds], learning_rate)
             if self.base_space.Visualization:
                 self.base_space.draw_brain()
+            self.reset_neurons()
 
         return loss_array
 
@@ -66,15 +67,13 @@ class Backpropagation:
     def evaluation(self, x, y):
         pred = []
         for ds in x:
-            pred.append(round(self.predict(ds)[0]*2,0))
-            for a in self.base_space.neurons:
-                a.reset_neuron()
+            pred.append(round(self.predict(ds)[0],0))
+            self.reset_neurons()
         target = y
 
-        from sklearn.metrics import accuracy_score
-        print("accuraccy: ", accuracy_score(target, pred))
+        #print("accuraccy: ", accuracy_score(target, pred))
 #        visual = np.concatenate((np.array([pred]), [target]), axis=0)
-        print("done")
+        return accuracy_score(target, pred)
 
     def reset_neurons(self):
         for n in self.base_space.neurons:

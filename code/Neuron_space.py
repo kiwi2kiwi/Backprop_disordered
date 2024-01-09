@@ -6,6 +6,8 @@ import Neuron
 import Backprop
 import random
 import numpy as np
+np.random.seed(1)
+random.seed(1)
 import time
 
 size = 100
@@ -184,15 +186,15 @@ class NeuronSpace():
 
         self.grown_axons = []
 
-    def spawn_neurons_axons(self):
+    def spawn_neurons_axons(self, input_number, output_number):
 
         mean = [0, 0]
         cov = [[100, 100], [100, 0]]
         # np.random.multivariate_normal(mean, cov, 1).T
 
         I = []
-        for i in np.arange(1):  # how many neurons do we want
-            I = self.ordered_input_neurons(height = 1, width = 4, plane_end=-(size/2))
+        for i in np.arange(input_number):  # how many neurons do we want
+            I = self.ordered_input_neurons(height = np.sqrt(input_number), width = np.sqrt(input_number), plane_end=-(size/2))
             #y, z = self.new_positions_circular_coordinates()
             #V.append(Coordinates.Coordinate(-(size/2), y, z))
 
@@ -205,8 +207,8 @@ class NeuronSpace():
         # choose cluster of coordinates on plane, opposite side to V, set I
         # that only connect to processing neurons
         O = []
-        for o in np.arange(1):  # how many neurons do we want
-            O = self.ordered_output_neurons(height=1, width=1, plane_end=size/2)
+        for o in np.arange(output_number):  # how many neurons do we want
+            O = self.ordered_output_neurons(height=1, width=output_number, plane_end=size/2)
             #y, z = self.new_positions_circular_coordinates()
             #np.random.multivariate_normal(mean, cov, 1).T
             #I.append(Coordinates.Coordinate(size/2, y, z))
@@ -233,19 +235,19 @@ class NeuronSpace():
         # axons generation from Perception to 1 nearest neurons in processing neuron set
         # perceptives should only connect to a processing neuron that is not directly connected to another perceptive
         for o in self.output_set:
-            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=5)
+            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=10)
             for n in Ns:
                 self.create_Axon(o, n)
 
         # axons generation from Interaction to 3 nearest neurons in processing neuron set
         for i in self.input_set:
-            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=9, x=5)
+            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=9, x=1)
             for n in Ns:
                 self.create_Axon(i, n)
 
         # axons generation from Processing to 3 nearest neurons in processing neuron set
         for p in self.hidden_set:
-            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=15, x=5)
+            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=20, x=2)
             for n in Ns:
                 self.create_Axon(p, n)
 
