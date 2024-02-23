@@ -30,20 +30,23 @@ y = f
 
 X, y = shuffle(X, y, random_state=1)
 X_train = X[:100]
-X_test = X[100:150]
+X_validation = X[100:150]
+X_test = X[150:200]
 y_train = np.array(y[:100])
-y_test = np.array(y[100:150])
+y_validation = np.array(y[100:150])
+y_test = np.array(y[150:200])
 
 std_slc = StandardScaler()
 std_slc.fit(X_train)
 X_train = std_slc.transform(X_train)
+X_validation = std_slc.transform(X_validation)
 X_test = std_slc.transform(X_test)
 
 
 #train_data = np.concatenate((X_train, y_train.T), axis=1)
 #test_data = np.concatenate((X_test, y_test.T), axis=1)
 
-epochs = 100
+epochs = 10
 train_acc = []
 losses = np.array([])
 epoch_losses = []
@@ -53,14 +56,14 @@ validation_losses = np.array([])
 epoch_validation_losses = []
 
 for idx,i in enumerate(np.arange(0,epochs)):
-    validation_loss = bp.train(X_test, y_test, learning_rate=0)
+    validation_loss = bp.train(X_validation, y_validation, learning_rate=0)
     epoch_validation_losses.append(np.average(validation_loss))
-    validation_losses = np.concatenate((validation_losses, validation_loss))
-    test_acc.append(bp.evaluation(X_test, y_test))
+    validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
+    test_acc.append(bp.evaluation(X_validation, y_validation))
 
     loss = bp.train(X_train, y_train, learning_rate = 1)
     epoch_losses.append(np.average(loss))
-    losses = np.concatenate((losses, loss))
+    losses = np.vstack([losses, loss]) if losses.size else loss
     train_acc.append(bp.evaluation(X_train, y_train))
 
     print("epoch: ", (idx+1), "/", epochs)
@@ -83,11 +86,18 @@ ax1.set_xlabel("epochs")
 fig1.legend()
 fig1.show()
 
-print("accuraccy: ", bp.evaluation(X_test, y_test.T))
+for i in np.arange(0, y_test.shape[1]):
+    print(i, " accuraccy: ", bp.evaluation(X_test, y_test))
+
+
 
 # neurons coloured by their bias
 # axons coloured by their weight
 n.start_vis()
 n.draw_brain()
+
+for i in np.arange(0, y_test.shape[1]):
+    print(i, " accuraccy: ", bp.evaluation(X_test, y_test))
+
 
 print("Simulation done")

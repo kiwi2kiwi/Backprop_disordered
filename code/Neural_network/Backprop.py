@@ -45,18 +45,24 @@ class Backpropagation:
         for idx, n in enumerate(self.base_space.output_set):
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
             n.error_for_output_neuron = error_through_a_zero
-
-        for idx, n in enumerate(self.base_space.output_set):
             n.gradient_descent(learning_rate)
+            self.reset_neurons()
+
+        #for idx, n in enumerate(self.base_space.output_set):
+            #n.gradient_descent(learning_rate)
 
 
     def train(self, x, y, learning_rate = 0.1):
-        loss_array = []#[[] for i in np.arange(len(y))]
+        #loss_array = np.empty((0,10),float)#[[] for i in np.arange(len(y))]
+        loss_array = None
         for idx, ds in enumerate(x):
             self.predict(ds)
-            loss_array = np.hstack([loss_array, self.compute_error(y[idx])])
+            if loss_array is None:
+                loss_array = self.compute_error(y[idx])
+            else:
+                loss_array = np.vstack([loss_array, self.compute_error(y[idx])])
             if learning_rate != 0:
-                self.backprop(y[ds], learning_rate)
+                self.backprop(y[idx], learning_rate)
             if self.base_space.Visualization:
                 self.base_space.draw_brain()
             self.reset_neurons()
@@ -67,7 +73,7 @@ class Backpropagation:
     def evaluation(self, x, y):
         pred = []
         for ds in x:
-            pred.append(round(self.predict(ds)[0],0))
+            pred.append([round(i,0) for i in self.predict(ds)])
             self.reset_neurons()
         target = y
 

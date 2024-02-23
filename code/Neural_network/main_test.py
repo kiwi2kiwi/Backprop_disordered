@@ -1,4 +1,3 @@
-import Neuron_space
 import Neuron_space_predifined
 import Backprop
 

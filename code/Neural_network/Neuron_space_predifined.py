@@ -3,12 +3,7 @@ import Axon
 import matplotlib.pyplot as plt
 
 import Neuron
-import Backprop
-import random
 import numpy as np
-np.random.seed(1)
-random.seed(1)
-import time
 
 size = 100
 class NeuronSpace():
@@ -20,32 +15,6 @@ class NeuronSpace():
             self.Visualization = False
         self.neuron_number = neuron_number
 
-    def new_positions_spherical_coordinates(self):
-        phi = random.uniform(0, 2 * np.pi)
-        costheta = random.uniform(-1, 1)
-        u = random.uniform(0, 1)
-
-        theta = np.arccos(costheta)
-        r = ((size-10) / 2) * np.sqrt(u)
-
-        x = r * np.sin(theta) * np.cos(phi)
-        y = r * np.sin(theta) * np.sin(phi)
-        z = r * np.cos(theta)
-        return (round(x, 3), round(y, 3), round(z, 3))
-
-    def new_positions_circular_coordinates(self):
-        phi = random.uniform(0, 2 * np.pi)
-        costheta = random.uniform(-1, 1)
-        u = random.uniform(0, 1)
-
-        size = 100
-        theta = np.arccos(costheta)
-        r = (size / 2) * np.sqrt(u)
-
-        x = r * np.sin(theta) * np.cos(phi)
-        y = r * np.sin(theta) * np.sin(phi)
-        #z = r * np.cos(theta)
-        return (round(x,3), round(y,3))
 
     def ordered_input_neurons(self, height, width, plane_end):
         global size
@@ -66,14 +35,14 @@ class NeuronSpace():
         area = size - 20
         y_distance = area / height
         z_distance = area / width
-        Y = np.arange(-(size/2)+10,(size/2)-10,y_distance)
-        Z = np.arange(-(size/2)+10,(size/2)-10,z_distance)
+        Y = np.arange(-(size / 2) + 10, (size / 2) - 10, y_distance)
+        Z = np.arange(-(size / 2) + 10, (size / 2) - 10, z_distance)
         for y in Y:
             for z in Z:
-                V.append(Coordinates.Coordinate(plane_end, y, 0))
+                V.append(Coordinates.Coordinate(plane_end, y, z))
         return V
 
-    def create_Axon(self, i, n):
+    def create_Axon(self, i, n, weight):
         is_n_parent = True
         if i.coordinate.x < n.coordinate.x:
             is_n_parent = False
@@ -87,7 +56,6 @@ class NeuronSpace():
         if is_n_parent:
             name = n.name + i.name
             if name not in self.Axon_dict.keys():
-                weight = round(random.uniform(0, 1), 2)
                 axon = Axon.Axon(n, i, name=name, base_space=self, weight=weight, new_weights=[])
                 self.Axon_dict[name] = axon
                 i.parent_connections[n.name] = axon
@@ -96,49 +64,31 @@ class NeuronSpace():
         else:
             name = i.name + n.name
             if name not in self.Axon_dict.keys():
-                weight = round(random.uniform(0, 1), 2)
                 axon = Axon.Axon(i, n, name=name, base_space=self, weight=weight, new_weights=[])
                 self.Axon_dict[name] = axon
                 i.children_connections[n.name] = axon
                 n.parent_connections[i.name] = axon
                 return axon
 
-    def find_x_nearest(self, neuron, setB, connection_limit=8, x=5): # finds x nearest Neurons of setB to Neuron
-        perceptive_connection_limit = 4
-        distdict={}
-        for i in setB:
-            if i != neuron and len(i.parent_connections) < connection_limit: # and sum([(type(c.other_side(i)) == Neuron.Input_Neuron or c.other_side(i).output) for c in i.parent_connections]) == 0:
-                # check if neuron is perceptive and if i already connected to perceptive
-                # this should ensure that one perceptive neuron does not connect to a processing neuron thats already connected to a perceptive neuron
-                if type(neuron) == Neuron.Input_Neuron:
-                    if len(i.parent_connections) < perceptive_connection_limit:
-                        distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
-                    # Debug output
-#                    else:
-#                        print("prevented perceptives connecting to same neuron")
-                else:
-                    distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
-        srtd = sorted(distdict.items())
-        return [i[1] for i in srtd[:x]]
 
     def draw_brain(self):
-        bias_list = []
+        out_list = []
         weight_list = []
         for neuron in self.neurons:
-            bias_list.append(neuron.bias)
+            out_list.append(neuron.output)
             if type(neuron) != Neuron.Input_Neuron:
                 for p_axon in neuron.parent_connections.values():
                     weight_list.append(p_axon.get_weight())
 
         cmap = plt.get_cmap('cool')
-        norm_out = plt.Normalize(min(bias_list), max(bias_list))
+        norm_out = plt.Normalize(min(out_list), max(out_list))
         norm_weight = plt.Normalize(min(weight_list), max(weight_list))
 
         # visualize the neurons
         # TODO change this to display neuron activation
         for key in self.neuron_dot_dict:
             value = self.neuron_dot_dict[key]
-            color = cmap(norm_out(value[1].bias))
+            color = cmap(norm_out(value[1].output))
             value[0].set_color(color)
 
         # TODO change this to display weight value
@@ -186,29 +136,28 @@ class NeuronSpace():
 
         self.grown_axons = []
 
-    def spawn_neurons_axons(self, input_number, output_number):
+    def spawn_neurons_axons(self, input_amount=2, hidden_layer_size=2, output_amount=2):
 
         mean = [0, 0]
         cov = [[100, 100], [100, 0]]
         # np.random.multivariate_normal(mean, cov, 1).T
 
         I = []
-        for i in np.arange(input_number):  # how many neurons do we want
-            I = self.ordered_input_neurons(height = np.sqrt(input_number), width = np.sqrt(input_number), plane_end=-(size/2))
+        for i in np.arange(input_amount):  # how many neurons do we want
+            I = self.ordered_input_neurons(height = 1, width = 2, plane_end=-(size/2))
             #y, z = self.new_positions_circular_coordinates()
             #V.append(Coordinates.Coordinate(-(size/2), y, z))
 
         # choose cluster of coordinates in the middle of the neuron space for processing neurons, set P
         P = []
-        for p in np.arange(self.neuron_number):
-            x, y, z = self.new_positions_spherical_coordinates()
-            P.append(Coordinates.Coordinate(x, y, z))
+        P.append(Coordinates.Coordinate(0, 0, 10))
+        P.append(Coordinates.Coordinate(0, 0, 0))
 
         # choose cluster of coordinates on plane, opposite side to V, set I
         # that only connect to processing neurons
         O = []
-        for o in np.arange(output_number):  # how many neurons do we want
-            O = self.ordered_output_neurons(height=1, width=output_number, plane_end=size/2)
+        for o in np.arange(output_amount):  # how many neurons do we want
+            O = self.ordered_output_neurons(height=1, width=2, plane_end=size/2)
             #y, z = self.new_positions_circular_coordinates()
             #np.random.multivariate_normal(mean, cov, 1).T
             #I.append(Coordinates.Coordinate(size/2, y, z))
@@ -217,39 +166,42 @@ class NeuronSpace():
         # Neuron generation
 
         # spawn a bunch of output neurons on coordinate set output_set
+        output_names = ["o21", "o22"]
         self.output_set = []
-        for o in O:
-            self.output_set.append(Neuron.Neuron(o, self, True, bias=0))
+        for idx, o in enumerate(O):
+            self.output_set.append(Neuron.Neuron(o, self, True, name = output_names[idx], bias = 0.35))
+
         # spawn a bunch of Processing neurons on coordinate set P
+        hidden_names=["h11","h12"]
         self.hidden_set = []
-        for h in P:
-            self.hidden_set.append(Neuron.Neuron(h, base_space = self, bias=0))
+        for idx, h in enumerate(P):
+            self.hidden_set.append(Neuron.Neuron(h, base_space = self, name = hidden_names[idx], bias = 0.25))
+
         # spawn a bunch of input neurons on coordinate set I
+        input_names = ["i01", "i02"]
         self.input_set = []
         for idx, i in enumerate(I):
-            self.input_set.append(Neuron.Input_Neuron(i, base_space = self))
+            self.input_set.append(Neuron.Input_Neuron(i, base_space = self, name = input_names[idx]))
 
 
         self.Axon_dict = {}
 
-        # axons generation from Perception to 1 nearest neurons in processing neuron set
-        # perceptives should only connect to a processing neuron that is not directly connected to another perceptive
+
+
+        weight_list = [0.5,0.6,0.7,0.8]
+        cnt = 0
         for o in self.output_set:
-            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=10)
-            for n in Ns:
-                self.create_Axon(o, n)
+            for h in self.hidden_set:
+                self.create_Axon(o, h, weight_list[cnt])
+                cnt += 1
 
-        # axons generation from Interaction to 3 nearest neurons in processing neuron set
+        weight_list = [0.1,0.2,0.3,0.4]
+        cnt = 0
         for i in self.input_set:
-            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=9, x=1)
-            for n in Ns:
-                self.create_Axon(i, n)
+            for h in self.hidden_set:
+                self.create_Axon(i, h, weight_list[cnt])
+                cnt += 1
 
-        # axons generation from Processing to 3 nearest neurons in processing neuron set
-        for p in self.hidden_set:
-            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=20, x=2)
-            for n in Ns:
-                self.create_Axon(p, n)
 
         self.hidden_neuron_dict = {}
         for h in self.hidden_set:
@@ -276,6 +228,7 @@ class NeuronSpace():
             plt.show()
             print("done")
             #self.draw_brain(active_axons={})
+
 
 
 

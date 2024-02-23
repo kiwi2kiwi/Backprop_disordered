@@ -49,7 +49,7 @@ class Neuron():
             parent_connection = self.parent_connections[p]
             parent = parent_connection.parent
             axon_name = parent.name + "," + self.name
-            axon = Axon.Axon(parent,self, axon_name, self.base_space, weight, [])
+            axon = Axon.Axon(parent, self, axon_name, self.base_space, weight, [])
             parent.children_connections[self.__hash__()] = axon
             self.parent_connections[axon_name] = axon
         for p in pkeys:
@@ -58,7 +58,7 @@ class Neuron():
 
     def gradient_normalisation(self, gradient):
         return gradient
-        return max(min(0.1,gradient),-0.1)
+        return max(min(0.5,gradient),-0.5)
         #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
     def change_weight(self):
