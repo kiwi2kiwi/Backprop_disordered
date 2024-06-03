@@ -120,7 +120,8 @@ class Neuron():
             #            if self.name == "h11":
             #                print("stop")
             if self.base_space.Visualization:
-                self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
+                pass
+                #self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
 
                 #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
             delta_net_through_delta_w = parent_connection.parent.activation()
@@ -187,7 +188,10 @@ class Neuron():
     def __hash__(self):
         return self.hash_val
 
-#    def color_me(self,color="red"):
+    def color_me(self,color="black"):
+        neuron_dict_entry = self.base_space.neuron_dot_dict[self.name]
+        neuron_dict_entry[0].set_color(color)
+        print("My bias is: ", self.bias)
 
 
 
@@ -236,3 +240,8 @@ class Input_Neuron():
 
     def __hash__(self):
         return self.hash_val
+
+    def color_me(self,color="black"):
+        neuron_dict_entry = self.base_space.neuron_dot_dict[self.name]
+        neuron_dict_entry[0].set_color(color)
+        print("My bias is: ", self.bias)

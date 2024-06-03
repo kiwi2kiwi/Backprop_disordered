@@ -128,14 +128,14 @@ class NeuronSpace():
                 for p_axon in neuron.parent_connections.values():
                     weight_list.append(p_axon.get_weight())
 
-        cmap = plt.get_cmap('cool')
-        norm_out = plt.Normalize(min(bias_list), max(bias_list))
+        cmap = plt.get_cmap('YlOrRd')  # 'cool')
+        norm_bias = plt.Normalize(min(bias_list), max(bias_list))
         norm_weight = plt.Normalize(min(weight_list), max(weight_list))
 
-        # visualize the neuron bias
+        # visualize the neurons
         for key in self.neuron_dot_dict:
             value = self.neuron_dot_dict[key]
-            color = cmap(norm_out(value[1].bias))
+            color = cmap(norm_bias(value[1].bias))
             value[0].set_color(color)
 
         # visualize the axons strength
@@ -271,7 +271,7 @@ class NeuronSpace():
         if self.Visualization:
             self.start_vis()
             plt.show()
-            print("done")
+            print("done starting the visualization!")
             #self.draw_brain(active_axons={})
 
 
