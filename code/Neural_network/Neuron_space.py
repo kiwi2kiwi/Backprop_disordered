@@ -132,14 +132,13 @@ class NeuronSpace():
         norm_out = plt.Normalize(min(bias_list), max(bias_list))
         norm_weight = plt.Normalize(min(weight_list), max(weight_list))
 
-        # visualize the neurons
-        # TODO change this to display neuron activation
+        # visualize the neuron bias
         for key in self.neuron_dot_dict:
             value = self.neuron_dot_dict[key]
             color = cmap(norm_out(value[1].bias))
             value[0].set_color(color)
 
-        # TODO change this to display weight value
+        # visualize the axons strength
         for key in self.axon_line_dict:
             value = self.axon_line_dict[key]
             color = cmap(norm_weight(value[1].get_weight()))

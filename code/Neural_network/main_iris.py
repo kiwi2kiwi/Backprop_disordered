@@ -7,7 +7,7 @@ np.random.seed(1)
 # Do you want visualization? Do you want the learning to be fast?
 
 n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 5)
-n.spawn_neurons_axons()
+n.spawn_neurons_axons(input_number=4, output_number=1)
 
 
 bp = Backprop.Backpropagation(n)
@@ -20,10 +20,10 @@ from sklearn.preprocessing import StandardScaler
 
 
 X = np.array(iris.data)
-X[:,0] = 0
+#X[:,0] = 0
 #X[:,1] = 0
-X[:,2] = 0
-X[:,3] = 0
+#X[:,2] = 0
+#X[:,3] = 0
 y = np.array(iris.target)
 y = y/2
 X, y = shuffle(X, y, random_state=1)
@@ -53,12 +53,12 @@ epoch_validation_losses = []
 for idx,i in enumerate(np.arange(0,epochs)):
     validation_loss = bp.train(X_test, y_test.T, learning_rate=0)
     epoch_validation_losses.append(np.average(validation_loss))
-    validation_losses = np.concatenate((validation_losses, validation_loss))
+    validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     test_acc.append(bp.evaluation(X_test, y_test.T * 2))
 
     loss = bp.train(X_train, y_train.T, learning_rate = 1)
     epoch_losses.append(np.average(loss))
-    losses = np.concatenate((losses, loss))
+    losses = np.vstack([losses, loss]) if losses.size else loss
     train_acc.append(bp.evaluation(X_train, y_train.T * 2))
 
     print("epoch: ", (idx+1), "/", epochs)

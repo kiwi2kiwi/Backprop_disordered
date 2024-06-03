@@ -6,7 +6,7 @@ np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 50)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 20)
 n.spawn_neurons_axons(input_number=64, output_number=10)
 
 

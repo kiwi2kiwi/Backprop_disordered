@@ -9,9 +9,10 @@ iris = datasets.load_iris()
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
+
 X = np.array(iris.data)
 y = np.array(iris.target)
-y = y/2
+#y = y/2
 X, y = shuffle(X, y)
 X_train = X[:100]
 X_test = X[100:]
@@ -41,19 +42,6 @@ clf = MLPClassifier(solver='lbfgs',
                     random_state=1)
 clf.fit(X_train, y_train.T)
 
-for idx,i in enumerate(np.arange(0,epochs)):
-
-
-
-    validation_loss = bp.train(X_test, y_test.T, learning_rate=0)
-    epoch_validation_losses.append(np.average(validation_loss))
-    validation_losses = np.concatenate((validation_losses, validation_loss))
-
-    loss = bp.train(X_train, y_train.T, learning_rate = 1)
-    epoch_losses.append(np.average(loss))
-    losses = np.concatenate((losses, loss))
-
-    print("epoch: ", (idx+1), "/", epochs)
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()
@@ -67,11 +55,6 @@ ax.set_xlabel("epochs")
 fig.legend()
 fig.show()
 
-bp.evaluation(X_test, y_test.T*2)
 
-# neurons coloured by their bias
-# axons coloured by their weight
-n.start_vis()
-n.draw_brain()
 
 print("Simulation done")
