@@ -24,7 +24,7 @@ y = [[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[1,	0],[0,	1
 train_losses = []
 train_acc = []
 
-for i in np.arange(1,20):
+for i in np.arange(1,100):
     train_loss = bp.train(x, y)
     train_losses.append(np.average(train_loss))
     #train_losses = np.vstack([train_losses, train_loss]) if train_losses.size else train_loss

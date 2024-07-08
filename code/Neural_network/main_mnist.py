@@ -56,7 +56,7 @@ validation_losses = np.array([])
 epoch_validation_losses = []
 
 for idx,i in enumerate(np.arange(0,epochs)):
-    validation_loss = bp.train(X_validation, y_validation, learning_rate=0)
+    validation_loss = bp.get_loss(X_validation, y_validation)
     epoch_validation_losses.append(np.average(validation_loss))
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     test_acc.append(bp.evaluation(X_validation, y_validation))

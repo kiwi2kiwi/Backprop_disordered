@@ -147,6 +147,14 @@ class NeuronSpace():
 
         #self.fig.savefig('..//Bilder//temp'+str(self.ticks)+'.png', dpi=self.fig.dpi)
 
+    def print_states(self):
+        for name in self.Neuron_dict:
+            neuron = self.Neuron_dict[name]
+            print(neuron.name , " bias: ", neuron.bias)
+
+        for name in self.Axon_dict:
+            axon = self.Axon_dict[name]
+            print(axon.name , " weight: ", axon.weight)
 
     def start_vis(self):
         plt.ion()

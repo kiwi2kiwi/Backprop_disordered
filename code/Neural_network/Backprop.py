@@ -10,7 +10,8 @@ class Backpropagation:
 
         for neuron in self.base_space.Neuron_dict.values():
             neuron.wire()
-
+# TUM ai medicine
+# 
 
 
     def error_function(self, pre,tar):
@@ -53,7 +54,24 @@ class Backpropagation:
 
 
     def train(self, x, y, learning_rate = 0.1):
-        #loss_array = np.empty((0,10),float)#[[] for i in np.arange(len(y))]
+        loss_array = None
+        for idx, ds in enumerate(x):
+            self.predict(ds)
+
+            self.backprop(y[idx], learning_rate)
+            if loss_array is None:
+                loss_array = self.compute_error(y[idx])
+            else:
+                loss_array = np.vstack([loss_array, self.compute_error(y[idx])])
+            if self.base_space.Visualization:
+                self.base_space.draw_brain()
+            self.reset_neurons()
+
+        for neuron in self.base_space.neurons:
+            neuron.change_weight()
+        return loss_array
+
+    def get_loss(self, x, y):
         loss_array = None
         for idx, ds in enumerate(x):
             self.predict(ds)
@@ -61,14 +79,11 @@ class Backpropagation:
                 loss_array = self.compute_error(y[idx])
             else:
                 loss_array = np.vstack([loss_array, self.compute_error(y[idx])])
-            if learning_rate != 0:
-                self.backprop(y[idx], learning_rate)
             if self.base_space.Visualization:
                 self.base_space.draw_brain()
             self.reset_neurons()
 
         return loss_array
-
 
     def evaluation(self, x, y):
         pred = []
@@ -84,6 +99,10 @@ class Backpropagation:
     def reset_neurons(self):
         for n in self.base_space.neurons:
             n.reset_neuron()
+
+    def reset_gradient_caches(self):
+        for n in self.base_space.neurons:
+            n.reset_gradient_cache()
 
 #do_test(test_data)
 #train(train_data)

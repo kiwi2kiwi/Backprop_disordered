@@ -152,6 +152,7 @@ class NeuronSpace():
         P = []
         P.append(Coordinates.Coordinate(0, 0, 10))
         P.append(Coordinates.Coordinate(0, 0, 0))
+        P.append(Coordinates.Coordinate(0, 0, -10))
 
         # choose cluster of coordinates on plane, opposite side to V, set I
         # that only connect to processing neurons
@@ -172,7 +173,7 @@ class NeuronSpace():
             self.output_set.append(Neuron.Neuron(o, self, True, name = output_names[idx], bias = 0.35))
 
         # spawn a bunch of Processing neurons on coordinate set P
-        hidden_names=["h11","h12"]
+        hidden_names=["h11","h12","h13"]
         self.hidden_set = []
         for idx, h in enumerate(P):
             self.hidden_set.append(Neuron.Neuron(h, base_space = self, name = hidden_names[idx], bias = 0.25))
@@ -188,14 +189,14 @@ class NeuronSpace():
 
 
 
-        weight_list = [0.5,0.6,0.7,0.8]
+        weight_list = [0.3,0.4,0.5,0.6,0.7,0.8]
         cnt = 0
         for o in self.output_set:
             for h in self.hidden_set:
                 self.create_Axon(o, h, weight_list[cnt])
                 cnt += 1
 
-        weight_list = [0.1,0.2,0.3,0.4]
+        weight_list = [0.1,0.2,0.3,0.4,0.5,0.6]
         cnt = 0
         for i in self.input_set:
             for h in self.hidden_set:

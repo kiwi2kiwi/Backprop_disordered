@@ -25,19 +25,23 @@ class Neuron():
         self.base_space = base_space
         print("Hey, im a neuron!")
 
+    def reset_gradient_cache(self):
+        self.calculated_gradient = False
+        for p in self.parent_connections.keys():
+            self.parent_connections[p].new_weights = []
+        for c in self.children_connections.keys():
+            self.children_connections[c].new_weights = []
+
+
+
     def reset_neuron(self):
         self.output = 0
-        self.calculated_gradient = False
         self.started = False
         self.activated = False
         self.error_for_output_neuron = 0
         self.delta_error_through_delta_neuron_output = 0
         self.delta_error_through_delta_neuron_net = 0
         self.delta_out_through_delta_net = 0
-        for p in self.parent_connections.keys():
-            self.parent_connections[p].new_weights = []
-        for c in self.children_connections.keys():
-            self.children_connections[c].new_weights = []
 
 
     def wire(self):
@@ -57,22 +61,26 @@ class Neuron():
 
 
     def gradient_normalisation(self, gradient):
-        return gradient
+        #return gradient
         return max(min(0.5,gradient),-0.5)
         #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
     def change_weight(self):
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
-            gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
-            if not self.base_space.fast:
-                #                print("from ", self.name, " to ", parent_connection.parent.name)
-                print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(-gradient, 4))
-            new_weight = parent_connection.get_weight() - gradient
-            #if abs(new_weight)>0.5:
-            #    print("stop")
-            parent_connection.weight = new_weight
-            self.parent_connections[p] = parent_connection
+            if parent_connection.new_weights != []:
+                gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
+                if not self.base_space.fast:
+                    #                print("from ", self.name, " to ", parent_connection.parent.name)
+                    print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(-gradient, 4))
+                new_weight = parent_connection.get_weight() - gradient
+                #if abs(new_weight)>0.5:
+                #    print("stop")
+                parent_connection.weight = new_weight
+                parent_connection.new_weights = []
+                self.parent_connections[p] = parent_connection
+
+
 
 
     #            parent = parent_connection.parent
@@ -138,12 +146,12 @@ class Neuron():
             if self.base_space.Visualization:
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
-
-        self.bias -= round((learning_rate * self.delta_error_through_delta_neuron_net),4)
+        if not self.output_neuron:
+            self.bias = max(-1, min(1, self.bias - round((learning_rate * self.delta_error_through_delta_neuron_net),4)))
         if not self.base_space.fast:
             print("bias: ", self.bias)
 
-        self.change_weight()
+        #self.change_weight()
     #        self.reset_neuron()
 
 
@@ -214,6 +222,9 @@ class Input_Neuron():
     def reset_neuron(self):
         pass
 
+    def reset_gradient_cache(self):
+        pass
+
     def wire(self):
         pass
 
@@ -240,6 +251,9 @@ class Input_Neuron():
 
     def __hash__(self):
         return self.hash_val
+
+    def change_weight(self):
+        pass
 
     def color_me(self,color="black"):
         neuron_dict_entry = self.base_space.neuron_dot_dict[self.name]
