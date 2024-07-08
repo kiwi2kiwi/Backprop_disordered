@@ -6,7 +6,7 @@ import numpy as np
 # Do you want visualization? Do you want the learning to be fast?
 
 
-n = Neuron_space_predifined.NeuronSpace(fast = False)
+n = Neuron_space_predifined.NeuronSpace(fast = True)
 n.spawn_neurons_axons()
 
 
@@ -24,8 +24,8 @@ y = [[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[1,	0],[0,	1
 train_losses = []
 train_acc = []
 
-for i in np.arange(1,100):
-    train_loss = bp.train(x, y)
+for i in np.arange(1,500):
+    train_loss = bp.train(x, y, learning_rate=0.01)
     train_losses.append(np.average(train_loss))
     #train_losses = np.vstack([train_losses, train_loss]) if train_losses.size else train_loss
     #train_losses.append(np.average(train_loss))
@@ -37,7 +37,7 @@ for i in np.arange(1,100):
 #    for ns in n.neurons:
 #        ns.reset_neuron()
 
-
+bp.evaluation(x, y)
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()

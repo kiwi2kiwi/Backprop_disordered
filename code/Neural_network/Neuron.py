@@ -61,8 +61,8 @@ class Neuron():
 
 
     def gradient_normalisation(self, gradient):
-        #return gradient
         return max(min(0.5,gradient),-0.5)
+        #return gradient
         #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
     def change_weight(self):
@@ -137,7 +137,7 @@ class Neuron():
             #            delta_error_through_delta_net = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
             gradient = self.delta_error_through_delta_neuron_net * delta_net_through_delta_w
 
-
+            # Appending the gradient
             self.parent_connections[p].new_weights.append(learning_rate * gradient)
             #            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
             if not parent_connection.parent.started:
@@ -156,7 +156,7 @@ class Neuron():
 
 
     def activation_function(self, z):
-        return 1. / (1 + np.exp(-z))
+        return (1. / (1 + np.exp(-z)))
         return z
 
     def deri_activation_function(self):

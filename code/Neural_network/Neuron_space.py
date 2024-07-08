@@ -246,13 +246,13 @@ class NeuronSpace():
 
         # axons generation from Interaction to 3 nearest neurons in processing neuron set
         for i in self.input_set:
-            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=9, x=1)
+            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=9, x=2)
             for n in Ns:
                 self.create_Axon(i, n)
 
         # axons generation from Processing to 3 nearest neurons in processing neuron set
         for p in self.hidden_set:
-            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=30, x=5)
+            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=30, x=10)
             for n in Ns:
                 self.create_Axon(p, n)
 

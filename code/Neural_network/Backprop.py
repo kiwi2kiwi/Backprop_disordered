@@ -88,13 +88,21 @@ class Backpropagation:
     def evaluation(self, x, y):
         pred = []
         for ds in x:
-            pred.append([round(i,0) for i in self.predict(ds)])
+            pred.append([int(round(i,0)) for i in self.predict(ds)])
             self.reset_neurons()
         target = y
 
         #print("accuraccy: ", accuracy_score(target, pred))
 #        visual = np.concatenate((np.array([pred]), [target]), axis=0)
-        return accuracy_score(target, pred)
+
+        target = np.asmatrix(target)
+        pred = np.asmatrix(pred)
+        accs = []
+        for f in np.arange(0, target.shape[1]):
+            accs.append(accuracy_score(target[:, f], pred[:, f]))
+
+        return np.mean(accs)
+        #accuracy_score(target, pred)
 
     def reset_neurons(self):
         for n in self.base_space.neurons:
@@ -104,6 +112,24 @@ class Backpropagation:
         for n in self.base_space.neurons:
             n.reset_gradient_cache()
 
+    def iris_evaluation(self, x, y):
+        pred = []
+        for ds in x:
+            pred.append([int(round(i*2,0)) for i in self.predict(ds)])
+            self.reset_neurons()
+        target = y*2
+
+        #print("accuraccy: ", accuracy_score(target, pred))
+#        visual = np.concatenate((np.array([pred]), [target]), axis=0)
+
+        target = np.asmatrix(target)
+        pred = np.asmatrix(pred)
+        accs = []
+        for f in np.arange(0, target.shape[1]):
+            accs.append(accuracy_score(target[:, f], pred[:, f]))
+
+        return np.mean(accs)
+        #accuracy_score(target, pred)
 #do_test(test_data)
 #train(train_data)
 #print("end")
