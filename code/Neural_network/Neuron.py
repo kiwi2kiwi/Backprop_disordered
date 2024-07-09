@@ -23,7 +23,7 @@ class Neuron():
             self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
         self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
-        print("Hey, im a neuron!")
+#        print("Hey, im a neuron!")
 
     def reset_gradient_cache(self):
         self.calculated_gradient = False
@@ -70,6 +70,10 @@ class Neuron():
             parent_connection = self.parent_connections[p]
             if parent_connection.new_weights != []:
                 gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
+
+                # monitoring the gradient development
+                self.base_space.bp.avg_gradient_update.append(abs(gradient))
+
                 if not self.base_space.fast:
                     #                print("from ", self.name, " to ", parent_connection.parent.name)
                     print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(-gradient, 4))

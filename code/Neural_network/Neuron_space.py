@@ -119,6 +119,16 @@ class NeuronSpace():
         srtd = sorted(distdict.items())
         return [i[1] for i in srtd[:x]]
 
+    def find_x_nearest_to_right(self, neuron, setB):  # the nearest processing neuron to the right
+        distdict = {}
+        for i in setB:
+            if neuron.coordinate.x < i.coordinate.x:
+                if i != neuron:
+                    distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
+        srtd = sorted(distdict.items())
+        return srtd[0][1]
+
+
     def draw_brain(self):
         bias_list = []
         weight_list = []
@@ -240,21 +250,28 @@ class NeuronSpace():
         # axons generation from Perception to 1 nearest neurons in processing neuron set
         # perceptives should only connect to a processing neuron that is not directly connected to another perceptive
         for o in self.output_set:
-            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=10)
+            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=5)
             for n in Ns:
                 self.create_Axon(o, n)
 
-        # axons generation from Interaction to 3 nearest neurons in processing neuron set
+        # axons generation from Input to 3 nearest neurons in processing neuron set
         for i in self.input_set:
-            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=9, x=2)
+            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=10, x=1)
             for n in Ns:
                 self.create_Axon(i, n)
 
         # axons generation from Processing to 3 nearest neurons in processing neuron set
         for p in self.hidden_set:
-            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=30, x=10)
+            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=30, x=3)
             for n in Ns:
                 self.create_Axon(p, n)
+
+        for lonely in self.hidden_set:
+            if len(lonely.children_connections) == 0:
+                near_right = self.find_x_nearest_to_right(lonely, self.hidden_set)
+                self.create_Axon(lonely, near_right)
+
+        print("Amount of axons: ", len(self.Axon_dict))
 
         self.hidden_neuron_dict = {}
         for h in self.hidden_set:

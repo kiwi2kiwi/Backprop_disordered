@@ -6,12 +6,12 @@ np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 20)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 50)
 n.spawn_neurons_axons(input_number=64, output_number=10)
 
 
 bp = Backprop.Backpropagation(n)
-
+n.bp = bp
 
 from sklearn import datasets
 mnist = datasets.load_digits()
@@ -46,7 +46,7 @@ X_test = std_slc.transform(X_test)
 #train_data = np.concatenate((X_train, y_train.T), axis=1)
 #test_data = np.concatenate((X_test, y_test.T), axis=1)
 
-epochs = 10
+epochs = 50
 train_acc = []
 losses = np.array([])
 epoch_losses = []
@@ -61,7 +61,7 @@ for idx,i in enumerate(np.arange(0,epochs)):
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     test_acc.append(bp.evaluation(X_validation, y_validation))
 
-    loss = bp.train(X_train, y_train, learning_rate = 1)
+    loss = bp.train(X_train, y_train, learning_rate = 0.05)
     epoch_losses.append(np.average(loss))
     losses = np.vstack([losses, loss]) if losses.size else loss
     train_acc.append(bp.evaluation(X_train, y_train))
@@ -89,7 +89,7 @@ fig1.show()
 for i in np.arange(0, y_test.shape[1]):
     print(i, " accuraccy: ", bp.evaluation(X_test, y_test))
 
-
+print(train_acc)
 
 # neurons coloured by their bias
 # axons coloured by their weight
@@ -99,5 +99,7 @@ n.draw_brain()
 for i in np.arange(0, y_test.shape[1]):
     print(i, " accuraccy: ", bp.evaluation(X_test, y_test))
 
+for i in np.arange(0,10):
+    print(np.argmax(bp.predict(X_test[i])), " ", np.argmax(y_test[i]))
 
 print("Simulation done")

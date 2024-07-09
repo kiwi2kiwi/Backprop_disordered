@@ -7,6 +7,7 @@ class Backpropagation:
     def __init__(self, base_space):
         super(Backpropagation, self).__init__()
         self.base_space = base_space
+        self.avg_gradient_update = []
 
         for neuron in self.base_space.Neuron_dict.values():
             neuron.wire()
@@ -18,8 +19,8 @@ class Backpropagation:
         return (pre - tar)**2
 
     def deriv_error_function(self, pre,tar):
-        #return ((1. / (1 + np.exp(-(pre - tar))))-0.5)
         return 2*(pre - tar)
+
 
     def compute_error(self, target):
         errors = []
@@ -44,9 +45,12 @@ class Backpropagation:
     def backprop(self, target, learning_rate):
 #        self.compute_error(target)
         for idx, n in enumerate(self.base_space.output_set):
+            unique, counts = np.unique(target, return_counts=True)
+            target_dict = dict(zip(unique, counts))
+            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
             error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
             n.error_for_output_neuron = error_through_a_zero
-            n.gradient_descent(learning_rate)
+            n.gradient_descent(learning_rate * class_balancer)
             self.reset_neurons()
 
         #for idx, n in enumerate(self.base_space.output_set):
@@ -69,6 +73,8 @@ class Backpropagation:
 
         for neuron in self.base_space.neurons:
             neuron.change_weight()
+        print("average gradient update: ", np.mean(self.avg_gradient_update))
+        self.avg_gradient_update=[]
         return loss_array
 
     def get_loss(self, x, y):
