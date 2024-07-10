@@ -25,14 +25,6 @@ class Neuron():
         self.base_space = base_space
 #        print("Hey, im a neuron!")
 
-    def reset_gradient_cache(self):
-        self.calculated_gradient = False
-        for p in self.parent_connections.keys():
-            self.parent_connections[p].new_weights = []
-        for c in self.children_connections.keys():
-            self.children_connections[c].new_weights = []
-
-
 
     def reset_neuron(self):
         self.output = 0
@@ -42,6 +34,11 @@ class Neuron():
         self.delta_error_through_delta_neuron_output = 0
         self.delta_error_through_delta_neuron_net = 0
         self.delta_out_through_delta_net = 0
+        self.calculated_gradient = False
+        for p in self.parent_connections.keys():
+            self.parent_connections[p].new_weights = []
+        for c in self.children_connections.keys():
+            self.children_connections[c].new_weights = []
         pass
 
 
@@ -71,7 +68,7 @@ class Neuron():
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
             if parent_connection.new_weights != []:
-                if self.name == "h11":
+                if self.name == "asdfh11":
                     print("changing weight from: ", self.name, " to: ", parent_connection.name)
                     print("weight update list: ", parent_connection.new_weights)
                     print("stop")
@@ -82,7 +79,7 @@ class Neuron():
 
                 if not self.base_space.fast:
                     #                print("from ", self.name, " to ", parent_connection.parent.name)
-                    print("weight: ", round(parent_connection.get_weight(), 2), " adjust by: ", round(-gradient, 4))
+                    print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
                 new_weight = parent_connection.get_weight() - gradient
                 #if abs(new_weight)>0.5:
                 #    print("stop")
@@ -104,19 +101,12 @@ class Neuron():
 
     def gradient_descent(self, learning_rate):
         self.started = True
-        #        if self.name == "o21":
-        #            print("stop")
 
-        #        if self.name == "h11":
-        #            print("stop")
-        #        self.ab_hier = self.a_null_a_eins() * bis_hier
-        #        if self.output_neuron:
-        #            self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
-
-        self.delta_error_through_delta_neuron_output = 0
+        #self.delta_error_through_delta_neuron_output = 0
 
         for c in self.children_connections.keys():
             children_connection = self.children_connections[c]
+
             if not children_connection.child.calculated_gradient:
                 children_connection.child.gradient_descent(learning_rate)
 
@@ -129,7 +119,10 @@ class Neuron():
 
         self.delta_out_through_delta_net = self.deri_activation_function()
         self.delta_error_through_delta_neuron_net = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
-
+        if self.name == "o22":
+            pass
+            #print("stop")
+        print("computed error/net in neuron: ", self.name, ": ", round(self.delta_error_through_delta_neuron_net,3))
 
 
 
@@ -142,13 +135,15 @@ class Neuron():
                 #self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
 
                 #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
+
             delta_net_through_delta_w = parent_connection.parent.activation()
 
             #            delta_error_through_delta_net = delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
             gradient = self.delta_error_through_delta_neuron_net * delta_net_through_delta_w
 
             # Appending the gradient
-            self.parent_connections[p].new_weights.append(learning_rate * gradient)
+            if gradient != 0:
+                self.parent_connections[p].new_weights.append(learning_rate * gradient)
             #            self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
             if not parent_connection.parent.started:
                 parent_connection.parent.gradient_descent(learning_rate = learning_rate)
@@ -157,11 +152,12 @@ class Neuron():
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
 
         if not self.output_neuron:
-            self.bias = max(-1, min(1, self.bias - round((learning_rate * self.delta_error_through_delta_neuron_net),4)))
+            pass
+            #self.bias = max(-1, min(1, self.bias - round((learning_rate * self.delta_error_through_delta_neuron_net),4)))
         if not self.base_space.fast:
             print("bias: ", self.bias)
 
-        #self.change_weight()
+        self.change_weight()
     #        self.reset_neuron()
 
 
@@ -222,6 +218,7 @@ class Input_Neuron():
         self.started = False
         self.name = name
         self.bias = 0
+        self.input = 0
 
         self.coordinate = coordinate
         if name == "not_set":
@@ -230,7 +227,10 @@ class Input_Neuron():
         self.base_space = base_space
 
     def reset_neuron(self):
-        pass
+        self.activated = False
+        self.output = 0
+        self.started = False
+        self.input = 0
 
     def reset_gradient_cache(self):
         pass
@@ -242,22 +242,21 @@ class Input_Neuron():
         pass
 
     def set_input(self, input):
-        self.output = input
+        self.input = input
 
-    def activation_function(z):
-        return 1. / (1 + np.exp(-z))
+    def activation_function(self, z):
+        return z
+        #return 1. / (1 + np.exp(-z))
 
     def activation(self):
 #        if not self.base_space.fast:
 #            print(self.name, " activation: ", self.output)
+        self.output = self.activation_function(self.input)
+        self.activated = True
         return self.output
 
     def deri_activation(self):
         return self.output
-
-    def reset_neuron(self):
-        self.output = 0
-        self.activated = False
 
     def __hash__(self):
         return self.hash_val

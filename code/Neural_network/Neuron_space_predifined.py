@@ -170,13 +170,13 @@ class NeuronSpace():
         output_names = ["o21", "o22"]
         self.output_set = []
         for idx, o in enumerate(O):
-            self.output_set.append(Neuron.Neuron(o, self, True, name = output_names[idx], bias = 0.35))
+            self.output_set.append(Neuron.Neuron(o, self, True, name = output_names[idx], bias = 0.6))
 
         # spawn a bunch of Processing neurons on coordinate set P
-        hidden_names=["h11","h12","h13"]
+        hidden_names=["h11","h12"]#,"h13"]
         self.hidden_set = []
-        for idx, h in enumerate(P):
-            self.hidden_set.append(Neuron.Neuron(h, base_space = self, name = hidden_names[idx], bias = 0.25))
+        for idx, h in enumerate(P[:-1]):
+            self.hidden_set.append(Neuron.Neuron(h, base_space = self, name = hidden_names[idx], bias = 0.35))
 
         # spawn a bunch of input neurons on coordinate set I
         input_names = ["i01", "i02"]
@@ -189,14 +189,14 @@ class NeuronSpace():
 
 
 
-        weight_list = [0.3,0.4,0.5,0.6,0.7,0.8]
+        weight_list = [0.4,0.45,0.5,0.55]#,0.7,0.8]
         cnt = 0
         for o in self.output_set:
             for h in self.hidden_set:
                 self.create_Axon(o, h, weight_list[cnt])
                 cnt += 1
 
-        weight_list = [0.1,0.2,0.3,0.4,0.5,0.6]
+        weight_list = [0.15,0.2,0.25,0.3]#,0.5,0.6]
         cnt = 0
         for i in self.input_set:
             for h in self.hidden_set:

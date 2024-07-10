@@ -16,10 +16,10 @@ class Backpropagation:
 
 
     def error_function(self, pre,tar):
-        return (tar - pre)**2
+        return 0.5* ((tar - pre)**2)
 
     def deriv_error_function(self, pre,tar):
-        return 2*(pre - tar)
+        return 0.5* (2*(pre - tar))
 
 
     def compute_error(self, target):
@@ -52,6 +52,7 @@ class Backpropagation:
 #            target_dict = dict(zip(unique, counts))
 #            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
 #            class_balancer = 1 / (1 + np.exp(-class_balancer))
+
             n_out = n.activation()
             y_true = target[idx]
             error_through_net_out = self.deriv_error_function(n_out, y_true)
@@ -66,6 +67,7 @@ class Backpropagation:
     def train(self, x, y, learning_rate = 0.1):
         loss_array = None
         for idx, ds in enumerate(x):
+            print("sample: ",idx)
             self.predict(ds)
             self.backprop(y[idx], learning_rate)
             if loss_array is None:
@@ -76,8 +78,8 @@ class Backpropagation:
                 self.base_space.draw_brain()
             self.reset_neurons()
 
-        for neuron in self.base_space.neurons:
-            neuron.change_weight()
+        # for neuron in self.base_space.neurons:
+        #     neuron.change_weight()
         #print("average gradient update: ", np.mean(self.avg_gradient_update))
         self.avg_gradient_update=[]
         return loss_array
@@ -136,10 +138,6 @@ class Backpropagation:
     def reset_neurons(self):
         for n in self.base_space.neurons:
             n.reset_neuron()
-
-    def reset_gradient_caches(self):
-        for n in self.base_space.neurons:
-            n.reset_gradient_cache()
 
     def iris_evaluation(self, x, y):
         pred = []
