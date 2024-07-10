@@ -42,6 +42,7 @@ class Neuron():
         self.delta_error_through_delta_neuron_output = 0
         self.delta_error_through_delta_neuron_net = 0
         self.delta_out_through_delta_net = 0
+        pass
 
 
     def wire(self):
@@ -66,13 +67,18 @@ class Neuron():
         #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
     def change_weight(self):
+
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
             if parent_connection.new_weights != []:
+                if self.name == "h11":
+                    print("changing weight from: ", self.name, " to: ", parent_connection.name)
+                    print("weight update list: ", parent_connection.new_weights)
+                    print("stop")
                 gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
 
                 # monitoring the gradient development
-                self.base_space.bp.avg_gradient_update.append(abs(gradient))
+                #self.base_space.bp.avg_gradient_update.append(abs(gradient))
 
                 if not self.base_space.fast:
                     #                print("from ", self.name, " to ", parent_connection.parent.name)

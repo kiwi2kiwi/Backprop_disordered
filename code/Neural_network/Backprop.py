@@ -1,6 +1,6 @@
 from Neuron import *
 import numpy as np
-from sklearn.metrics import accuracy_score
+import sklearn.metrics
 
 
 class Backpropagation:
@@ -16,7 +16,7 @@ class Backpropagation:
 
 
     def error_function(self, pre,tar):
-        return (pre - tar)**2
+        return (tar - pre)**2
 
     def deriv_error_function(self, pre,tar):
         return 2*(pre - tar)
@@ -44,13 +44,19 @@ class Backpropagation:
 
     def backprop(self, target, learning_rate):
 #        self.compute_error(target)
+
         for idx, n in enumerate(self.base_space.output_set):
-            unique, counts = np.unique(target, return_counts=True)
-            target_dict = dict(zip(unique, counts))
-            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
-            error_through_a_zero = self.deriv_error_function(n.activation(), target[idx])
-            n.error_for_output_neuron = error_through_a_zero
-            n.gradient_descent(learning_rate * class_balancer)
+            print("Backprop from output neuron: ", n.name)
+
+#            unique, counts = np.unique(target, return_counts=True)
+#            target_dict = dict(zip(unique, counts))
+#            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
+#            class_balancer = 1 / (1 + np.exp(-class_balancer))
+            n_out = n.activation()
+            y_true = target[idx]
+            error_through_net_out = self.deriv_error_function(n_out, y_true)
+            n.error_for_output_neuron = error_through_net_out
+            n.gradient_descent(learning_rate)# * class_balancer)
             self.reset_neurons()
 
         #for idx, n in enumerate(self.base_space.output_set):
@@ -61,7 +67,6 @@ class Backpropagation:
         loss_array = None
         for idx, ds in enumerate(x):
             self.predict(ds)
-
             self.backprop(y[idx], learning_rate)
             if loss_array is None:
                 loss_array = self.compute_error(y[idx])
@@ -73,7 +78,7 @@ class Backpropagation:
 
         for neuron in self.base_space.neurons:
             neuron.change_weight()
-        print("average gradient update: ", np.mean(self.avg_gradient_update))
+        #print("average gradient update: ", np.mean(self.avg_gradient_update))
         self.avg_gradient_update=[]
         return loss_array
 
@@ -91,7 +96,7 @@ class Backpropagation:
 
         return loss_array
 
-    def evaluation(self, x, y):
+    def evaluation(self, x, y, metric = "acc"):
         pred = []
         for ds in x:
             pred.append([int(round(i,0)) for i in self.predict(ds)])
@@ -103,12 +108,30 @@ class Backpropagation:
 
         target = np.asmatrix(target)
         pred = np.asmatrix(pred)
-        accs = []
-        for f in np.arange(0, target.shape[1]):
-            accs.append(accuracy_score(target[:, f], pred[:, f]))
+        if metric == "acc":
+            accs = []
+            for f in np.arange(0, target.shape[1]):
+                accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))
 
-        return np.mean(accs)
-        #accuracy_score(target, pred)
+            return np.mean(accs)
+        if metric == "recall":
+            recalls = []
+            for f in np.arange(0, target.shape[1]):
+                try:
+                    recalls.append(sklearn.metrics.recall_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
+                except:
+                    print("stop")
+            return np.mean(recalls)
+        if metric == "precision":
+            precisions = []
+            for f in np.arange(0, target.shape[1]):
+                precisions.append(sklearn.metrics.precision_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
+            return np.mean(precisions)
+        if metric == "f1":
+            f1s = []
+            for f in np.arange(0, target.shape[1]):
+                f1s.append(sklearn.metrics.f1_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
+            return np.mean(f1s)
 
     def reset_neurons(self):
         for n in self.base_space.neurons:
@@ -132,7 +155,7 @@ class Backpropagation:
         pred = np.asmatrix(pred)
         accs = []
         for f in np.arange(0, target.shape[1]):
-            accs.append(accuracy_score(target[:, f], pred[:, f]))
+            accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))
 
         return np.mean(accs)
         #accuracy_score(target, pred)

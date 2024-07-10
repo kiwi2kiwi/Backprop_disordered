@@ -250,19 +250,19 @@ class NeuronSpace():
         # axons generation from Perception to 1 nearest neurons in processing neuron set
         # perceptives should only connect to a processing neuron that is not directly connected to another perceptive
         for o in self.output_set:
-            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=5)
+            Ns = self.find_x_nearest(o, self.hidden_set, connection_limit=20, x=10)
             for n in Ns:
                 self.create_Axon(o, n)
 
         # axons generation from Input to 3 nearest neurons in processing neuron set
         for i in self.input_set:
-            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=10, x=1)
+            Ns = self.find_x_nearest(i, self.hidden_set, connection_limit=10, x=4)
             for n in Ns:
                 self.create_Axon(i, n)
 
         # axons generation from Processing to 3 nearest neurons in processing neuron set
         for p in self.hidden_set:
-            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=30, x=3)
+            Ns = self.find_x_nearest(p, self.hidden_set, connection_limit=30, x=15)
             for n in Ns:
                 self.create_Axon(p, n)
 

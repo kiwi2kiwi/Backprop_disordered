@@ -16,21 +16,22 @@ x = [[0.1, 0.5],[0.6, 0.1]]
 y = [[0, 1],[1, 0]]
 
 
-x = [[1.0,	2.0], [2.0,	3.0], [1.5,	1.0], [2.5,	2.5], [0.5,	1.5], [2.0,	0.5], [1.0,	3.0], [3.0,	2.0], [0.5,	2.5], [1.5,	0.5], [3.0,	1.5], [2.0,	1.0], [1.5,	2.0], [0.5,	3.0], [2.5,	0.5], [3.0,	0.5], [1.0,	1.5], [0.5,	0.5], [2.0,	2.5], [1.5,	3.0]]
+x = np.array([[1.0,	2.0], [2.0,	3.0], [1.5,	1.0], [2.5,	2.5], [0.5,	1.5], [2.0,	0.5], [1.0,	3.0], [3.0,	2.0], [0.5,	2.5], [1.5,	0.5], [3.0,	1.5], [2.0,	1.0], [1.5,	2.0], [0.5,	3.0], [2.5,	0.5], [3.0,	0.5], [1.0,	1.5], [0.5,	0.5], [2.0,	2.5], [1.5,	3.0]])
 
-y = [[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[1,	0]]
-
-
+y = np.array([[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[1,	0]])
+x_train = x[[1,2]]#,4,6]]
+y_train = y[[1,2]]#,4,6]]
 train_losses = []
 train_acc = []
 
 for i in np.arange(1,500):
-    train_loss = bp.train(x, y, learning_rate=0.01)
+    train_loss = bp.train(x_train, y_train, learning_rate=0.01)
     train_losses.append(np.average(train_loss))
     #train_losses = np.vstack([train_losses, train_loss]) if train_losses.size else train_loss
     #train_losses.append(np.average(train_loss))
     #train_losses = np.vstack([train_losses, train_loss]) if train_losses.size else train_loss
-    train_acc.append(bp.evaluation(x, y))
+    train_acc.append(bp.evaluation(x_train, y_train))
+    print("epoch: ", i)
 #    bp.predict(x[0])
 #    bp.compute_error(y[0])
 #    bp.backprop(y[0])
@@ -38,6 +39,10 @@ for i in np.arange(1,500):
 #        ns.reset_neuron()
 
 bp.evaluation(x, y)
+
+for i in np.arange(0,len(x_train)):
+    print([ '%.2f' % elem for elem in bp.predict(x_train[i])], " ", y_train[i])
+
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()
