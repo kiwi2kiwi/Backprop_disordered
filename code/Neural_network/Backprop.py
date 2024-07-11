@@ -11,8 +11,7 @@ class Backpropagation:
 
         for neuron in self.base_space.Neuron_dict.values():
             neuron.wire()
-# TUM ai medicine
-# 
+
 
 
     def error_function(self, pre,tar):
@@ -43,7 +42,6 @@ class Backpropagation:
 
 
     def backprop(self, target, learning_rate):
-#        self.compute_error(target)
 
         for idx, n in enumerate(self.base_space.output_set):
             print("Backprop from output neuron: ", n.name)
@@ -58,7 +56,7 @@ class Backpropagation:
             error_through_net_out = self.deriv_error_function(n_out, y_true)
             n.error_for_output_neuron = error_through_net_out
             n.gradient_descent(learning_rate)# * class_balancer)
-            self.reset_neurons()
+            self.reset_neuron_gradients()
 
         #for idx, n in enumerate(self.base_space.output_set):
             #n.gradient_descent(learning_rate)
@@ -76,11 +74,8 @@ class Backpropagation:
                 loss_array = np.vstack([loss_array, self.compute_error(y[idx])])
             if self.base_space.Visualization:
                 self.base_space.draw_brain()
-            self.reset_neurons()
+            self.reset_neuron_gradients()
 
-        # for neuron in self.base_space.neurons:
-        #     neuron.change_weight()
-        #print("average gradient update: ", np.mean(self.avg_gradient_update))
         self.avg_gradient_update=[]
         return loss_array
 
@@ -103,12 +98,8 @@ class Backpropagation:
         for ds in x:
             pred.append([int(round(i,0)) for i in self.predict(ds)])
             self.reset_neurons()
-        target = y
 
-        #print("accuraccy: ", accuracy_score(target, pred))
-#        visual = np.concatenate((np.array([pred]), [target]), axis=0)
-
-        target = np.asmatrix(target)
+        target = np.asmatrix(y)
         pred = np.asmatrix(pred)
         if metric == "acc":
             accs = []
@@ -139,24 +130,21 @@ class Backpropagation:
         for n in self.base_space.neurons:
             n.reset_neuron()
 
-    def iris_evaluation(self, x, y):
-        pred = []
-        for ds in x:
-            pred.append([int(round(i*2,0)) for i in self.predict(ds)])
-            self.reset_neurons()
-        target = y*2
+    def reset_neuron_gradients(self):
+        for n in self.base_space.neurons:
+            n.reset_neuron_gradient_calculations()
 
-        #print("accuraccy: ", accuracy_score(target, pred))
-#        visual = np.concatenate((np.array([pred]), [target]), axis=0)
-
-        target = np.asmatrix(target)
-        pred = np.asmatrix(pred)
-        accs = []
-        for f in np.arange(0, target.shape[1]):
-            accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))
-
-        return np.mean(accs)
-        #accuracy_score(target, pred)
-#do_test(test_data)
-#train(train_data)
-#print("end")
+    # def iris_evaluation(self, x, y):
+    #     pred = []
+    #     for ds in x:
+    #         pred.append([int(round(i*2,0)) for i in self.predict(ds)])
+    #         self.reset_neurons()
+    #     target = y*2
+    #
+    #     target = np.asmatrix(target)
+    #     pred = np.asmatrix(pred)
+    #     accs = []
+    #     for f in np.arange(0, target.shape[1]):
+    #         accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))
+    #
+    #     return np.mean(accs)

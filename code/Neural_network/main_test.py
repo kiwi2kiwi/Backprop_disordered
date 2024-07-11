@@ -12,17 +12,13 @@ n.spawn_neurons_axons()
 
 bp = Backprop.Backpropagation(n)
 
-x = [[0.1, 0.5],[0.6, 0.1]]
-y = [[0, 1],[1, 0]]
 
-
-x = np.array([[1.0,	2.0], [2.0,	3.0], [1.5,	1.0], [2.5,	2.5], [0.5,	1.5], [2.0,	0.5], [1.0,	3.0], [3.0,	2.0], [0.5,	2.5], [1.5,	0.5], [3.0,	1.5], [2.0,	1.0], [1.5,	2.0], [0.5,	3.0], [2.5,	0.5], [3.0,	0.5], [1.0,	1.5], [0.5,	0.5], [2.0,	2.5], [1.5,	3.0]])
-
-y = np.array([[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[1,	0]])
-x_train = x[[1,2]]#,4,6]]
-y_train = y[[1,2]]#,4,6]]
-x_train = [[0.05,0.1],[0.1,0.05]]
-y_train = [[0.01,0.99],[0.99,0.01]]
+# x = np.array([[1.0,	2.0], [2.0,	3.0], [1.5,	1.0], [2.5,	2.5], [0.5,	1.5], [2.0,	0.5], [1.0,	3.0], [3.0,	2.0], [0.5,	2.5], [1.5,	0.5], [3.0,	1.5], [2.0,	1.0], [1.5,	2.0], [0.5,	3.0], [2.5,	0.5], [3.0,	0.5], [1.0,	1.5], [0.5,	0.5], [2.0,	2.5], [1.5,	3.0]])
+# y = np.array([[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[0,	1],[1,	0],[1,	0],[0,	1],[1,	0]])
+# x_train = x[[1,2]]#,4,6]]
+# y_train = y[[1,2]]#,4,6]]
+# x_train = [[0.05,0.1],[0.1,0.05]]
+# y_train = [[0.01,0.99],[0.99,0.01]]
 
 x_train = [[0.05,0.99],[0.99,0.05]]
 y_train = [[0.01,0.99],[0.99,0.01]]
@@ -34,9 +30,7 @@ train_acc = []
 for i in np.arange(1,100):
     train_loss = bp.train(x_train, y_train, learning_rate=0.5)
     train_losses.append(np.average(train_loss))
-    #train_losses = np.vstack([train_losses, train_loss]) if train_losses.size else train_loss
-    #train_losses.append(np.average(train_loss))
-    #train_losses = np.vstack([train_losses, train_loss]) if train_losses.size else train_loss
+
     # for i in n.Axon_dict.values():
     #     print(i.name," ", i.weight)
     # for i in n.Neuron_dict.values():
@@ -45,19 +39,9 @@ for i in np.arange(1,100):
     print("prediction: ", bp.predict(x_train[1]))
     #train_acc.append(bp.evaluation([x_train], [y_train]))
     print("epoch: ", i, " loss: ",train_loss)
-#    bp.predict(x[0])
-#    bp.compute_error(y[0])
-#    bp.backprop(y[0])
-#    for ns in n.neurons:
-#        ns.reset_neuron()
 
-x_train = [[0.1,0.05]]
-y_train = [[0.99,0.01]]
-for i in np.arange(1,100):
-    train_loss = bp.train(x_train, y_train, learning_rate=0.5)
-    train_losses.append(np.average(train_loss))
-    print("prediction: ", bp.predict(x_train[0]))
-    print("epoch: ", i, " loss: ",train_loss)
+
+
 
 
 
