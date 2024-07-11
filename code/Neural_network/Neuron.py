@@ -89,7 +89,7 @@ class Neuron():
                     print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
                 new_weight = parent_connection.get_weight() - gradient
 
-                print("Axon: ", parent_connection.name, " weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
+                # print("Axon: ", parent_connection.name, " weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
                 parent_connection.weight = new_weight
                 parent_connection.new_weights = []
                 self.parent_connections[p] = parent_connection
@@ -100,8 +100,8 @@ class Neuron():
 
     def gradient_descent(self, learning_rate):
         self.started = True
-        if self.name == "o22":
-            print("stop")
+        # if self.name == "o21":
+        #     print("stop")
 
         #self.delta_error_through_delta_neuron_output = 0
 
@@ -115,13 +115,14 @@ class Neuron():
 
         if self.output_neuron:
             self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
-
+        # if self.name == "o21":
+        #     print("stop")
         self.calculated_gradient = True
 
         self.delta_out_through_delta_net = self.deri_activation_function()
         self.delta_error_through_delta_neuron_net = self.delta_error_through_delta_neuron_output * self.delta_out_through_delta_net
-        if self.name == "o22":
-            pass
+        # if self.name == "o22":
+        #     pass
             #print("stop")
         #print("computed error/net in neuron: ", self.name, ": ", round(self.delta_error_through_delta_neuron_net,3))
 

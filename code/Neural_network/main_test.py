@@ -20,8 +20,8 @@ bp = Backprop.Backpropagation(n)
 # x_train = [[0.05,0.1],[0.1,0.05]]
 # y_train = [[0.01,0.99],[0.99,0.01]]
 
-x_train = [[0.05,0.99],[0.99,0.05]]
-y_train = [[0.01,0.99],[0.99,0.01]]
+x_train = [[0.05,0.1],[0.05,0.1]]
+y_train = [[0.01,0.99],[0.01,0.99]]
 train_losses = []
 train_acc = []
 
@@ -36,7 +36,7 @@ for i in np.arange(1,100):
     # for i in n.Neuron_dict.values():
     #     print(i.name," ", i.bias)
     print("prediction: ", bp.predict(x_train[0]))
-    print("prediction: ", bp.predict(x_train[1]))
+    # print("prediction: ", bp.predict(x_train[1]))
     #train_acc.append(bp.evaluation([x_train], [y_train]))
     print("epoch: ", i, " loss: ",train_loss)
 

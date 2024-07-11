@@ -44,7 +44,7 @@ class Backpropagation:
     def backprop(self, target, learning_rate):
 
         for idx, n in enumerate(self.base_space.output_set):
-            print("Backprop from output neuron: ", n.name)
+            # print("Backprop from output neuron: ", n.name)
 
 #            unique, counts = np.unique(target, return_counts=True)
 #            target_dict = dict(zip(unique, counts))
@@ -55,8 +55,8 @@ class Backpropagation:
             y_true = target[idx]
             error_through_net_out = self.deriv_error_function(n_out, y_true)
             n.error_for_output_neuron = error_through_net_out
-            n.gradient_descent(learning_rate)# * class_balancer)
-            self.reset_neuron_gradients()
+        n.gradient_descent(learning_rate)# * class_balancer)
+        self.reset_neuron_gradients()
 
         #for idx, n in enumerate(self.base_space.output_set):
             #n.gradient_descent(learning_rate)
@@ -65,7 +65,7 @@ class Backpropagation:
     def train(self, x, y, learning_rate = 0.1):
         loss_array = None
         for idx, ds in enumerate(x):
-            print("sample: ",idx)
+            # print("sample: ",idx)
             self.predict(ds)
             self.backprop(y[idx], learning_rate)
             if loss_array is None:
