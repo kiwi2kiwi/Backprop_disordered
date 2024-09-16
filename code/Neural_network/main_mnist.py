@@ -6,7 +6,7 @@ np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 100)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 50)
 n.spawn_neurons_axons(input_number=64, output_number=10)
 
 
@@ -68,7 +68,7 @@ X_test = std_slc.transform(X_test)
 #train_data = np.concatenate((X_train, y_train.T), axis=1)
 #test_data = np.concatenate((X_test, y_test.T), axis=1)
 
-epochs = 200
+epochs = 50
 train_acc = []
 train_rec = []
 train_pre = []
@@ -118,5 +118,18 @@ for i in np.arange(0,len(X_train)):
 
 for i in np.arange(0,len(X_train)):
     print([ '%.2f' % elem for elem in bp.predict(X_train[i])], " ", y_train[i])
+
+pred = []
+for ds in X_train:
+    prediction = bp.predict(ds)
+    #pred.append([int(round(i,0)) for i in bp.predict(ds)])
+    filled = [0]*10
+    filled[prediction.index(max(prediction))] = 1
+    pred.append(filled)
+
+
+    bp.reset_neurons()
+
+
 
 print("Simulation done")

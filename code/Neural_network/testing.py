@@ -24,14 +24,25 @@ w8 = 0.55
 b1 = 0.35
 b2 = 0.60
 
-# inputs
-i1 = x_train[0][0]
-i2 = x_train[0][1]
+x1 = x_train[0]
+x2 = x_train[1]
+y1 = y_train[0]
+y2 = y_train[1]
 
-o1_out = 0
-o2_out = 0
+def run_and_backprop(x, y):
+    global w1
+    global w2
+    global w3
+    global w4
+    global w5
+    global w6
+    global w7
+    global w8
 
-def forward():
+    # inputs
+    i1 = x[0]
+    i2 = x[1]
+
     # hiddens
     h1_in = i1 * w1 + i2 * w2 + b1
     h1_out = activation_function(h1_in)
@@ -44,69 +55,81 @@ def forward():
     o2_in = h1_out * w7 + h2_out * w8 + b2
     o2_out = activation_function(o2_in)
 
+    print("Prediction: ", "%.4f" % (o1_out), " " , "%.4f" % (o2_out))
+
+    # Errors
+    o1_err = .5*((y_train[0][0] - o1_out)**2)
+    o2_err = .5*((y_train[0][1] - o2_out)**2)
+    print("Total error: ", "%.4f" % (o1_err+o2_err))
+
+    # derivations
+    delta_Error_through_delta_o1_out = (o1_out - y[0])
+    delta_Error_through_delta_o2_out = (o2_out - y[1])
+
+    delta_o1_out_through_delta_o1_in = o1_out*(1-o1_out)
+    delta_o2_out_through_delta_o2_in = o2_out*(1-o2_out)
+
+    delta_o1_in_through_delta_w5 = h1_out
+    delta_o1_in_through_delta_w6 = h2_out
+    delta_o2_in_through_delta_w7 = h1_out
+    delta_o2_in_through_delta_w8 = h2_out
+
+    delta_Error_o1_through_delta_w5 = delta_Error_through_delta_o1_out * delta_o1_out_through_delta_o1_in * delta_o1_in_through_delta_w5
+    delta_Error_o1_through_delta_w6 = delta_Error_through_delta_o1_out * delta_o1_out_through_delta_o1_in * delta_o1_in_through_delta_w6
+    delta_Error_o2_through_delta_w7 = delta_Error_through_delta_o2_out * delta_o2_out_through_delta_o2_in * delta_o2_in_through_delta_w7
+    delta_Error_o2_through_delta_w8 = delta_Error_through_delta_o2_out * delta_o2_out_through_delta_o2_in * delta_o2_in_through_delta_w8
+
+    # new weights
+    w5_new = w5 - lr * delta_Error_o1_through_delta_w5
+    w6_new = w6 - lr * delta_Error_o1_through_delta_w6
+    w7_new = w7 - lr * delta_Error_o2_through_delta_w7
+    w8_new = w8 - lr * delta_Error_o2_through_delta_w8
+
+    delta_Error_o1_through_delta_o1_in = delta_Error_through_delta_o1_out * delta_o1_out_through_delta_o1_in
+    delta_Error_o2_through_delta_o2_in = delta_Error_through_delta_o2_out * delta_o2_out_through_delta_o2_in
+
+    delta_o1_in_through_h1_out = w5
+    delta_o2_in_through_h1_out = w7
 
 
-# Errors
-o1_err = .5*((y_train[0][0] - o1_out)**2)
-o2_err = .5*((y_train[0][1] - o2_out)**2)
-
-# derivations
-delta_Error_through_delta_o1_out = (o1_out - y_train[0][0])
-delta_Error_through_delta_o2_out = (o2_out - y_train[0][1])
-
-delta_o1_out_through_delta_o1_in = o1_out*(1-o1_out)
-delta_o2_out_through_delta_o2_in = o2_out*(1-o2_out)
-
-delta_o1_in_through_delta_w5 = h1_out
-delta_o1_in_through_delta_w6 = h2_out
-delta_o2_in_through_delta_w7 = h1_out
-delta_o2_in_through_delta_w8 = h2_out
-
-delta_Error_o1_through_delta_w5 = delta_Error_through_delta_o1_out * delta_o1_out_through_delta_o1_in * delta_o1_in_through_delta_w5
-delta_Error_o1_through_delta_w6 = delta_Error_through_delta_o1_out * delta_o1_out_through_delta_o1_in * delta_o1_in_through_delta_w6
-delta_Error_o2_through_delta_w7 = delta_Error_through_delta_o2_out * delta_o2_out_through_delta_o2_in * delta_o2_in_through_delta_w7
-delta_Error_o2_through_delta_w8 = delta_Error_through_delta_o2_out * delta_o2_out_through_delta_o2_in * delta_o2_in_through_delta_w8
-
-# new weights
-w5_new = w5 - lr * delta_Error_o1_through_delta_w5
-w6_new = w6 - lr * delta_Error_o1_through_delta_w6
-w7_new = w7 - lr * delta_Error_o2_through_delta_w7
-w8_new = w8 - lr * delta_Error_o2_through_delta_w8
-
-delta_Error_o1_through_delta_o1_in = delta_Error_through_delta_o1_out * delta_o1_out_through_delta_o1_in
-delta_Error_o2_through_delta_o2_in = delta_Error_through_delta_o2_out * delta_o2_out_through_delta_o2_in
-
-delta_o1_in_through_h1_out = w5
-delta_o2_in_through_h1_out = w7
+    delta_Error_o1_through_delta_h1_out = delta_Error_o1_through_delta_o1_in * delta_o1_in_through_h1_out
+    delta_Error_o2_through_delta_h1_out = delta_Error_o2_through_delta_o2_in * delta_o2_in_through_h1_out
 
 
-delta_Error_o1_through_delta_h1_out = delta_Error_o1_through_delta_o1_in * delta_o1_in_through_h1_out
-delta_Error_o2_through_delta_h1_out = delta_Error_o2_through_delta_o2_in * delta_o2_in_through_h1_out
+    delta_Error_total_through_delta_h1_out = delta_Error_o1_through_delta_h1_out + delta_Error_o2_through_delta_h1_out
+    delta_Error_total_through_delta_h2_out = delta_Error_o1_through_delta_h1_out + delta_Error_o2_through_delta_h1_out
 
+    delta_h1_out_through_delta_h1_in = h1_out*(1-h1_out)
+    delta_h2_out_through_delta_h2_in = h2_out*(1-h2_out)
 
-delta_Error_total_through_delta_h1_out = delta_Error_o1_through_delta_h1_out + delta_Error_o2_through_delta_h1_out
-delta_Error_total_through_delta_h2_out = delta_Error_o1_through_delta_h1_out + delta_Error_o2_through_delta_h1_out
+    delta_h1_in_through_delta_w1 = i1
+    delta_h1_in_through_delta_w2 = i2
+    delta_h1_in_through_delta_w3 = i1
+    delta_h1_in_through_delta_w4 = i2
 
-delta_h1_out_through_delta_h1_in = h1_out*(1-h1_out)
-delta_h2_out_through_delta_h2_in = h2_out*(1-h2_out)
+    delta_Error_total_through_delta_w1 = delta_Error_total_through_delta_h1_out * delta_h1_out_through_delta_h1_in * delta_h1_in_through_delta_w1
+    delta_Error_total_through_delta_w2 = delta_Error_total_through_delta_h1_out * delta_h2_out_through_delta_h2_in * delta_h1_in_through_delta_w2
+    delta_Error_total_through_delta_w3 = delta_Error_total_through_delta_h2_out * delta_h1_out_through_delta_h1_in * delta_h1_in_through_delta_w3
+    delta_Error_total_through_delta_w4 = delta_Error_total_through_delta_h2_out * delta_h2_out_through_delta_h2_in * delta_h1_in_through_delta_w4
 
-delta_h1_in_through_delta_w1 = i1
-delta_h1_in_through_delta_w2 = i2
-delta_h1_in_through_delta_w3 = i1
-delta_h1_in_through_delta_w4 = i2
+    # new weights
+    w1_new = w1 - lr * delta_Error_total_through_delta_w1
+    w2_new = w2 - lr * delta_Error_total_through_delta_w2
+    w3_new = w3 - lr * delta_Error_total_through_delta_w3
+    w4_new = w4 - lr * delta_Error_total_through_delta_w4
 
-delta_Error_total_through_delta_w1 = delta_Error_total_through_delta_h1_out * delta_h1_out_through_delta_h1_in * delta_h1_in_through_delta_w1
-delta_Error_total_through_delta_w2 = delta_Error_total_through_delta_h1_out * delta_h2_out_through_delta_h2_in * delta_h1_in_through_delta_w2
-delta_Error_total_through_delta_w3 = delta_Error_total_through_delta_h2_out * delta_h1_out_through_delta_h1_in * delta_h1_in_through_delta_w3
-delta_Error_total_through_delta_w4 = delta_Error_total_through_delta_h2_out * delta_h2_out_through_delta_h2_in * delta_h1_in_through_delta_w4
+    w1 = w1_new
+    w2 = w2_new
+    w3 = w3_new
+    w4 = w4_new
+    w5 = w5_new
+    w6 = w6_new
+    w7 = w7_new
+    w8 = w8_new
 
-# new weights
-w1_new = w1 - lr * delta_Error_total_through_delta_w1
-w2_new = w2 - lr * delta_Error_total_through_delta_w2
-w3_new = w3 - lr * delta_Error_total_through_delta_w3
-w4_new = w4 - lr * delta_Error_total_through_delta_w4
-
-
+for i in np.arange(0,100):
+    run_and_backprop(x1, y1)
+    run_and_backprop(x2, y2)
 
 print("end")
 

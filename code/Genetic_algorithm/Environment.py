@@ -3,9 +3,11 @@
 class Environment:
     def __init__(self):
         super(Environment, self).__init__()
+        self.population = {}
 
 
     def running_all(self):
+
         # TODO call the population
         #  Run the simulation for one generation
         #  Evaluate the fitness of all learners
@@ -15,6 +17,9 @@ class Environment:
         print("generation run")
 
     def run_generation(self):
+        for entity in self.population:
+            # TODO entity.run() returns the learning speed
+            entity.run
         print("generation run")
 
     def evaluation(self, population):

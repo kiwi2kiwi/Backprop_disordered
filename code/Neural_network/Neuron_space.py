@@ -126,6 +126,8 @@ class NeuronSpace():
                 if i != neuron:
                     distdict[Coordinates.distance_finder(neuron.coordinate, i.coordinate)] = i
         srtd = sorted(distdict.items())
+        if len(srtd) == 0:
+            return self.output_set[0]
         return srtd[0][1]
 
 
