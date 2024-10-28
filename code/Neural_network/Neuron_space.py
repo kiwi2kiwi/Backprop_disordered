@@ -214,7 +214,7 @@ class NeuronSpace():
             I = self.ordered_input_neurons(height = np.sqrt(input_number), width = np.sqrt(input_number), plane_end=-(size/2))
             #y, z = self.new_positions_circular_coordinates()
             #V.append(Coordinates.Coordinate(-(size/2), y, z))
-
+        I = I[:input_number]
         # choose cluster of coordinates in the middle of the neuron space for processing neurons, set P
         P = []
         for p in np.arange(self.neuron_number):

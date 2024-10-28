@@ -15,10 +15,10 @@ class Backpropagation:
 
 
     def error_function(self, pre,tar):
-        return 0.5* ((tar - pre)**2)
+        return ((tar - pre)**2)
 
     def deriv_error_function(self, pre,tar):
-        return 0.5* (2*(pre - tar))
+        return (2*(pre - tar))
 
 
     def compute_error(self, target):
@@ -93,7 +93,7 @@ class Backpropagation:
 
         return loss_array
 
-    def evaluation(self, x, y, metric = "acc"):
+    def evaluation(self, x, y, metric = "accuracy"):
         pred = []
         for ds in x:
             pred.append([int(round(i,0)) for i in self.predict(ds)])
@@ -101,7 +101,7 @@ class Backpropagation:
 
         target = np.asmatrix(y)
         pred = np.asmatrix(pred)
-        if metric == "acc":
+        if metric == "accuracy":
             accs = []
             for f in np.arange(0, target.shape[1]):
                 accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))

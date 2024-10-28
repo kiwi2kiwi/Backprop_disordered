@@ -70,8 +70,8 @@ class Neuron():
 
 
     def gradient_normalisation(self, gradient):
+        return gradient
         return max(min(0.5,gradient),-0.5)
-        #return gradient
         #return ((1. / (1 + np.exp(-gradient)))-0.5)
 
     def change_weight(self):
@@ -82,8 +82,7 @@ class Neuron():
 
                 gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
 
-
-
+                print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
                 if not self.base_space.fast:
                     #                print("from ", self.name, " to ", parent_connection.parent.name)
                     print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))

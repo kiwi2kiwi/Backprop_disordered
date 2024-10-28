@@ -1,13 +1,28 @@
+import numpy as np
+import scipy
+from scipy.io import loadmat
+import pandas as pd
+test = scipy.io.loadmat("C:/Users/yanni/Desktop/6. Semester/ML/pycharms/data/TestingData_N1000_d2_M4-v7.mat")
+train = scipy.io.loadmat("C:/Users/yanni/Desktop/6. Semester/ML/pycharms/data/TrainingData_N800_d2_M4-v7.mat")
+# conversion to pandas DataFrame for easier handling
+df_train = pd.DataFrame(
+    data=np.array([train["Labels"].flatten(), train["DataVecs"][:, 0], train["DataVecs"][:, 1]]).T,
+    columns=["Label", "X_Coordinate", "Y_Coordinate"]
+)
+df_test = pd.DataFrame(
+    data=np.array([test["TestLabels"].flatten(), test["TestVecs"][:, 0], test["TestVecs"][:, 1]]).T,
+    columns=["Label", "X_Coordinate", "Y_Coordinate"]
+)
+
 import Neuron_space
 import Backprop
 
-import numpy as np
 np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 64)
-n.spawn_neurons_axons(input_number=64, output_number=10)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 2)
+n.spawn_neurons_axons(input_number=2, output_number=4)
 
 
 bp = Backprop.Backpropagation(n)
@@ -36,33 +51,48 @@ def plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_
     fig.legend()
     fig.show()
 
-X = np.array(mnist.data)
-y = np.array(mnist.target)
+# X = df_train[["X_Coordinate","Y_Coordinate"]]
+# y = df_train["Label"]
+# X = np.array(mnist.data)
+# y = np.array(mnist.target)
 
-f = np.zeros([len(y),10])
-for idx, i in enumerate(y):
-    f[idx, i] = 1
+X_train = np.array(df_train[["X_Coordinate","Y_Coordinate"]].sample(frac=1))
+y_train = np.array(df_train["Label"].sample(frac=1))
 
-y = f
+X_validation = np.array(df_test[["X_Coordinate","Y_Coordinate"]].sample(frac=1))
+y_validation = np.array(df_test["Label"].sample(frac=1))
 
-train_len = 50
-val_len = 55
-test_len = 85
-X, y = shuffle(X, y, random_state=1)
-X_train = X[[0,2,4,5]]
-#X_train = X[:train_len]
-X_validation = X[train_len:val_len]
-X_test = X[val_len:test_len]
-y_train = y[[0,2,4,5]]
-#y_train = np.array(y[:train_len])
-y_validation = np.array(y[train_len:val_len])
-y_test = np.array(y[val_len:test_len])
+f = np.zeros([len(y_train),4])
+for idx, i in enumerate(y_train):
+    f[idx, int(i-1)] = 1
 
-std_slc = StandardScaler()
-std_slc.fit(X_train)
-X_train = std_slc.transform(X_train)
-X_validation = std_slc.transform(X_validation)
-X_test = std_slc.transform(X_test)
+y_train = f
+
+f = np.zeros([len(y_validation),4])
+for idx, i in enumerate(y_validation):
+    f[idx, int(i-1)] = 1
+
+y_validation = f
+
+# train_len = 50
+# val_len = 55
+# test_len = 85
+# X, y = shuffle(X, y, random_state=1)
+# X_train = X[[0,2,4,5]]
+# #X_train = X[:train_len]
+# X_validation = X[train_len:val_len]
+# X_test = X[val_len:test_len]
+# y_train = y[[0,2,4,5]]
+# #y_train = np.array(y[:train_len])
+# y_validation = np.array(y[train_len:val_len])
+# y_test = np.array(y[val_len:test_len])
+#
+# std_slc = StandardScaler()
+# std_slc.fit(X_train)
+# X_train = std_slc.transform(X_train)
+# X_validation = std_slc.transform(X_validation)
+# X_test = std_slc.transform(X_test)
+
 
 
 #train_data = np.concatenate((X_train, y_train.T), axis=1)
@@ -86,7 +116,7 @@ for idx,i in enumerate(np.arange(0,epochs)):
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     validation_acc.append(bp.evaluation(X_validation, y_validation))
 
-    loss = bp.train(X_train, y_train, learning_rate = 0.5) #* 0.98**idx)
+    loss = bp.train(X_train, y_train, learning_rate = 1) #* 0.98**idx)
     epoch_losses.append(np.average(loss))
     losses = np.vstack([losses, loss]) if losses.size else loss
     train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
