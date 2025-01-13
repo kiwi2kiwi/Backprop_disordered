@@ -1,6 +1,5 @@
 import Neuron_space
 import Backprop
-
 import numpy as np
 np.random.seed(1)
 
