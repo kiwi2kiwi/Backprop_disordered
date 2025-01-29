@@ -6,7 +6,7 @@ np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 64)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 32)
 n.spawn_neurons_axons(input_number=64, output_number=10)
 
 
@@ -37,24 +37,31 @@ def plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_
     fig.show()
 
 X = np.array(mnist.data)
-y = np.array(mnist.target)
+y_ori = np.array(mnist.target)
 
-f = np.zeros([len(y),10])
-for idx, i in enumerate(y):
-    f[idx, i] = 1
+# turn y into one hot encoding
+y_oh = np.eye(10)[y_ori]
+# select only 0, 1 and 2
+# mask = np.logical_or(np.logical_or(y_oh[:, 3] == 1, y_oh[:, 1] == 1), y_oh[:, 2] == 1)
+# mask = np.logical_or(y_oh[:, 2] == 1, y_oh[:, 1] == 1)
+X = X#[mask, :]
+y = y_oh[:,0]#[mask]
+y = [y[i:i+1] for i in range(0,len(y),1)]
 
-y = f
 
-train_len = 50
-val_len = 55
-test_len = 85
-X, y = shuffle(X, y, random_state=1)
-X_train = X[[0,2,4,5]]
-#X_train = X[:train_len]
+train_len = 100
+val_len = 120
+test_len = 200
+# train_len = 30
+# val_len = 50
+# test_len = 80
+# X, y = shuffle(X, y, random_state=1)
+# X_train = X[[0,2,4,5]]
+X_train = X[:train_len]
 X_validation = X[train_len:val_len]
 X_test = X[val_len:test_len]
-y_train = y[[0,2,4,5]]
-#y_train = np.array(y[:train_len])
+# y_train = y[[0,2,4,5]]
+y_train = np.array(y[:train_len])
 y_validation = np.array(y[train_len:val_len])
 y_test = np.array(y[val_len:test_len])
 
@@ -68,7 +75,7 @@ X_test = std_slc.transform(X_test)
 #train_data = np.concatenate((X_train, y_train.T), axis=1)
 #test_data = np.concatenate((X_test, y_test.T), axis=1)
 
-epochs = 100
+epochs = 10
 train_acc = []
 train_rec = []
 train_pre = []
@@ -86,7 +93,7 @@ for idx,i in enumerate(np.arange(0,epochs)):
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     validation_acc.append(bp.evaluation(X_validation, y_validation))
 
-    loss = bp.train(X_train, y_train, learning_rate = 0.5) #* 0.98**idx)
+    loss = bp.train(X_train, y_train, learning_rate = 1) #* 0.98**idx)
     epoch_losses.append(np.average(loss))
     losses = np.vstack([losses, loss]) if losses.size else loss
     train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
@@ -110,8 +117,29 @@ print(train_acc)
 n.start_vis()
 n.draw_brain()
 
+
+
 # for i in np.arange(0, y_test.shape[1]):
 #     print(i, " accuraccy: ", bp.evaluation(X_test, y_test))
+
+preds = []
+trues = []
+for i in np.arange(0,len(X_test)):
+    preds.append(np.argmax(bp.predict(X_test[i])))
+    trues.append(np.argmax(y_test[i]))
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(trues, preds)
+
+import seaborn as sns
+plt.figure(figsize=(10, 7))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix')
+plt.show()
+
+
 
 for i in np.arange(0,len(X_train)):
     print(np.argmax(bp.predict(X_train[i])), " ", np.argmax(y_train[i]))

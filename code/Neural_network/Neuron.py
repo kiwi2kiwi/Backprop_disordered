@@ -82,10 +82,10 @@ class Neuron():
 
                 gradient = self.gradient_normalisation(sum(parent_connection.new_weights))
 
-                print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
-                if not self.base_space.fast:
-                    #                print("from ", self.name, " to ", parent_connection.parent.name)
-                    print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
+                # print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
+                # if not self.base_space.fast:
+                #     #                print("from ", self.name, " to ", parent_connection.parent.name)
+                #     print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
                 new_weight = parent_connection.get_weight() - gradient
 
                 # print("Axon: ", parent_connection.name, " weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
@@ -97,7 +97,7 @@ class Neuron():
     def get_weight(self, parent):
         return self.parent_connections[parent + self].get_weight()
 
-    def gradient_descent(self, learning_rate):
+    def gradient_descent(self, learning_rate, depth_counter):
         self.started = True
         # if self.name == "o21":
         #     print("stop")
@@ -108,7 +108,7 @@ class Neuron():
             children_connection = self.children_connections[c]
 
             if not children_connection.child.calculated_gradient:
-                children_connection.child.gradient_descent(learning_rate)
+                children_connection.child.gradient_descent(learning_rate, depth_counter=depth_counter-1)
 
             self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_net
 
@@ -145,10 +145,10 @@ class Neuron():
 
             # Appending the gradient
             if gradient != 0:
-                self.parent_connections[p].new_weights.append(learning_rate * gradient)
+                self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
             #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
             if not parent_connection.parent.started:
-                parent_connection.parent.gradient_descent(learning_rate = learning_rate)
+                parent_connection.parent.gradient_descent(learning_rate = learning_rate, depth_counter = depth_counter + 1)
 
             if self.base_space.Visualization:
                 self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
@@ -241,7 +241,7 @@ class Input_Neuron():
     def wire(self):
         pass
 
-    def gradient_descent(self, learning_rate, error_for_output_neuron = 0):
+    def gradient_descent(self, learning_rate, error_for_output_neuron = 0, depth_counter=0):
         pass
 
     def set_input(self, input):

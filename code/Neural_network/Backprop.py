@@ -55,7 +55,7 @@ class Backpropagation:
             y_true = target[idx]
             error_through_net_out = self.deriv_error_function(n_out, y_true)
             n.error_for_output_neuron = error_through_net_out
-        n.gradient_descent(learning_rate)# * class_balancer)
+        n.gradient_descent(learning_rate, depth_counter=1)# * class_balancer)
         self.reset_neuron_gradients()
 
         #for idx, n in enumerate(self.base_space.output_set):
