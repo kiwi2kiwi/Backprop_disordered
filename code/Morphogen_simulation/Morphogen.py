@@ -4,6 +4,8 @@ class Morphogen():
         self.name = name
         self.rule = rule
 
+
+
     def deteriorate(self, morphogen_abundancy, cell):
         # print("deteriorating cell ", cell.name)
         morphogen_abundancy = morphogen_abundancy - 0.1

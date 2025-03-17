@@ -137,19 +137,19 @@ class Backpropagation:
     def iris_evaluation(self, x, y, metric = "acc"):
         pred = []
         for ds in x:
-            pred.append([int(round(i*2,0)) for i in self.predict(ds)])
+            pred.append([int(round(i*1,0)) for i in self.predict(ds)])
             self.reset_neurons()
 
-        target = y*2
+        target = y*1
         if metric == "acc":
-            acc = sklearn.metrics.accuracy_score(target[0], pred)
+            acc = sklearn.metrics.accuracy_score(target, pred)
             return acc
         if metric == "recall":
-            recall = sklearn.metrics.recall_score(target[0], pred, zero_division=1, average=None)
+            recall = sklearn.metrics.recall_score(target, pred, zero_division=1, average=None)
             return recall
         if metric == "precision":
-            precision = sklearn.metrics.precision_score(target[0], pred, zero_division=1, average=None)
+            precision = sklearn.metrics.precision_score(target, pred, zero_division=1, average=None)
             return precision
         if metric == "f1":
-            f1 = sklearn.metrics.f1_score(target[0], pred, zero_division=1, average=None)
+            f1 = sklearn.metrics.f1_score(target, pred, zero_division=1, average=None)
             return f1

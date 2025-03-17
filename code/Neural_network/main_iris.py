@@ -6,7 +6,7 @@ np.random.seed(1)
 # Do you want visualization? Do you want the learning to be fast?
 
 n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 5)
-n.spawn_neurons_axons(input_number=4, output_number=1)
+n.spawn_neurons_axons(input_number=4, output_number=3)
 
 
 bp = Backprop.Backpropagation(n)
@@ -36,17 +36,23 @@ def plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_
     fig.show()
 
 X = np.array(iris.data)
+y = np.array(iris.target)
 #X[:,0] = 0
 #X[:,1] = 0
 #X[:,2] = 0
 #X[:,3] = 0
-y = np.array(iris.target)
-y = y/2
-X, y = shuffle(X, y, random_state=10)
-X_train = X[:140]
-X_val = X[140:]
-y_train = np.array([y[:140]])
-y_val = np.array([y[140:]])
+
+
+# y = y/2
+
+y_oh = np.eye(3)[y]
+
+
+X, y = shuffle(X, y_oh, random_state=10)
+X_train = X[:100]
+X_val = X[100:]
+y_train = np.array(y[:100])
+y_val = np.array(y[100:])
 
 # X_train = X
 # y_train = np.array([y])
@@ -67,7 +73,7 @@ X_val = std_slc.transform(X_val)
 #train_data = np.concatenate((X_train, y_train.T), axis=1)
 #test_data = np.concatenate((X_val, y_val.T), axis=1)
 
-epochs = 20
+epochs = 50
 train_acc = []
 train_rec = []
 train_pre = []
@@ -81,16 +87,16 @@ epoch_validation_losses = []
 
 for idx,i in enumerate(np.arange(0,epochs)):
     #n.print_states()
-    validation_loss = bp.get_loss(X_val, y_val.T)
+    validation_loss = bp.get_loss(X_val, y_val)
     epoch_validation_losses.append(np.average(validation_loss))
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     validation_acc.append(bp.iris_evaluation(X_val, y_val))
 
     #n.print_states()
-    loss = bp.train(X_train, y_train.T, learning_rate = 0.5)
+    loss = bp.train(X_train, y_train, learning_rate = 0.5)
     epoch_losses.append(np.average(loss))
     losses = np.vstack([losses, loss]) if losses.size else loss
-    train_acc.append(bp.iris_evaluation(X_train, y_train))
+    # train_acc.append(bp.iris_evaluation(X_train, y_train))
     train_acc.append(bp.iris_evaluation(X_train, y_train, "accuracy"))
     train_rec.append(bp.iris_evaluation(X_train, y_train, "recall"))
     train_pre.append(bp.iris_evaluation(X_train, y_train, "precision"))
@@ -101,9 +107,27 @@ for idx,i in enumerate(np.arange(0,epochs)):
 
 plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_acc,epoch_validation_losses)
 
+preds = []
+trues = []
+for i in np.arange(0,len(X_val)):
+    preds.append(np.argmax(bp.predict(X_val[i])))
+    trues.append(np.argmax(y_val[i]))
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(trues, preds)
+
+import seaborn as sns
+plt.figure(figsize=(10, 7))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix')
+plt.show()
+
+
 
 for i in np.arange(0,len(X_train)):
-    print([ '%.2f' % elem for elem in bp.predict(X_train[i])], " ", y_train[0][i])
+    print([ '%.2f' % elem for elem in bp.predict(X_train[i])], " ", y_train[i])
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()

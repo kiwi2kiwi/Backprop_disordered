@@ -6,7 +6,7 @@ np.random.seed(1)
 
 # Do you want visualization? Do you want the learning to be fast?
 
-n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 32)
+n = Neuron_space.NeuronSpace(fast = True, Visualization=False, neuron_number = 100)
 n.spawn_neurons_axons(input_number=64, output_number=10)
 
 
@@ -45,13 +45,13 @@ y_oh = np.eye(10)[y_ori]
 # mask = np.logical_or(np.logical_or(y_oh[:, 3] == 1, y_oh[:, 1] == 1), y_oh[:, 2] == 1)
 # mask = np.logical_or(y_oh[:, 2] == 1, y_oh[:, 1] == 1)
 X = X#[mask, :]
-y = y_oh[:,0]#[mask]
-y = [y[i:i+1] for i in range(0,len(y),1)]
+y = y_oh[:,:]#[mask]
+# y = [y[i:i+1] for i in range(0,len(y),1)]
 
 
-train_len = 100
-val_len = 120
-test_len = 200
+train_len = 1000
+val_len = 1200
+test_len = 2200
 # train_len = 30
 # val_len = 50
 # test_len = 80
@@ -93,7 +93,7 @@ for idx,i in enumerate(np.arange(0,epochs)):
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
     validation_acc.append(bp.evaluation(X_validation, y_validation))
 
-    loss = bp.train(X_train, y_train, learning_rate = 1) #* 0.98**idx)
+    loss = bp.train(X_train, y_train, learning_rate = 0.5) #* 0.98**idx)
     epoch_losses.append(np.average(loss))
     losses = np.vstack([losses, loss]) if losses.size else loss
     train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
