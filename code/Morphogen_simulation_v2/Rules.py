@@ -1,27 +1,15 @@
-def make_two_children_below(cell, amount):
-    if amount >= 0.2:
-        cell.mitosis_counter = 2
-        if cell.name == 0:
-            print("2 mitosis for cell 0")
-
-    if amount < 0.2 and amount > 0:
-        cell.morphogens["leg"][1] = 0.5
-
-
-
-def elongate_down(cell, amount):
-    if amount >= 0.2:
-        cell.mitosis_counter = 1
-
 import Coordinates
 import Cell_v2
 import Axon
 import random
+import Morphogens_v2
 class Rule():
-    def __init__(self, address, executing_cell, cell_space):
-        self.address = address
-        self.executing_cell = executing_cell
+    def __init__(self, cell_space):
+        # self.executing_cell = executing_cell
         self.cell_space = cell_space
+        self.name = self.cell_space.Rule_counter
+        self.cell_space.Rule_counter += 1
+        self.cell_space.Rules[self.name] = self
 
 
         # These variables can be mutated
@@ -45,7 +33,8 @@ class Rule():
             "inhibit_excite_type",
             "child_limit",
             "rule_type",
-            "delete_rule"
+            "delete_rule",
+            "create_rule"
         ]
 
         # Pick a random attribute to mutate
@@ -81,57 +70,54 @@ class Rule():
         elif target == "delete_rule":
             # Small chance of deleting the rule
             if random.random() < mutation_rate:
-                self.is_deleted = True
+                self.cell_space.Rules.pop(self.name)
+
+        elif target == "create_rule":
+            # Small chance of creating a new rule
+            if random.random() < mutation_rate:
+                new_rule = Rule(self.cell_space)
+                new_rule.new_coordinate_shift = self.new_coordinate_shift
+                new_rule.threshold = self.threshold
+                new_rule.morphogen = self.morphogen
+                new_rule.inhibit_excite_type = self.inhibit_excite_type
+                new_rule.child_limit = self.child_limit
+                new_rule.rule_type = self.rule_type
+
 
     # i tried to make a function that is customizable by the genetic algorithm
     # this function should be modifyable by the genetic algorithm and perform various tasks such as creating an action when a morphogen threshold is reached.
-    def rule(self):
+    def rule(self, executing_cell):
             # 2 types of actions
             # 1. send out new morphogen
             # 2. if child cells above threshold, stop creating new ones
             # 3. create Axon to cell with morphogen x
             #
 
-        if self.rule_type == 1:
-            self.executing_cell.morphogens.append()
-        if self.rule_type == 2:
-            if self.morphogen >= self.threshold: # TODO dont to this via child number but via summed morphogens or nearby cells
-                if self.child_limit < len(self.executing_cell.children):
-                    self.create_new_cell()
+        if self.rule_type == 1: # add a completely new morphogen to the cell expression
+            new_morpho = Morphogens_v2(0.5)
+            executing_cell.new_morphogens(new_morpho)
+        if self.rule_type == 2: # remove a morphogen from a cell
+            executing_cell.del_morphogens(self.morphogen)
         if self.rule_type == 3:
-            if self.morphogen < self.threshold: # TODO dont to this via child number but via summed morphogens or nearby cells
-                if self.child_limit < len(self.executing_cell.children):
+            if self.morphogen >= self.threshold: # TODO dont to this via child number but via summed morphogens or nearby cells
+                if self.child_limit < len(executing_cell.children):
                     self.create_new_cell()
         if self.rule_type == 4:
             if self.morphogen >= self.threshold:
-                self.connect(self.morphogen)
+                self.connect(executing_cell)
 
-    def create_new_cell(self):
+    def create_new_cell(self, executing_cell):
         # create new cell at parameters
-        new_cell_coordinates = Coordinates.change_coords(self.executing_cell.Coordinate, self.new_coordinate_shift)
-        new_cell_rules = self.executing_cell.rules
-        new_cell = Cell_v2.Cell(Cell_space = self.cell_space, Coordinate=new_cell_coordinates, name="", rules = new_cell_rules)
+        new_cell_coordinates = Coordinates.change_coords(executing_cell.Coordinate, self.new_coordinate_shift)
+        new_cell = Cell_v2.Cell(Cell_space = self.cell_space, Coordinate=new_cell_coordinates)
         self.cell_space.Cells.append(new_cell)
 
         # when divided, put the child cell address here and create a rule that connects to the address marker of the child cell
 
-    def connect(self, morphogen):
-        for i in self.morphogen.cells:
-            self.cell_space.addAxons(Axon(self.executing_cell, i, self.inhibit_excite_type))
+    def connect(self, executing_cell):
+        for child in self.morphogen.cells: # TODO morphogens associated with each cell are not updated properly yet
+            if executing_cell.name != child.name:
+                self.cell_space.addAxons(Axon(executing_cell, child, self.inhibit_excite_type))
         # TODO prevent connections to itself
 
 
-    # Example function
-    def make_two_children_below(cell, amount):
-        if amount >= 0.2:
-            cell.mitosis_counter = 2
-            if cell.name == 0:
-                print("2 mitosis for cell 0")
-
-        if amount < 0.2 and amount > 0:
-            cell.morphogens["leg"][1] = 0.5
-
-    # Example function
-    def elongate_down(cell, amount):
-        if amount >= 0.2:
-            cell.mitosis_counter = 1

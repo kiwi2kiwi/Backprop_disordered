@@ -15,23 +15,15 @@ import pickle
 class Cell_space():
 
     def __init__(self):
-        self.Cells = []
-        self.Axons = []
-        self.Morphogens = []
-#        self.morphogens_with_cells = {}
+        self.Cells = {}
+        self.Cell_counter = 0
+        self.Axons = {}
+        self.Axon_counter = 0
+        self.Morphogens = {}
+        self.Morphogen_counter = 0
+        self.Rules = {}
+        self.Rule_counter = 0
 
-        self.morphogens = {
-            "hip": [Morphogens_v2.Morphogen("hip", Rules.make_two_children_below), 0.2],
-            "leg": [Morphogens_v2.Morphogen("leg", Rules.elongate_down), 0]
-        }
-
-        self.cells_in_plot = {}
-        Stem_cell = Cell(self, Coordinates.Coordinate(0,0,0), copy.deepcopy(self.morphogens),0,0)
-        self.Cells = [Stem_cell]
-        self.cell_count = 0
-
-        self.tick = 0
-        ticks = 20
         self.start_vis()
         self.draw_image()
         while self.tick < ticks:
