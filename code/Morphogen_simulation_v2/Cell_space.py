@@ -75,8 +75,6 @@ class Cell_space():
         self.Cells.append(new_cell)
         return new_cell
 
-    def addAxon(self, Axon):
-        self.Axons.append(Axon)
 
     def start_vis(self):
         plt.ion()

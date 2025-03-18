@@ -23,8 +23,6 @@ class Cell():
     def del_morphogens(self, morphogen):
         self.morphogens.pop(morphogen.name)
 
-    def connect(self, child):
-        self.children.append(child)
 
 
     # def step(self):

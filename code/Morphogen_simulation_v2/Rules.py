@@ -5,7 +5,6 @@ import random
 import Morphogens_v2
 class Rule():
     def __init__(self, cell_space):
-        # self.executing_cell = executing_cell
         self.cell_space = cell_space
         self.name = self.cell_space.Rule_counter
         self.cell_space.Rule_counter += 1
@@ -13,18 +12,17 @@ class Rule():
 
 
         # These variables can be mutated
-        self.new_coordinate_shift = Coordinates.Coordinate(1,0,0)
+        self.new_coordinate_shift = Coordinates.Coordinate(1,0,0) # default is to the right
         self.threshold = 0.5
-        self.morphogen = random.choice(self.cell_space.Morphogens)# pick first morphogen from all morphogens
+        self.morphogen = random.choice(self.cell_space.Morphogens)# pick random morphogen from all morphogens
         self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
         self.child_limit = 0
         self.rule_type = 3
 
 
     def mutate(self, mutation_rate):
-        # TODO mutate one of the mutate-able variables by the mutation rate
         """
-                Mutates one of the mutable variables by a small random amount based on mutation_rate.
+                Mutates one of the mutate-able variables by a small random amount based on mutation_rate.
                 """
         mutation_targets = [
             "new_coordinate_shift",
@@ -98,8 +96,8 @@ class Rule():
             executing_cell.new_morphogens(new_morpho)
         if self.rule_type == 2: # remove a morphogen from a cell
             executing_cell.del_morphogens(self.morphogen)
-        if self.rule_type == 3:
-            if self.morphogen >= self.threshold: # TODO dont to this via child number but via summed morphogens or nearby cells
+        if self.rule_type == 3: # create a new cell
+            if self.morphogen >= self.threshold: # TODO dont to this via child number but via summed morphogen density of nearby cells
                 if self.child_limit < len(executing_cell.children):
                     self.create_new_cell()
         if self.rule_type == 4:
@@ -117,7 +115,7 @@ class Rule():
     def connect(self, executing_cell):
         for child in self.morphogen.cells: # TODO morphogens associated with each cell are not updated properly yet
             if executing_cell.name != child.name:
-                self.cell_space.addAxons(Axon(executing_cell, child, self.inhibit_excite_type))
+                Axon(executing_cell, child, self.inhibit_excite_type)
         # TODO prevent connections to itself
 
 
