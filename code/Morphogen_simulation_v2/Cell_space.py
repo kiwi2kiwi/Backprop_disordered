@@ -3,11 +3,11 @@ matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from random import randrange
 import Coordinates
-from Cell import Cell
+from Cell_v2 import Cell
 import Rules
 import math
 import numpy as np
-import Morphogen
+import Morphogens_v2
 import copy
 import pickle
 
@@ -15,9 +15,14 @@ import pickle
 class Cell_space():
 
     def __init__(self):
+        self.Cells = []
+        self.Axons = []
+        self.Morphogens = []
+#        self.morphogens_with_cells = {}
+
         self.morphogens = {
-            "hip": [Morphogen.Morphogen("hip", Rules.make_two_children_below), 0.2],
-            "leg": [Morphogen.Morphogen("leg", Rules.elongate_down), 0]
+            "hip": [Morphogens_v2.Morphogen("hip", Rules.make_two_children_below), 0.2],
+            "leg": [Morphogens_v2.Morphogen("leg", Rules.elongate_down), 0]
         }
 
         self.cells_in_plot = {}
@@ -77,6 +82,9 @@ class Cell_space():
         # self.new_cells.append(new_cell)
         self.Cells.append(new_cell)
         return new_cell
+
+    def addAxon(self, Axon):
+        self.Axons.append(Axon)
 
     def start_vis(self):
         plt.ion()

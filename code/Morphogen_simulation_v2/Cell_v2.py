@@ -2,25 +2,27 @@ import Coordinates
 import copy
 
 class Cell():
-    def __init__(self, Cell_space, Coordinate, mitosis_counter, name, excite_inhibit):
+    def __init__(self, Cell_space, Coordinate, name, rules):
         self.Cell_space = Cell_space
         self.Coordinate = Coordinate
         self.children = []
         self.parents = []
-        self.address = ""
+        self.address = "" # the adress is a unique morphogen that each cell always expresses
         self.rules = []
-        self.excite = excite_inhibit
+        self.rules.append(rules)
         self.name = name
         self.morphogens = []
-
-
         self.replicate_vector = Coordinates.Coordinate(0, 0, -1)
-        self.mitosis_counter = mitosis_counter
-        self.executed_morphogens = False
+
+    def new_morphogens(self, new_morphogen):
+        self.morphogens.append(new_morphogen)
+
+    def connect(self, child):
+        self.children.append(child)
 
 
     def step(self):
-        #TODO gather all morphogens from surrounding are and divide them by distance
+        #TODO gather all morphogens from surrounding area and divide them by distance
 
         if not self.executed_morphogens:
             for key in self.morphogens:
@@ -28,10 +30,7 @@ class Cell():
             self.executed_morphogens = True
         self.replicate()
 
-    def connect(self, child):
 
-        c = self.Cell_space.spawn_cell(self.Coordinate, self.replicate_vector, copy.deepcopy(self.morphogens))
-        self.children.append(c)
 
     def replicate(self):
         # print("Cell: " + str(self.name))

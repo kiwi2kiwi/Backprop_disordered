@@ -14,3 +14,9 @@ def distance_finder(one,two):
 
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
+
+def change_coords(oldCoordinate, newCoordinate):
+    x = oldCoordinate.x + newCoordinate.x
+    y = oldCoordinate.y + newCoordinate.y
+    z = oldCoordinate.z + newCoordinate.z
+    return Coordinate(x,y,z)
