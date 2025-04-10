@@ -9,7 +9,7 @@ class Cell():
         self.children = {}
         self.parents = {}
         self.Axons = {}
-        self.address = Morphogens_v2(0.5, self.Cell_space, cell_unique=True) # the adress is a unique morphogen that each cell always expresses
+        self.address = Morphogens_v2(1, self.Cell_space, cell_unique=True, cell = self) # the adress is a unique morphogen that each cell always expresses
         self.name = Cell_space.Cell_counter
         Cell_space.Cell_counter += 1
         self.morphogens = {}
@@ -23,10 +23,22 @@ class Cell():
     def del_morphogens(self, morphogen):
         self.morphogens.pop(morphogen.name)
 
+    def calc_morphogen(self, morphogen, cell_space):
+        # get distance to all other cells and calculate the morphogen * distance
+        # for cell in cell_space.Morphogens[morphogen.name].cells:
+        concentration = 0
+        for cell in morphogen.cells:
+            if cell.name != self.name:
+                distance = Coordinates.distance_finder(self.Coordinate, cell.Coordinate)
+                calculated = morphogen.amount/distance # morphogen with distance falloff
+                concentration += calculated
+        return concentration
+
+
 
 
     # def step(self):
-    #     #TODO gather all morphogens from surrounding area and divide them by distance
+    #
     #
     #     if not self.executed_morphogens:
     #         for key in self.morphogens:

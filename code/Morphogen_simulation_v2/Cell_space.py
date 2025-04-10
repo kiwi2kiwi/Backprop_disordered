@@ -26,26 +26,10 @@ class Cell_space():
 
         self.start_vis()
         self.draw_image()
-        while self.tick < ticks:
-            self.new_cells = []
-            self.lines_in_plot = []
-            print("tick ", self.tick)
-            current_cells = self.Cells.copy()
-            for c in current_cells:
-                c.step()
-                # for child in c.children:
-                #     self.lines_in_plot.append(self.ax.plot3D([child.Coordinate.x, c.Coordinate.x],
-                #                                                 [child.Coordinate.y, c.Coordinate.y],
-                #                                                 [child.Coordinate.z, c.Coordinate.z], linewidth=1,
-                #                                                 c='grey'))
 
-            self.draw_image()
-            self.Cells
-            # for l in self.lines_in_plot:
-            #     l[0].axes.cla()
-            # [self.Cells.append(nc) for nc in self.new_cells]
-            self.tick += 1
-
+    def neurogenesis(self):
+        for cell in self.Cells.values():
+            cell.develop()
 
 
 

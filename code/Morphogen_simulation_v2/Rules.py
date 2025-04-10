@@ -3,6 +3,8 @@ import Cell_v2
 import Axon
 import random
 import Morphogens_v2
+import math
+
 class Rule():
     def __init__(self, cell_space):
         self.cell_space = cell_space
@@ -40,9 +42,24 @@ class Rule():
 
         if target == "new_coordinate_shift":
             # Mutate coordinate shift with a small random change
-            self.new_coordinate_shift.x += random.uniform(-mutation_rate, mutation_rate)
-            self.new_coordinate_shift.y += random.uniform(-mutation_rate, mutation_rate)
-            self.new_coordinate_shift.z += random.uniform(-mutation_rate, mutation_rate)
+
+            # Generate a random shift vector
+            dx = random.uniform(-mutation_rate, mutation_rate)
+            dy = random.uniform(-mutation_rate, mutation_rate)
+            dz = random.uniform(-mutation_rate, mutation_rate)
+
+            # Compute the magnitude of the vector
+            magnitude = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+
+            # Ensure the shift is at least distance 1
+            if magnitude < 1.0:
+                scale = 1.0 / magnitude  # Scale factor to make magnitude 1
+                dx *= scale
+                dy *= scale
+                dz *= scale
+
+            # Apply the shift
+            self.new_coordinate_shift = Coordinates.Coordinate(dx, dy, dz)
 
         elif target == "threshold":
             # Mutate threshold but keep it between 0 and 1
@@ -92,7 +109,7 @@ class Rule():
             #
 
         if self.rule_type == 1: # add a completely new morphogen to the cell expression
-            new_morpho = Morphogens_v2(0.5)
+            new_morpho = Morphogens_v2(1, cell = executing_cell)
             executing_cell.new_morphogens(new_morpho)
         if self.rule_type == 2: # remove a morphogen from a cell
             executing_cell.del_morphogens(self.morphogen)
