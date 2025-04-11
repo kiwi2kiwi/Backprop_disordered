@@ -7,7 +7,6 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import Coordinates
-import Perceptive_neuron, Processing_neuron, Interaction_neuron
 import Axon
 
 
@@ -24,32 +23,6 @@ class NeuronSpace():
         self.Visualization = Visualization
         self.spawn_neurons_axons()
 
-    def new_positions_spherical_coordinates(self):
-        phi = random.uniform(0, 2 * np.pi)
-        costheta = random.uniform(-1, 1)
-        u = random.uniform(0, 1)
-
-        theta = np.arccos(costheta)
-        r = ((size-10) / 2) * np.sqrt(u)
-
-        x = r * np.sin(theta) * np.cos(phi)
-        y = r * np.sin(theta) * np.sin(phi)
-        z = r * np.cos(theta)
-        return (x, y, z)
-
-    def new_positions_circular_coordinates(self):
-        phi = random.uniform(0, 2 * np.pi)
-        costheta = random.uniform(-1, 1)
-        u = random.uniform(0, 1)
-
-        size = 100
-        theta = np.arccos(costheta)
-        r = (size / 2) * np.sqrt(u)
-
-        x = r * np.sin(theta) * np.cos(phi)
-        y = r * np.sin(theta) * np.sin(phi)
-        #z = r * np.cos(theta)
-        return (x, y)
 
     def ordered_input_neurons(self, height, width, plane_end):
         global size

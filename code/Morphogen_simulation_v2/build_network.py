@@ -2,11 +2,15 @@ class build_network:
     def __init__(self):
         super(build_network, self).__init__()
         # TODO
-        #  morphogens, consisting of rules
-        #  build the network in a simulation
+        #  create
+        #
         #
 
-    def build_network(self):
+
+
+    def build_network(self, input_size, output_size):
+
+
         # TODO
         #  run the morphogen simulation
         #  get the architecture and its connectome

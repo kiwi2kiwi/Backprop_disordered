@@ -3,7 +3,7 @@ import copy
 import Morphogens_v2
 
 class Cell():
-    def __init__(self, Cell_space, Coordinate, rules):
+    def __init__(self, Cell_space, Coordinate):
         self.Cell_space = Cell_space
         self.Coordinate = Coordinate
         self.children = {}

@@ -11,6 +11,7 @@ import Morphogens_v2
 import copy
 import pickle
 
+size = 100
 
 class Cell_space():
 
@@ -23,6 +24,21 @@ class Cell_space():
         self.Morphogen_counter = 0
         self.Rules = {}
         self.Rule_counter = 0
+        self.input_cells = []
+        self.output_cells = []
+
+        input_coords = self.ordered_input_neurons(2,2)
+        output_coords = self.ordered_output_neurons(1,3)
+
+        for i in input_coords:
+            new_input_cell = Cell(self, i)
+            self.input_cells.append(new_input_cell)
+            self.Cells[new_input_cell.name] = new_input_cell
+
+        for o in output_coords:
+            new_output_cell = Cell(self, o)
+            self.output_cells.append(new_output_cell)
+            self.Cells[new_output_cell.name] = new_output_cell
 
         self.start_vis()
         self.draw_image()
@@ -31,7 +47,31 @@ class Cell_space():
         for cell in self.Cells.values():
             cell.develop()
 
+    def ordered_input_neurons(self, height, width):
+        global size
+        V = []
+        area = size - 20
+        y_distance = area / height
+        z_distance = area / width
+        Y = np.arange(-(size / 2) + 10, (size / 2) - 10, y_distance)
+        Z = np.arange(-(size / 2) + 10, (size / 2) - 10, z_distance)
+        for y in Y:
+            for z in Z:
+                V.append(Coordinates.Coordinate(-(size/2), y, z))
+        return V
 
+    def ordered_output_neurons(self, height, width):
+        global size
+        V = []
+        area = size - 20
+        y_distance = area / height
+        z_distance = area / width
+        Y = np.arange(-(size/2)+10,(size/2)-10,y_distance)
+        Z = np.arange(-(size/2)+10,(size/2)-10,z_distance)
+        for y in Y:
+            for z in Z:
+                V.append(Coordinates.Coordinate(size/2, y, 0))
+        return V
 
 
     def spawn_cell(self, old_Coordinate, replicate_vector, morphogens):
