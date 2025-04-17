@@ -1,8 +1,9 @@
 calculate the morpho conc from other cells - done
 
-read the input size and create the first few cells
-read the output size and create the last few cells
+read the input size and create the first few cells - done
+read the output size and create the last few cells - done
 
+create a format that the neural network can read and convert into an architecture
 
 project schedule
 network cancer
