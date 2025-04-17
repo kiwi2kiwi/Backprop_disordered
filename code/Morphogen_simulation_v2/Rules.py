@@ -14,7 +14,7 @@ class Rule():
 
 
         # These variables can be mutated
-        self.new_coordinate_shift = Coordinates.Coordinate(1,0,0) # default is to the right
+        self.new_coordinate_shift = Coordinates.Coordinate(5,0,0) # default is to the right
         self.threshold = 0.5
         self.morphogen = random.choice(self.cell_space.Morphogens)# pick random morphogen from all morphogens
         self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
@@ -107,19 +107,23 @@ class Rule():
             # 2. if child cells above threshold, stop creating new ones
             # 3. create Axon to cell with morphogen x
             #
-
+        # TODO LET RULES ACTIVATE EACH OTHER so the morphogen removal rule 2 only happens after a condition is met
         if self.rule_type == 1: # add a completely new morphogen to the cell expression
             new_morpho = Morphogens_v2(1, cell = executing_cell)
             executing_cell.new_morphogens(new_morpho)
         if self.rule_type == 2: # remove a morphogen from a cell
             executing_cell.del_morphogens(self.morphogen)
         if self.rule_type == 3: # create a new cell
-            if self.morphogen >= self.threshold: # TODO dont to this via child number but via summed morphogen density of nearby cells
+            morphogen_concentration = executing_cell.calc_morphogen(self.morphogen)
+            if morphogen_concentration >= self.threshold: # TODO dont to this via child number but via summed morphogen density of nearby cells
                 if self.child_limit < len(executing_cell.children):
                     self.create_new_cell()
         if self.rule_type == 4:
             if self.morphogen >= self.threshold:
                 self.connect(executing_cell)
+        if self.rule_type == 5: # add a morphogen to the cell expression
+
+            executing_cell.new_morphogens(new_morpho)
 
     def create_new_cell(self, executing_cell):
         # create new cell at parameters
@@ -133,6 +137,5 @@ class Rule():
         for child in self.morphogen.cells: # TODO morphogens associated with each cell are not updated properly yet
             if executing_cell.name != child.name:
                 Axon(executing_cell, child, self.inhibit_excite_type)
-        # TODO prevent connections to itself
 
 

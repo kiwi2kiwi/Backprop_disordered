@@ -40,10 +40,16 @@ class Cell_space():
             self.output_cells.append(new_output_cell)
             self.Cells[new_output_cell.name] = new_output_cell
 
+        for i in np.arange(5):
+            Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)
+            Rules.Rule(self)
+
+
         self.start_vis()
         self.draw_image()
 
     def neurogenesis(self):
+        print("neurogenesis")
         for cell in self.Cells.values():
             cell.develop()
 
@@ -101,21 +107,22 @@ class Cell_space():
 
 
     def start_vis(self):
+        self.cells_in_plot = {}
         plt.ion()
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111, projection='3d')
-        self.size = 10
+        self.size = 120
         self.ax.set_xlim(-(self.size / 2), self.size / 2)
         self.ax.set_ylim(-(self.size / 2), self.size / 2)
         self.ax.set_zlim(-(self.size / 2), self.size / 2)
-        for c in self.Cells:
+        for c in self.Cells.values():
             self.cells_in_plot[c.name] = [(self.ax.scatter(c.Coordinate.x, c.Coordinate.y, c.Coordinate.z, c="grey",
                                                              s=10)), c]
 
     def draw_image(self):
         for c in self.cells_in_plot.keys():
             self.cells_in_plot[c][0].axes.cla()
-        for c in self.Cells:  # create cells
+        for c in self.Cells.values():  # create cells
             if c.name not in self.cells_in_plot.keys():
                 self.cells_in_plot[c.name] = [(self.ax.scatter(c.Coordinate.x, c.Coordinate.y, c.Coordinate.z, c="grey",
                                                              s=30)), c]
@@ -127,6 +134,7 @@ class Cell_space():
         self.ax.set_ylim(-(self.size / 2), self.size / 2)
         self.ax.set_zlim(-(self.size / 2), self.size / 2)
         plt.ion()
-        self.fig.savefig('..//Bilder//temp' + str(self.cell_count) + '.png', dpi=self.fig.dpi)
+        # self.fig.savefig('..//Bilder//temp' + str(self.cell_count) + '.png', dpi=self.fig.dpi)
 
-Cell_space()
+print("hi")
+# Cell_space()
