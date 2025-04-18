@@ -10,55 +10,13 @@ random.seed(1)
 
 size = 100
 class NeuronSpace():
-    def __init__(self, Visualization = True, fast = False):
+    def __init__(self, Visualization = True, fast = False, neuron_number = 10):
         super(NeuronSpace, self).__init__()
         self.fast = fast
         self.Visualization = Visualization
         if self.fast:
             self.Visualization = False
-
-
-    def import_network(self, cell_space):
-
-
-        self.input_neuron_dict = {}
-        for i in cell_space.input_cells:
-            new_neuron = Neuron.Input_Neuron(i.coordinate, self, name = i.name)
-            self.input_neuron_dict[new_neuron.name] = new_neuron
-
-        self.output_neuron_dict = {}
-        for o in cell_space.output_cells:
-            new_neuron = Neuron.Neuron(o.coordinate, self, output_neuron=True, name = o.name)
-            self.output_neuron_dict[new_neuron.name] = new_neuron
-
-        self.hidden_neuron_dict = {}
-        for c in cell_space.Cells:
-            if c.name not in self.input_neuron_dict.keys() and c.name not in self.output_neuron_dict.keys():
-                new_neuron = Neuron.Neuron(c.coordinate, self, name=c.name)
-                self.hidden_neuron_dict[new_neuron.name] = new_neuron
-
-        self.Neuron_dict = self.hidden_neuron_dict
-        self.Neuron_dict.update(self.output_neuron_dict)
-        self.Neuron_dict.update(self.input_neuron_dict)
-
-
-        self.Axon_dict = {}
-        for a in cell_space.Axons:
-            # TODO convert axons
-            #  implement inhibitory connections
-
-            parent = self.Neuron_dict[a.parent.name]
-            child = self.Neuron_dict[a.child.name]
-            weight = round(random.uniform(0.2, 0.8), 2)
-            new_axon = Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
-            parent.children_connections[child.name] = child
-            child.parent_connections[parent.name] = parent
-            self.Axon_dict[new_axon.name] = new_axon
-
-
-
-
-
+        self.neuron_number = neuron_number
 
     def new_positions_spherical_coordinates(self):
         phi = random.uniform(0, 2 * np.pi)

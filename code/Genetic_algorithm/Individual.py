@@ -20,6 +20,10 @@ class Individual:
         c.neurogenesis()
         print("done")
 
+        # TODO
+        #  get the grown network from the Morpho simulation
+        #  instantiate a neural network and feed it the grown network
+
 Individual()
 
 

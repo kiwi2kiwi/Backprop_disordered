@@ -3,7 +3,7 @@ import copy
 import Morphogens_v2
 
 class Cell():
-    def __init__(self, Cell_space, Coordinate):
+    def __init__(self, Cell_space, Coordinate, output = False, input = False):
         self.Cell_space = Cell_space
         self.Coordinate = Coordinate
         self.children = {}
@@ -14,14 +14,15 @@ class Cell():
         Cell_space.Cell_counter += 1
         self.morphogens = {}
         self.morphogen_counter = 0
-        self.replicate_vector = Coordinates.Coordinate(0, 0, -1)
+        # self.replicate_vector = Coordinates.Coordinate(0, 0, -1)
 
     def new_morphogens(self, new_morphogen):
         self.morphogens[new_morphogen.name] = new_morphogen
         self.morphogen_counter += 1
 
-    def del_morphogens(self, morphogen):
-        self.morphogens.pop(morphogen.name)
+    def del_morphogens(self, morphogen): # dont remove morphogens that are unique cell addresses
+        if not morphogen.cell_unique:
+            self.morphogens.pop(morphogen.name)
 
     def calc_morphogen(self, morphogen):
         # get distance to all other cells and calculate the morphogen * distance

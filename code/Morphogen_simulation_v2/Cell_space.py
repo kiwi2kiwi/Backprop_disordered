@@ -31,12 +31,12 @@ class Cell_space():
         output_coords = self.ordered_output_neurons(1,3)
 
         for i in input_coords:
-            new_input_cell = Cell(self, i)
+            new_input_cell = Cell(self, i, input=True)
             self.input_cells.append(new_input_cell)
             self.Cells[new_input_cell.name] = new_input_cell
 
         for o in output_coords:
-            new_output_cell = Cell(self, o)
+            new_output_cell = Cell(self, o, output=True)
             self.output_cells.append(new_output_cell)
             self.Cells[new_output_cell.name] = new_output_cell
 
@@ -73,10 +73,10 @@ class Cell_space():
         y_distance = area / height
         z_distance = area / width
         Y = np.arange(-(size/2)+10,(size/2)-10,y_distance)
-        Z = np.arange(-(size/2)+10,(size/2)-10,z_distance)
+        Z = np.arange(-(size/2)+10,((size/2)-10),z_distance)
         for y in Y:
             for z in Z:
-                V.append(Coordinates.Coordinate(size/2, y, 0))
+                V.append(Coordinates.Coordinate(size/2, y, z))
         return V
 
 

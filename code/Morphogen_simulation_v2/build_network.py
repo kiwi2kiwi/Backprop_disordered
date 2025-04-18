@@ -21,6 +21,7 @@ class build_network:
         print("running simulation")
 
     def extract_connectome(self):
+
         # TODO extract the connectome
         print("extracting connectome")
 
