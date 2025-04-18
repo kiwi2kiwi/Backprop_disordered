@@ -34,7 +34,7 @@ class NeuronSpace():
         Z = np.arange(-(size / 2) + 10, (size / 2) - 10, z_distance)
         for y in Y:
             for z in Z:
-                V.append(Coordinates.Coordinate(plane_end, y, z))
+                V.append(Coordinates.coordinate(plane_end, y, z))
         return V
 
     def ordered_output_neurons(self, height, width, plane_end):
@@ -47,7 +47,7 @@ class NeuronSpace():
         Z = np.arange(-(size/2)+10,(size/2)-10,z_distance)
         for y in Y:
             for z in Z:
-                V.append(Coordinates.Coordinate(plane_end, y, 0))
+                V.append(Coordinates.coordinate(plane_end, y, 0))
         return V
 
     def create_Axon(self, i, n):
@@ -222,7 +222,7 @@ class NeuronSpace():
         P = []
         for p in np.arange(200):
             x, y, z = self.new_positions_spherical_coordinates()
-            P.append(Coordinates.Coordinate(x, y, z))
+            P.append(Coordinates.coordinate(x, y, z))
 
         # choose cluster of coordinates on plane, opposite side to V, set I
         # that only connect to processing neurons

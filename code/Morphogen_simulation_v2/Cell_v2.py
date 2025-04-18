@@ -5,7 +5,7 @@ import Morphogens_v2
 class Cell():
     def __init__(self, Cell_space, Coordinate, output = False, input = False):
         self.Cell_space = Cell_space
-        self.Coordinate = Coordinate
+        self.coordinate = Coordinate
         self.children = {}
         self.parents = {}
         self.Axons = {}
@@ -30,7 +30,7 @@ class Cell():
         concentration = 0
         for cell in morphogen.cells:
             if cell.name != self.name:
-                distance = Coordinates.distance_finder(self.Coordinate, cell.Coordinate)
+                distance = Coordinates.distance_finder(self.coordinate, cell.coordinate)
                 calculated = morphogen.amount/distance # morphogen with distance falloff
                 concentration += calculated
         return concentration

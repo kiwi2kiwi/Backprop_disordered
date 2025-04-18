@@ -19,30 +19,32 @@ class NeuronSpace():
 
 
     def import_network(self, cell_space):
-
-
         self.input_neuron_dict = {}
+        self.output_neuron_dict = {}
+        self.hidden_neuron_dict = {}
+        self.Axon_dict = {}
+
+
+
         for i in cell_space.input_cells:
             new_neuron = Neuron.Input_Neuron(i.coordinate, self, name = i.name)
             self.input_neuron_dict[new_neuron.name] = new_neuron
 
-        self.output_neuron_dict = {}
         for o in cell_space.output_cells:
             new_neuron = Neuron.Neuron(o.coordinate, self, output_neuron=True, name = o.name)
             self.output_neuron_dict[new_neuron.name] = new_neuron
 
-        self.hidden_neuron_dict = {}
-        for c in cell_space.Cells:
+        for c in cell_space.Cells.values():
             if c.name not in self.input_neuron_dict.keys() and c.name not in self.output_neuron_dict.keys():
                 new_neuron = Neuron.Neuron(c.coordinate, self, name=c.name)
                 self.hidden_neuron_dict[new_neuron.name] = new_neuron
 
-        self.Neuron_dict = self.hidden_neuron_dict
+        self.Neuron_dict = {}
+        self.Neuron_dict.update(self.hidden_neuron_dict)
         self.Neuron_dict.update(self.output_neuron_dict)
         self.Neuron_dict.update(self.input_neuron_dict)
 
 
-        self.Axon_dict = {}
         for a in cell_space.Axons:
             # TODO convert axons
             #  implement inhibitory connections
@@ -54,6 +56,11 @@ class NeuronSpace():
             parent.children_connections[child.name] = child
             child.parent_connections[parent.name] = parent
             self.Axon_dict[new_axon.name] = new_axon
+
+        if self.Visualization:
+            self.start_vis()
+            self.draw_brain()
+            plt.show()
 
 
 
@@ -176,16 +183,18 @@ class NeuronSpace():
     def draw_brain(self):
         bias_list = []
         weight_list = []
-        for neuron in self.neurons:
+        for neuron in self.Neuron_dict.values():
             bias_list.append(neuron.bias)
             if type(neuron) != Neuron.Input_Neuron:
                 for p_axon in neuron.parent_connections.values():
                     weight_list.append(p_axon.get_weight())
 
-        cmap = plt.get_cmap('YlOrRd')  # 'cool')
+        cmap = plt.get_cmap('cool')
         norm_bias = plt.Normalize(min(bias_list), max(bias_list))
-        norm_weight = plt.Normalize(min(weight_list), max(weight_list))
-
+        try:
+            norm_weight = plt.Normalize(min(weight_list), max(weight_list))
+        except:
+            norm_weight = plt.Normalize(0,1)
         # visualize the neurons
         for key in self.neuron_dot_dict:
             value = self.neuron_dot_dict[key]
@@ -211,6 +220,7 @@ class NeuronSpace():
             print(axon.name , " weight: ", axon.weight)
 
     def start_vis(self):
+        # plt.style.use('fivethirtyeight')
         plt.ion()
         self.neuron_dot_dict = {}  # name: (neuron, punkt auf plot)
         self.axon_line_dict = {}  # name: (axon, linie auf plot)
@@ -219,19 +229,19 @@ class NeuronSpace():
         self.ax.set_xlim(-(size / 2), size / 2)
         self.ax.set_ylim(-(size / 2), size / 2)
         self.ax.set_zlim(-(size / 2), size / 2)
-        for i in self.input_set:  # plot perceptive neurons
+        for i in self.input_neuron_dict.values():  # plot perceptive neurons
             self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
                                                              s=10)), i]
         #    for c in i.connections:
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
 
-        for i in self.hidden_set:  # plot processing neurons
+        for i in self.hidden_neuron_dict.values():  # plot processing neurons
             self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
                                                              s=10)), i]
         #    for c in i.connections:
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
 
-        for i in self.output_set:  # plot interaction neurons
+        for i in self.output_neuron_dict.values():  # plot interaction neurons
             self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
                                                              s=10)), i]
         #    for c in i.connections:

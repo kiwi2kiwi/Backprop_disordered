@@ -53,6 +53,9 @@ class Cell_space():
         for cell in self.Cells.values():
             cell.develop()
 
+    def input_to_output_debug(self):
+        # TODO create a connection from first input to first output
+
     def ordered_input_neurons(self, height, width):
         global size
         V = []
@@ -86,21 +89,21 @@ class Cell_space():
         for key in new_cell.morphogens:
             new_cell.morphogens[key][1] = new_cell.morphogens[key][0].deteriorate(new_cell.morphogens[key][1], new_cell)
 
-        new_cell.Coordinate.x = new_cell.Coordinate.x + randrange(10) * 0.01 - 0.05
-        new_cell.Coordinate.y = new_cell.Coordinate.y + randrange(10) * 0.01 - 0.05
-        new_cell.Coordinate.z = new_cell.Coordinate.z + randrange(10) * 0.01 - 0.05
+        new_cell.coordinate.x = new_cell.coordinate.x + randrange(10) * 0.01 - 0.05
+        new_cell.coordinate.y = new_cell.coordinate.y + randrange(10) * 0.01 - 0.05
+        new_cell.coordinate.z = new_cell.coordinate.z + randrange(10) * 0.01 - 0.05
         for c2 in self.Cells:
-            distance = Coordinates.distance_finder(new_cell.Coordinate, c2.Coordinate)
+            distance = Coordinates.distance_finder(new_cell.coordinate, c2.coordinate)
             if distance < 0.5:
-                vector = [new_cell.Coordinate.x - c2.Coordinate.x, new_cell.Coordinate.y - c2.Coordinate.y, new_cell.Coordinate.z - c2.Coordinate.z]
+                vector = [new_cell.coordinate.x - c2.coordinate.x, new_cell.coordinate.y - c2.coordinate.y, new_cell.coordinate.z - c2.coordinate.z]
                 norm = math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2)
                 direction = [vector[0] / (norm * 2), vector[1] / (norm * 2), vector[2] / (norm * 2)]
-                new_cell.Coordinate.x = new_cell.Coordinate.x - direction[0]
-                new_cell.Coordinate.y = new_cell.Coordinate.y - direction[1]
-                new_cell.Coordinate.z = new_cell.Coordinate.z - direction[2]
-                c2.Coordinate.x = c2.Coordinate.x + direction[0]
-                c2.Coordinate.y = c2.Coordinate.y + direction[1]
-                c2.Coordinate.z = c2.Coordinate.z + direction[2]
+                new_cell.coordinate.x = new_cell.coordinate.x - direction[0]
+                new_cell.coordinate.y = new_cell.coordinate.y - direction[1]
+                new_cell.coordinate.z = new_cell.coordinate.z - direction[2]
+                c2.coordinate.x = c2.coordinate.x + direction[0]
+                c2.coordinate.y = c2.coordinate.y + direction[1]
+                c2.coordinate.z = c2.coordinate.z + direction[2]
         # self.new_cells.append(new_cell)
         self.Cells.append(new_cell)
         return new_cell
@@ -116,19 +119,19 @@ class Cell_space():
         self.ax.set_ylim(-(self.size / 2), self.size / 2)
         self.ax.set_zlim(-(self.size / 2), self.size / 2)
         for c in self.Cells.values():
-            self.cells_in_plot[c.name] = [(self.ax.scatter(c.Coordinate.x, c.Coordinate.y, c.Coordinate.z, c="grey",
-                                                             s=10)), c]
+            self.cells_in_plot[c.name] = [(self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
+                                                           s=10)), c]
 
     def draw_image(self):
         for c in self.cells_in_plot.keys():
             self.cells_in_plot[c][0].axes.cla()
         for c in self.Cells.values():  # create cells
             if c.name not in self.cells_in_plot.keys():
-                self.cells_in_plot[c.name] = [(self.ax.scatter(c.Coordinate.x, c.Coordinate.y, c.Coordinate.z, c="grey",
-                                                             s=30)), c]
+                self.cells_in_plot[c.name] = [(self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
+                                                               s=30)), c]
             else:
-                self.cells_in_plot[c.name][0] = self.ax.scatter(c.Coordinate.x, c.Coordinate.y, c.Coordinate.z, c="grey",
-                                                             s=30)
+                self.cells_in_plot[c.name][0] = self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
+                                                                s=30)
 
         self.ax.set_xlim(-(self.size / 2), self.size / 2)
         self.ax.set_ylim(-(self.size / 2), self.size / 2)

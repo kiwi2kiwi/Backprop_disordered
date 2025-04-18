@@ -5,9 +5,9 @@ read the output size and create the last few cells - done
 
 create a format that the neural network can read and convert into an architecture
 - neurons import - done
-- axons import
-- add axons to neurons
-- connect neurons
+- axons import - done
+- add axons to neurons - done
+- connect neurons - done
 
 project schedule
 network cancer

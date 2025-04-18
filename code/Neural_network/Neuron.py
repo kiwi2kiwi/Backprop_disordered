@@ -21,7 +21,7 @@ class Neuron():
         self.coordinate = coordinate
         if name == "not_set":
             self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
-        self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
+        # self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
 #        print("Hey, im a neuron!")
 
@@ -201,8 +201,8 @@ class Neuron():
             summation += parent_connection.get_weight()
         return self.deri_activation_function(summation)
 
-    def __hash__(self):
-        return self.hash_val
+    # def __hash__(self):
+    #     return self.hash_val
 
     def color_me(self,color="black"):
         neuron_dict_entry = self.base_space.neuron_dot_dict[self.name]
@@ -225,7 +225,7 @@ class Input_Neuron():
         self.coordinate = coordinate
         if name == "not_set":
             self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
-        self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
+        # self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
 
     def reset_neuron(self):
@@ -261,8 +261,8 @@ class Input_Neuron():
     def deri_activation(self):
         return self.output
 
-    def __hash__(self):
-        return self.hash_val
+    # def __hash__(self):
+    #     return self.hash_val
 
     def change_weight(self):
         pass
