@@ -9,6 +9,13 @@ create a format that the neural network can read and convert into an architectur
 - add axons to neurons - done
 - connect neurons - done
 
+Demo axon creation from first input to first output cell
+- Currently the connect rule connects every cell that receives enough of morphogen a to every cell that expresses morphogen a
+- make it that there is a condition morphogen and a target morphogen  - DONE
+- make the demo axon - done
+
+
+
 project schedule
 network cancer
 allowing different architectures to grow like rnns

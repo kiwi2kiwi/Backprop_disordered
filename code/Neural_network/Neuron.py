@@ -1,6 +1,6 @@
 import numpy as np
 import random
-import Axon
+import Neural_network.Axon
 import time
 
 

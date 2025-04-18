@@ -2,12 +2,13 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from random import randrange
-import Coordinates
-from Cell_v2 import Cell
-import Rules
+from Morphogen_simulation_v2 import *
+import Morphogen_simulation_v2.Coordinates
+from Morphogen_simulation_v2.Cell_v2 import Cell
+import Morphogen_simulation_v2.Rules
 import math
 import numpy as np
-import Morphogens_v2
+import Morphogen_simulation_v2.Morphogens_v2
 import copy
 import pickle
 
@@ -41,12 +42,9 @@ class Cell_space():
             self.Cells[new_output_cell.name] = new_output_cell
 
         for i in np.arange(5):
-            Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)
-            Rules.Rule(self)
+            Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)
+            Morphogen_simulation_v2.Rules.Rule(self)
 
-
-        self.start_vis()
-        self.draw_image()
 
     def neurogenesis(self):
         print("neurogenesis")
@@ -55,6 +53,19 @@ class Cell_space():
 
     def input_to_output_debug(self):
         # TODO create a connection from first input to first output
+        # get morpho address from first input
+        in_morpho = self.input_cells[0].address
+        # get morpho address from first output
+        out_morpho = self.output_cells[0].address
+
+
+        demo_rule = Morphogen_simulation_v2.Rules.Rule(self)
+        demo_rule.threshold = 0
+        demo_rule.morphogen = in_morpho
+        demo_rule.target_morphogen = out_morpho
+        demo_rule.rule_type = 4
+
+
 
     def ordered_input_neurons(self, height, width):
         global size
@@ -66,7 +77,7 @@ class Cell_space():
         Z = np.arange(-(size / 2) + 10, (size / 2) - 10, z_distance)
         for y in Y:
             for z in Z:
-                V.append(Coordinates.Coordinate(-(size/2), y, z))
+                V.append(Morphogen_simulation_v2.Coordinates.Coordinate(-(size/2), y, z))
         return V
 
     def ordered_output_neurons(self, height, width):
@@ -79,7 +90,7 @@ class Cell_space():
         Z = np.arange(-(size/2)+10,((size/2)-10),z_distance)
         for y in Y:
             for z in Z:
-                V.append(Coordinates.Coordinate(size/2, y, z))
+                V.append(Morphogen_simulation_v2.Coordinates.Coordinate(size/2, y, z))
         return V
 
 
@@ -111,6 +122,7 @@ class Cell_space():
 
     def start_vis(self):
         self.cells_in_plot = {}
+        self.axon_line_dict = {}  # name: (axon, linie auf plot)
         plt.ion()
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111, projection='3d')
@@ -122,6 +134,12 @@ class Cell_space():
             self.cells_in_plot[c.name] = [(self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
                                                            s=10)), c]
 
+        for a in self.Axons.values():
+            self.axon_line_dict[a.name] = [(self.ax.plot3D([a.parent.coordinate.x, a.child.coordinate.x],
+                                                           [a.parent.coordinate.y, a.child.coordinate.y],
+                                                           [a.parent.coordinate.z, a.child.coordinate.z], linewidth=1,
+                                                           c='grey')), a]
+
     def draw_image(self):
         for c in self.cells_in_plot.keys():
             self.cells_in_plot[c][0].axes.cla()
@@ -130,8 +148,20 @@ class Cell_space():
                 self.cells_in_plot[c.name] = [(self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
                                                                s=30)), c]
             else:
-                self.cells_in_plot[c.name][0] = self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
+                self.cells_in_plot[c.name][0] = self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z,
+                                                                c="grey",
                                                                 s=30)
+        for a in self.Axons.values():  # create cells
+            if a.name not in self.axon_line_dict.keys():
+                self.axon_line_dict[a.name] = [(self.ax.plot3D([a.parent.coordinate.x, a.child.coordinate.x],
+                                                           [a.parent.coordinate.y, a.child.coordinate.y],
+                                                           [a.parent.coordinate.z, a.child.coordinate.z], linewidth=1,
+                                                           c='grey')), a]
+            else:
+                self.cells_in_plot[a.name][0] = self.ax.plot3D([a.parent.coordinate.x, a.child.coordinate.x],
+                                                           [a.parent.coordinate.y, a.child.coordinate.y],
+                                                           [a.parent.coordinate.z, a.child.coordinate.z], linewidth=1,
+                                                           c='grey')
 
         self.ax.set_xlim(-(self.size / 2), self.size / 2)
         self.ax.set_ylim(-(self.size / 2), self.size / 2)

@@ -1,6 +1,6 @@
 import random
 import numpy as np
-import Coordinates
+import Neural_network.Coordinates
 
 class Axon():
     # simulates the axon and its synapse

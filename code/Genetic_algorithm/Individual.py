@@ -4,11 +4,11 @@
 
 import sys
 import os
-
-sys.path.append(os.path.abspath('../Morphogen_simulation_v2'))
-import Cell_space
-sys.path.append(os.path.abspath('../Neural_network'))
-import Neuron_space
+# /Morphogen_simulation_v2
+sys.path.append(os.path.abspath('..'))
+import Morphogen_simulation_v2.Cell_space
+# sys.path.append(os.path.abspath('../Neural_network'))
+import Neural_network.Neuron_space
 
 # from Morphogen_simulation_v2 import Cell_space
 
@@ -17,13 +17,18 @@ class Individual:
     def __init__(self):
         super(Individual, self).__init__()
         print("creation of input and output cells")
-        c = Cell_space.Cell_space()
+        c = Morphogen_simulation_v2.Cell_space.Cell_space()
         print("debug 1 manually written rule. Connect from the first input to the first output neuron")
+        c.input_to_output_debug()
         print("neurogenesis")
         c.neurogenesis()
+        c.start_vis()
+        c.draw_image()
         print("Creating neural network backbone and importing structure")
-        n = Neuron_space.NeuronSpace()
+        n = Neural_network.Neuron_space.NeuronSpace()
         n.import_network(c)
+        n.start_vis()
+        n.draw_brain()
         print("done")
 
 

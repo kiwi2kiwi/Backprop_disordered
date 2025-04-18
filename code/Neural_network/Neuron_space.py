@@ -1,8 +1,8 @@
-import Coordinates
-import Axon
+import Neural_network.Coordinates
+import Neural_network.Axon
 import matplotlib.pyplot as plt
 
-import Neuron
+import Neural_network.Neuron
 import random
 import numpy as np
 np.random.seed(1)
@@ -27,16 +27,16 @@ class NeuronSpace():
 
 
         for i in cell_space.input_cells:
-            new_neuron = Neuron.Input_Neuron(i.coordinate, self, name = i.name)
+            new_neuron = Neural_network.Neuron.Input_Neuron(i.coordinate, self, name = i.name)
             self.input_neuron_dict[new_neuron.name] = new_neuron
 
         for o in cell_space.output_cells:
-            new_neuron = Neuron.Neuron(o.coordinate, self, output_neuron=True, name = o.name)
+            new_neuron = Neural_network.Neuron.Neuron(o.coordinate, self, output_neuron=True, name = o.name)
             self.output_neuron_dict[new_neuron.name] = new_neuron
 
         for c in cell_space.Cells.values():
             if c.name not in self.input_neuron_dict.keys() and c.name not in self.output_neuron_dict.keys():
-                new_neuron = Neuron.Neuron(c.coordinate, self, name=c.name)
+                new_neuron = Neural_network.Neuron.Neuron(c.coordinate, self, name=c.name)
                 self.hidden_neuron_dict[new_neuron.name] = new_neuron
 
         self.Neuron_dict = {}
@@ -45,22 +45,22 @@ class NeuronSpace():
         self.Neuron_dict.update(self.input_neuron_dict)
 
 
-        for a in cell_space.Axons:
+        for a in cell_space.Axons.values():
             # TODO convert axons
             #  implement inhibitory connections
 
             parent = self.Neuron_dict[a.parent.name]
             child = self.Neuron_dict[a.child.name]
             weight = round(random.uniform(0.2, 0.8), 2)
-            new_axon = Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
-            parent.children_connections[child.name] = child
-            child.parent_connections[parent.name] = parent
+            new_axon = Neural_network.Axon.Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
+            parent.children_connections[child.name] = new_axon
+            child.parent_connections[parent.name] = new_axon
             self.Axon_dict[new_axon.name] = new_axon
 
-        if self.Visualization:
-            self.start_vis()
-            self.draw_brain()
-            plt.show()
+        # if self.Visualization:
+        #     self.start_vis()
+        #     self.draw_brain()
+        #     plt.show()
 
 
 
@@ -185,7 +185,7 @@ class NeuronSpace():
         weight_list = []
         for neuron in self.Neuron_dict.values():
             bias_list.append(neuron.bias)
-            if type(neuron) != Neuron.Input_Neuron:
+            if type(neuron) != Neural_network.Neuron.Input_Neuron:
                 for p_axon in neuron.parent_connections.values():
                     weight_list.append(p_axon.get_weight())
 

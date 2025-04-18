@@ -1,6 +1,6 @@
-import Coordinates
+import Morphogen_simulation_v2.Coordinates
 import copy
-import Morphogens_v2
+import Morphogen_simulation_v2.Morphogens_v2
 
 class Cell():
     def __init__(self, Cell_space, Coordinate, output = False, input = False):
@@ -9,7 +9,8 @@ class Cell():
         self.children = {}
         self.parents = {}
         self.Axons = {}
-        self.address = Morphogens_v2.Morphogens_v2(1, self.Cell_space, cell_unique=True) # the adress is a unique morphogen that each cell always expresses
+        self.address = Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self.Cell_space, cell_unique=True) # the adress is a unique morphogen that each cell always expresses
+        self.address.cells.append(self) # add cell ----------------TODO  to morphogen
         self.name = Cell_space.Cell_counter
         Cell_space.Cell_counter += 1
         self.morphogens = {}
@@ -29,10 +30,10 @@ class Cell():
         # for cell in cell_space.Morphogens[morphogen.name].cells:
         concentration = 0
         for cell in morphogen.cells:
-            if cell.name != self.name:
-                distance = Coordinates.distance_finder(self.coordinate, cell.coordinate)
-                calculated = morphogen.amount/distance # morphogen with distance falloff
-                concentration += calculated
+            # if cell.name != self.name:
+            distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
+            calculated = morphogen.amount/distance # morphogen with distance falloff
+            concentration += calculated
         return concentration
 
     def develop(self):

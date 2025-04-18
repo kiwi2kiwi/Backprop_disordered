@@ -1,4 +1,4 @@
-import Cell_v2
+import Morphogen_simulation_v2.Cell_v2
 
 class Axon():
     def __init__(self, parent, child, excite_inhibit, cell_space):
