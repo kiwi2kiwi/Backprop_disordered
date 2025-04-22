@@ -1,4 +1,4 @@
-from Neuron import *
+from Neural_network.Neuron import *
 import numpy as np
 import sklearn.metrics
 
@@ -23,7 +23,7 @@ class Backpropagation:
 
     def compute_error(self, target):
         errors = []
-        for idx, n in enumerate(self.base_space.output_set):
+        for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
             pred = n.activation()
             if not self.base_space.fast:
                 print("error: ", round(self.error_function(pred, target[idx]),4), " pred: ", pred, " targ: ", target[idx])
@@ -32,10 +32,10 @@ class Backpropagation:
 
     def predict(self, slice_of_data):
         self.reset_neurons()
-        for idx, input_neuron in enumerate(self.base_space.input_set):
+        for idx, input_neuron in enumerate(self.base_space.input_neuron_dict.values()):
             input_neuron.set_input(slice_of_data[idx])
         prediction = []
-        for o in self.base_space.output_set:
+        for o in self.base_space.output_neuron_dict.values():
             prediction.append(o.activation())
 
         return prediction
@@ -43,7 +43,7 @@ class Backpropagation:
 
     def backprop(self, target, learning_rate):
 
-        for idx, n in enumerate(self.base_space.output_set):
+        for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
             # print("Backprop from output neuron: ", n.name)
 
 #            unique, counts = np.unique(target, return_counts=True)
@@ -127,11 +127,11 @@ class Backpropagation:
             return np.mean(f1s)
 
     def reset_neurons(self):
-        for n in self.base_space.neurons:
+        for n in self.base_space.Neuron_dict.values():
             n.reset_neuron()
 
     def reset_neuron_gradients(self):
-        for n in self.base_space.neurons:
+        for n in self.base_space.Neuron_dict.values():
             n.reset_neuron_gradient_calculations()
 
     def iris_evaluation(self, x, y, metric = "acc"):

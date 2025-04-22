@@ -14,6 +14,22 @@ Demo axon creation from first input to first output cell
 - make it that there is a condition morphogen and a target morphogen  - DONE
 - make the demo axon - done
 
+Run NN on architecture
+
+
+Morphogen Rule conditionals like transcription factor binding sites
+
+
+TODO
+test the morphogens - done
+why do cells connect to first out? - done
+output neurons should not execute morphogenesis rules - done
+move the dataset initialization and loading to the population class
+
+refine them biologically ----------
+what they do
+
+
 
 
 project schedule

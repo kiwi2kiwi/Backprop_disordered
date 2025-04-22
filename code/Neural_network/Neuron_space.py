@@ -10,12 +10,12 @@ random.seed(1)
 
 size = 100
 class NeuronSpace():
-    def __init__(self, Visualization = True, fast = False):
+    def __init__(self, Visualization = True, fast = True):
         super(NeuronSpace, self).__init__()
         self.fast = fast
         self.Visualization = Visualization
-        if self.fast:
-            self.Visualization = False
+        # if self.fast:
+        #     self.Visualization = False
 
 
     def import_network(self, cell_space):
@@ -43,7 +43,6 @@ class NeuronSpace():
         self.Neuron_dict.update(self.hidden_neuron_dict)
         self.Neuron_dict.update(self.output_neuron_dict)
         self.Neuron_dict.update(self.input_neuron_dict)
-
 
         for a in cell_space.Axons.values():
             # TODO convert axons

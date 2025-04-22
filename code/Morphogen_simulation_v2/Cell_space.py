@@ -49,7 +49,8 @@ class Cell_space():
     def neurogenesis(self):
         print("neurogenesis")
         for cell in self.Cells.values():
-            cell.develop()
+            if not cell.output:
+                cell.develop()
 
     def input_to_output_debug(self):
         # TODO create a connection from first input to first output
@@ -60,7 +61,7 @@ class Cell_space():
 
 
         demo_rule = Morphogen_simulation_v2.Rules.Rule(self)
-        demo_rule.threshold = 0
+        demo_rule.threshold = 0.5
         demo_rule.morphogen = in_morpho
         demo_rule.target_morphogen = out_morpho
         demo_rule.rule_type = 4
@@ -92,7 +93,6 @@ class Cell_space():
             for z in Z:
                 V.append(Morphogen_simulation_v2.Coordinates.Coordinate(size/2, y, z))
         return V
-
 
     def spawn_cell(self, old_Coordinate, replicate_vector, morphogens):
         self.cell_count += 1

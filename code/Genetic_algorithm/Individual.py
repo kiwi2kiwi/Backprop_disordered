@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath('..'))
 import Morphogen_simulation_v2.Cell_space
 # sys.path.append(os.path.abspath('../Neural_network'))
 import Neural_network.Neuron_space
+import Neural_network.nn_execution as nn_exe
 
 # from Morphogen_simulation_v2 import Cell_space
 
@@ -29,7 +30,9 @@ class Individual:
         n.import_network(c)
         n.start_vis()
         n.draw_brain()
-        print("done")
+        print("Training the network")
+        nn_exe.running_the_network(n)
+        print("trained the network")
 
 
 Individual()
