@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import Neural_network.Neuron
 import random
 import numpy as np
-np.random.seed(1)
-random.seed(1)
+np.random.seed(2)
+random.seed(2)
 
 size = 100
 class NeuronSpace():

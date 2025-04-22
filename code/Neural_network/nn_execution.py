@@ -50,7 +50,7 @@ def running_the_network(n):
 
 
 
-    epochs = 10
+    epochs = 50
     train_acc = []
     train_rec = []
     train_pre = []
@@ -70,7 +70,7 @@ def running_the_network(n):
         validation_acc.append(bp.iris_evaluation(X_val, y_val))
 
         #n.print_states()
-        loss = bp.train(X_train, y_train, learning_rate = 0.5)
+        loss = bp.train(X_train, y_train, learning_rate = 1)
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if losses.size else loss
         # train_acc.append(bp.iris_evaluation(X_train, y_train))

@@ -53,18 +53,26 @@ class Cell_space():
                 cell.develop()
 
     def input_to_output_debug(self):
-        # TODO create a connection from first input to first output
-        # get morpho address from first input
-        in_morpho = self.input_cells[0].address
-        # get morpho address from first output
-        out_morpho = self.output_cells[0].address
+        # TODO create a connection from input to output
+        demo_rule_1 = Morphogen_simulation_v2.Rules.Rule(self)
+        demo_rule_1.threshold = 0
+        demo_rule_1.morphogen = self.input_cells[0].address
+        demo_rule_1.target_morphogen = self.output_cells[0].address
+        demo_rule_1.rule_type = 4
+
+        demo_rule_2 = Morphogen_simulation_v2.Rules.Rule(self)
+        demo_rule_2.threshold = 0
+        demo_rule_2.morphogen = self.input_cells[0].address
+        demo_rule_2.target_morphogen = self.output_cells[1].address
+        demo_rule_2.rule_type = 4
+
+        demo_rule_3 = Morphogen_simulation_v2.Rules.Rule(self)
+        demo_rule_3.threshold = 0
+        demo_rule_3.morphogen = self.input_cells[0].address
+        demo_rule_3.target_morphogen = self.output_cells[2].address
+        demo_rule_3.rule_type = 4
 
 
-        demo_rule = Morphogen_simulation_v2.Rules.Rule(self)
-        demo_rule.threshold = 0.5
-        demo_rule.morphogen = in_morpho
-        demo_rule.target_morphogen = out_morpho
-        demo_rule.rule_type = 4
 
 
 
@@ -158,7 +166,7 @@ class Cell_space():
                                                            [a.parent.coordinate.z, a.child.coordinate.z], linewidth=1,
                                                            c='grey')), a]
             else:
-                self.cells_in_plot[a.name][0] = self.ax.plot3D([a.parent.coordinate.x, a.child.coordinate.x],
+                self.axon_line_dict[a.name][0] = self.ax.plot3D([a.parent.coordinate.x, a.child.coordinate.x],
                                                            [a.parent.coordinate.y, a.child.coordinate.y],
                                                            [a.parent.coordinate.z, a.child.coordinate.z], linewidth=1,
                                                            c='grey')

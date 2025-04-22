@@ -14,20 +14,30 @@ Demo axon creation from first input to first output cell
 - make it that there is a condition morphogen and a target morphogen  - DONE
 - make the demo axon - done
 
-Run NN on architecture
+Run NN on architecture - done
 
 
-Morphogen Rule conditionals like transcription factor binding sites
 
 
 TODO
 test the morphogens - done
 why do cells connect to first out? - done
 output neurons should not execute morphogenesis rules - done
+
+- create custom rule for debugging that fully connects input and output for the iris dataset task - done
+- maby there's a bug in my evaluation or error feedback function
+- create population
+- mutate the individuals
+- individuals return performance as fitness score
+- import and export morphogen rules to a file
+-
+
+
 move the dataset initialization and loading to the population class
 
-refine them biologically ----------
-what they do
+Morphogen Rule conditionals like transcription factor binding sites
+    refine them biologically ----------
+    what they do
 
 
 

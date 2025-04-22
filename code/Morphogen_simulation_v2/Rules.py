@@ -142,7 +142,7 @@ class Rule():
     def connect(self, executing_cell):
         for child in self.target_morphogen.cells: # TODO morphogens associated with each cell are not updated properly yet
             if executing_cell.name != child.name:
-                print("Rule 4 activated, connect cell ", executing_cell.name, " to cell ", child.name)
+                print("Rule type 4 activated, connect cell ", executing_cell.name, " to cell ", child.name, " Rule name:", self.name)
                 Axon.Axon(executing_cell, child, self.inhibit_excite_type, self.cell_space)
 
 

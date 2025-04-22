@@ -87,7 +87,7 @@ class Backpropagation:
                 loss_array = self.compute_error(y[idx])
             else:
                 loss_array = np.vstack([loss_array, self.compute_error(y[idx])])
-            if self.base_space.Visualization:
+            if not self.base_space.fast:
                 self.base_space.draw_brain()
             self.reset_neurons()
 

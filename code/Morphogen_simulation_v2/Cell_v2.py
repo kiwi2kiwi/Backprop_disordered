@@ -15,6 +15,8 @@ class Cell():
         Cell_space.Cell_counter += 1
         self.morphogens = {}
         self.morphogen_counter = 0
+        self.output = output
+        self.input = input
         # self.replicate_vector = Coordinates.Coordinate(0, 0, -1)
 
     def new_morphogens(self, new_morphogen):
