@@ -1,0 +1,5 @@
+A place to save the morphogen rules that govern morphogenesis.
+The morphogen rules are the only thing needed to build the network.
+Each file should contain all Rule sets used in a population of a generation
+- maby the rules should have their fitness score, training dataset and Rule file (for reproducibility in case the rule class gets changed)
+
