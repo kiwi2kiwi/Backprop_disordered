@@ -39,10 +39,10 @@ def running_the_network(n):
     X_val = X[100:]
     y_train = np.array(y[:100])
     y_val = np.array(y[100:])
-    X_train = X[:1]
-    X_val = X[1:]
-    y_train = np.array(y[:1])
-    y_val = np.array(y[1:])
+    # X_train = X[:10]
+    # X_val = X[10:]
+    # y_train = np.array(y[:10])
+    # y_val = np.array(y[10:])
 
 
 
@@ -54,7 +54,7 @@ def running_the_network(n):
 
 
 
-    epochs = 50
+    epochs = 20
     train_acc = []
     train_rec = []
     train_pre = []
@@ -69,8 +69,8 @@ def running_the_network(n):
     for idx,i in enumerate(np.arange(0,epochs)):
         #n.print_states()
 
-        for axon in n.Axon_dict.values():
-            print(axon.name, " ", axon.get_weight(), " ", axon.parent.name, axon.child.name)
+        # for axon in n.Axon_dict.values():
+        #     print(axon.name, " ", axon.get_weight(), " ", axon.parent.name, axon.child.name)
 
         validation_loss = bp.get_loss(X_val, y_val)
         epoch_validation_losses.append(np.average(validation_loss))

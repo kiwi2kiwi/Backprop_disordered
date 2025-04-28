@@ -14,6 +14,7 @@ class NeuronSpace():
         super(NeuronSpace, self).__init__()
         self.fast = fast
         self.Visualization = Visualization
+        self.verbal = False
         # if self.fast:
         #     self.Visualization = False
 

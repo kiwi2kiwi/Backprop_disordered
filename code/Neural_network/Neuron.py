@@ -98,6 +98,9 @@ class Neuron():
         return self.parent_connections[parent + self].get_weight()
 
     def gradient_descent(self, learning_rate, depth_counter):
+        if self.base_space.verbal:
+            print("Start gradient descent to neuron", self.name)
+
         self.started = True
         # if self.name == "o21":
         #     print("stop")
@@ -146,7 +149,8 @@ class Neuron():
 
             # Appending the gradient
             if gradient != 0:
-                print("Gradient descent to neuron", self.name, " gradient: ", gradient)
+                if self.base_space.verbal:
+                    print("Gradient descent to neuron", self.name, " gradient: ", gradient)
                 self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
             #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
             if not parent_connection.parent.started:
