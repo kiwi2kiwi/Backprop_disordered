@@ -39,6 +39,10 @@ def running_the_network(n):
     X_val = X[100:]
     y_train = np.array(y[:100])
     y_val = np.array(y[100:])
+    X_train = X[:1]
+    X_val = X[1:]
+    y_train = np.array(y[:1])
+    y_val = np.array(y[1:])
 
 
 
@@ -64,6 +68,10 @@ def running_the_network(n):
 
     for idx,i in enumerate(np.arange(0,epochs)):
         #n.print_states()
+
+        for axon in n.Axon_dict.values():
+            print(axon.name, " ", axon.get_weight(), " ", axon.parent.name, axon.child.name)
+
         validation_loss = bp.get_loss(X_val, y_val)
         epoch_validation_losses.append(np.average(validation_loss))
         validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
@@ -72,7 +80,7 @@ def running_the_network(n):
         #n.print_states()
         loss = bp.train(X_train, y_train, learning_rate = 1)
         epoch_losses.append(np.average(loss))
-        losses = np.vstack([losses, loss]) if losses.size else loss
+        losses = np.vstack([losses, loss]) if len(losses) else loss
         # train_acc.append(bp.iris_evaluation(X_train, y_train))
         train_acc.append(bp.iris_evaluation(X_train, y_train, "accuracy"))
         train_rec.append(bp.iris_evaluation(X_train, y_train, "recall"))

@@ -143,8 +143,10 @@ class Neuron():
             # TODO reset_neuron_all and reset_gradient_calculations
             gradient = self.delta_error_through_delta_neuron_net * delta_net_through_delta_w
 
+
             # Appending the gradient
             if gradient != 0:
+                print("Gradient descent to neuron", self.name, " gradient: ", gradient)
                 self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
             #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
             if not parent_connection.parent.started:

@@ -46,20 +46,22 @@ class Backpropagation:
         for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
             # print("Backprop from output neuron: ", n.name)
 
-#            unique, counts = np.unique(target, return_counts=True)
-#            target_dict = dict(zip(unique, counts))
-#            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
-#            class_balancer = 1 / (1 + np.exp(-class_balancer))
+            #            unique, counts = np.unique(target, return_counts=True)
+            #            target_dict = dict(zip(unique, counts))
+            #            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
+            #            class_balancer = 1 / (1 + np.exp(-class_balancer))
 
             n_out = n.activation()
             y_true = target[idx]
             error_through_net_out = self.deriv_error_function(n_out, y_true)
             n.error_for_output_neuron = error_through_net_out
+
+
         n.gradient_descent(learning_rate, depth_counter=1)# * class_balancer)
         self.reset_neuron_gradients()
 
         #for idx, n in enumerate(self.base_space.output_set):
-            #n.gradient_descent(learning_rate)
+        #n.gradient_descent(learning_rate)
 
 
     def train(self, x, y, learning_rate = 0.1):
