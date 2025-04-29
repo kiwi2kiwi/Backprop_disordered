@@ -1,3 +1,4 @@
+import numpy
 from Neural_network.Neuron import *
 import numpy as np
 import sklearn.metrics
@@ -15,10 +16,10 @@ class Backpropagation:
 
 
     def error_function(self, pre,tar):
-        return ((tar - pre)**2)
+        return ((tar - pre) **2)
 
     def deriv_error_function(self, pre,tar):
-        return (2*(pre - tar))
+        return (2 * (pre - tar))
 
 
     def compute_error(self, target):
@@ -41,7 +42,7 @@ class Backpropagation:
         return prediction
 
 
-    def backprop(self, target, learning_rate):
+    def backprop(self, target, learning_rate, slice_of_data):
 
         for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
             if self.base_space.verbal:
@@ -51,16 +52,19 @@ class Backpropagation:
             #            target_dict = dict(zip(unique, counts))
             #            class_balancer = sum(target_dict.values()) / target_dict[target[idx]]
             #            class_balancer = 1 / (1 + np.exp(-class_balancer))
-
+            self.reset_neurons()
+            self.reset_neuron_gradients()
+            for input_idx, input_neuron in enumerate(self.base_space.input_neuron_dict.values()):
+                input_neuron.set_input(slice_of_data[input_idx])
             n_out = n.activation()
             y_true = target[idx]
             error_through_net_out = self.deriv_error_function(n_out, y_true)
             n.error_for_output_neuron = error_through_net_out
-
-        for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
             n.gradient_descent(learning_rate, depth_counter=1)# * class_balancer)
 
-        self.reset_neuron_gradients()
+
+        # for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
+
 
         #for idx, n in enumerate(self.base_space.output_set):
         #n.gradient_descent(learning_rate)
@@ -71,7 +75,7 @@ class Backpropagation:
         for idx, ds in enumerate(x):
             # print("sample: ",idx)
             self.predict(ds)
-            self.backprop(y[idx], learning_rate)
+            self.backprop(y[idx], learning_rate, ds)
             if loss_array is None:
                 loss_array = self.compute_error(y[idx])
             else:
@@ -141,19 +145,36 @@ class Backpropagation:
     def iris_evaluation(self, x, y, metric = "acc"):
         pred = []
         for ds in x:
-            pred.append([int(round(i*1,0)) for i in self.predict(ds)])
+            try:
+                prediction = self.predict(ds)
+
+                pred_temp = numpy.zeros_like(prediction)
+                pred_temp[numpy.argmax(prediction)] = 1
+                pred.append(pred_temp)
+                # pred.append([int(round(i,0)) for i in self.predict(ds)])
+            except:
+                print("stop")
+                [int(round(i * 1, 0)) for i in self.predict(ds)]
+                [int(round(i * 1, 0)) for i in self.predict(ds)]
+                [int(round(i * 1, 0)) for i in self.predict(ds)]
+                [int(round(i * 1, 0)) for i in self.predict(ds)]
             self.reset_neurons()
 
-        target = y*1
-        if metric == "acc":
-            acc = sklearn.metrics.accuracy_score(target, pred)
-            return acc
-        if metric == "recall":
-            recall = sklearn.metrics.recall_score(target, pred, zero_division=1, average=None)
-            return recall
-        if metric == "precision":
-            precision = sklearn.metrics.precision_score(target, pred, zero_division=1, average=None)
-            return precision
-        if metric == "f1":
-            f1 = sklearn.metrics.f1_score(target, pred, zero_division=1, average=None)
-            return f1
+        target = y
+        # target = np.argmax(target, axis=1)
+        # pred = np.argmax(pred, axis=1)
+        try:
+            if metric == "acc":
+                acc = sklearn.metrics.accuracy_score(target, pred)
+                return acc
+            if metric == "recall":
+                recall = sklearn.metrics.recall_score(target, pred, zero_division=1, average=None)
+                return recall
+            if metric == "precision":
+                precision = sklearn.metrics.precision_score(target, pred, zero_division=1, average=None)
+                return precision
+            if metric == "f1":
+                f1 = sklearn.metrics.f1_score(target, pred, zero_division=1, average=None)
+                return f1
+        except:
+            return 0

@@ -2,6 +2,7 @@ import numpy as np
 import random
 import Neural_network.Axon
 import time
+import math
 
 
 class Neuron():
@@ -86,7 +87,9 @@ class Neuron():
                 # if not self.base_space.fast:
                 #     #                print("from ", self.name, " to ", parent_connection.parent.name)
                 #     print("weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
-                new_weight = parent_connection.get_weight() - gradient
+                new_weight = max(min(10,parent_connection.get_weight() - gradient),-10)
+                if math.isnan(new_weight):
+                    print("pause")
 
                 # print("Axon: ", parent_connection.name, " weight: ", round(parent_connection.get_weight(), 3), " adjust by: ", round(-gradient, 4))
                 parent_connection.weight = new_weight
@@ -150,7 +153,9 @@ class Neuron():
             # Appending the gradient
             if gradient != 0:
                 if self.base_space.verbal:
-                    print("Gradient descent to neuron", self.name, " gradient: ", gradient)
+                    print("Gradient descent to neuron: ", self.name, " gradient: ", gradient)
+                if math.isnan(learning_rate*gradient*depth_counter):
+                    print("pause")
                 self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
             #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
             if not parent_connection.parent.started:
@@ -170,12 +175,16 @@ class Neuron():
 
 
     def activation_function(self, z):
-        return (1. / (1 + np.exp(-z)))
-        return z
+        if math.isnan(z):
+            print("pause")
+        return z # linear
+        return (1. / (1 + np.exp(-z))) # sigmoid
 
     def deri_activation_function(self):
-        return self.activation() * (1 - self.activation())
-        return self.activation()
+        if math.isnan(self.activation()):
+            print("pause")
+        return 1 # linear
+        return self.activation() * (1 - self.activation()) # sigmoid
 
     def activation(self):
         if self.activated:
@@ -251,6 +260,8 @@ class Input_Neuron():
         pass
 
     def set_input(self, input):
+        if math.isnan(input):
+            print("pause")
         self.input = input
 
     def activation_function(self, z):

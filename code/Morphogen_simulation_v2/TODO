@@ -26,6 +26,8 @@ output neurons should not execute morphogenesis rules - done
 
 - create custom rule for debugging that fully connects input and output for the iris dataset task - done
 - maby there's a bug in my evaluation or error feedback function
+- metrics return error because output is messy
+- allow output node bias maby
 - create population
 - mutate the individuals
 - individuals return performance as fitness score

@@ -1,6 +1,7 @@
 import Neural_network.Neuron_space
 import Neural_network.Backprop
 import numpy as np
+import math
 from sklearn import datasets
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
@@ -34,15 +35,15 @@ def running_the_network(n):
     X = np.array(iris.data)
     y = np.array(iris.target)
     y_oh = np.eye(3)[y]
-    X, y = shuffle(X, y_oh, random_state=10)
+    X, y = shuffle(X, y_oh, random_state=42)
     X_train = X[:100]
     X_val = X[100:]
     y_train = np.array(y[:100])
     y_val = np.array(y[100:])
-    # X_train = X[:10]
-    # X_val = X[10:]
-    # y_train = np.array(y[:10])
-    # y_val = np.array(y[10:])
+    # X_train = X[:1]
+    # X_val = X[1:]
+    # y_train = np.array(y[:1])
+    # y_val = np.array(y[1:])
 
 
 
@@ -52,9 +53,12 @@ def running_the_network(n):
     X_train = std_slc.transform(X_train)
     X_val = std_slc.transform(X_val)
 
+    print(X_train)
+    print(y_train)
 
 
-    epochs = 20
+
+    epochs = 50
     train_acc = []
     train_rec = []
     train_pre = []
@@ -78,7 +82,10 @@ def running_the_network(n):
         validation_acc.append(bp.iris_evaluation(X_val, y_val))
 
         #n.print_states()
-        loss = bp.train(X_train, y_train, learning_rate = 1)
+        for i in n.Axon_dict.values():
+            if math.isnan(i.get_weight()):
+                print("pause")
+        loss = bp.train(X_train, y_train, learning_rate = 0.001)
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if len(losses) else loss
         # train_acc.append(bp.iris_evaluation(X_train, y_train))
