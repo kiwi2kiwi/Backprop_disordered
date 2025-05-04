@@ -52,25 +52,7 @@ class Cell_space():
             if not cell.output:
                 cell.develop()
 
-    def input_to_output_debug(self):
-        # TODO create a connection from input to output
-        demo_rule_1 = Morphogen_simulation_v2.Rules.Rule(self)
-        demo_rule_1.threshold = 0
-        demo_rule_1.morphogen = self.input_cells[0].address
-        demo_rule_1.target_morphogen = self.output_cells[0].address
-        demo_rule_1.rule_type = 4
 
-        demo_rule_2 = Morphogen_simulation_v2.Rules.Rule(self)
-        demo_rule_2.threshold = 0
-        demo_rule_2.morphogen = self.input_cells[0].address
-        demo_rule_2.target_morphogen = self.output_cells[1].address
-        demo_rule_2.rule_type = 4
-
-        demo_rule_3 = Morphogen_simulation_v2.Rules.Rule(self)
-        demo_rule_3.threshold = 0
-        demo_rule_3.morphogen = self.input_cells[0].address
-        demo_rule_3.target_morphogen = self.output_cells[2].address
-        demo_rule_3.rule_type = 4
 
 
 
@@ -177,5 +159,3 @@ class Cell_space():
         plt.ion()
         # self.fig.savefig('..//Bilder//temp' + str(self.cell_count) + '.png', dpi=self.fig.dpi)
 
-print("hi")
-# Cell_space()

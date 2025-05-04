@@ -29,36 +29,16 @@ def plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_
     fig.legend()
     fig.show()
 
-def running_the_network(n):
+def running_the_network(individual, n, viz = False):
     bp = Neural_network.Backprop.Backpropagation(n)
-    iris = datasets.load_iris()
-    X = np.array(iris.data)
-    y = np.array(iris.target)
-    y_oh = np.eye(3)[y]
-    X, y = shuffle(X, y_oh, random_state=42)
-    X_train = X[:100]
-    X_val = X[100:]
-    y_train = np.array(y[:100])
-    y_val = np.array(y[100:])
-    # X_train = X[:1]
-    # X_val = X[1:]
-    # y_train = np.array(y[:1])
-    # y_val = np.array(y[1:])
 
+    data_import = individual.get_data()
+    X_train = data_import[0]
+    X_val = data_import[1]
+    y_train = data_import[2]
+    y_val = data_import[3]
 
-
-
-    std_slc = StandardScaler()
-    std_slc.fit(X_train)
-    X_train = std_slc.transform(X_train)
-    X_val = std_slc.transform(X_val)
-
-    print(X_train)
-    print(y_train)
-
-
-
-    epochs = 50
+    epochs = 10
     train_acc = []
     train_rec = []
     train_pre = []
@@ -67,6 +47,7 @@ def running_the_network(n):
     epoch_losses = []
 
     validation_acc = []
+    validation_pre = []
     validation_losses = np.array([])
     epoch_validation_losses = []
 
@@ -79,7 +60,8 @@ def running_the_network(n):
         validation_loss = bp.get_loss(X_val, y_val)
         epoch_validation_losses.append(np.average(validation_loss))
         validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
-        validation_acc.append(bp.iris_evaluation(X_val, y_val))
+        validation_acc.append(bp.iris_evaluation(X_val, y_val, "accuracy"))
+        validation_pre.append(bp.iris_evaluation(X_val, y_val, "precision"))
 
         #n.print_states()
         for i in n.Axon_dict.values():
@@ -97,7 +79,8 @@ def running_the_network(n):
 
         print("epoch: ", (idx+1), "/", epochs)
 
-    plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_acc,epoch_validation_losses)
+    if viz:
+        plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_acc,epoch_validation_losses)
 
     preds = []
     trues = []
@@ -105,50 +88,52 @@ def running_the_network(n):
         preds.append(np.argmax(bp.predict(X_val[i])))
         trues.append(np.argmax(y_val[i]))
 
-    cm = confusion_matrix(trues, preds)
+    if viz:
+        cm = confusion_matrix(trues, preds)
 
-    plt.figure(figsize=(10, 7))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    plt.title('Confusion Matrix')
-    plt.show()
+        plt.figure(figsize=(10, 7))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.title('Confusion Matrix')
+        plt.show()
 
 
 
-    for i in np.arange(0,len(X_train)):
-        print([ '%.2f' % elem for elem in bp.predict(X_train[i])], " ", y_train[i])
+        for i in np.arange(0,len(X_train)):
+            print([ '%.2f' % elem for elem in bp.predict(X_train[i])], " ", y_train[i])
 
-    fig, ax = plt.subplots()
-    fig1, ax1 = plt.subplots()
+        fig, ax = plt.subplots()
+        fig1, ax1 = plt.subplots()
 
-    ax.plot(np.arange(len(epoch_losses)), epoch_losses, label='train losses')
-    ax.plot(np.arange(len(epoch_validation_losses)), epoch_validation_losses, label='validation losses')
-    ax.set_title("Iris dataset losses")
-    ax.set_xlabel("epochs")
-    fig.legend()
-    fig.show()
+        ax.plot(np.arange(len(epoch_losses)), epoch_losses, label='train losses')
+        ax.plot(np.arange(len(epoch_validation_losses)), epoch_validation_losses, label='validation losses')
+        ax.set_title("Iris dataset losses")
+        ax.set_xlabel("epochs")
+        fig.legend()
+        fig.show()
 
-    ax1.plot(np.arange(len(train_acc)), train_acc, label='train accuracy')
-    ax1.plot(np.arange(len(validation_acc)), validation_acc, label='validation accuracy')
-    ax1.set_title("Iris dataset accuracy")
-    ax1.set_xlabel("epochs")
-    fig1.legend()
-    fig1.show()
-    print("stop")
+        ax1.plot(np.arange(len(train_acc)), train_acc, label='train accuracy')
+        ax1.plot(np.arange(len(validation_acc)), validation_acc, label='validation accuracy')
+        ax1.set_title("Iris dataset accuracy")
+        ax1.set_xlabel("epochs")
+        fig1.legend()
+        fig1.show()
+        print("stop")
 
-    #print("accuraccy: ", bp.evaluation(X_val, y_val.T))
+        #print("accuraccy: ", bp.evaluation(X_val, y_val.T))
 
-    # neurons coloured by their bias
-    # axons coloured by their weight
-    n.start_vis()
-    n.draw_brain()
+        # neurons coloured by their bias
+        # axons coloured by their weight
+        n.start_vis()
+        n.draw_brain()
 
-    n.print_states()
-    pred = []
-    for ds in X_train:
-        pred.append(bp.predict(ds))
-    print("pred: ", pred)
-    print("targ: ", y_train)
+        n.print_states()
+        pred = []
+        for ds in X_train:
+            pred.append(bp.predict(ds))
+        print("pred: ", pred)
+        print("targ: ", y_train)
 
     print("Simulation done")
+    return max(np.average(validation_pre, axis=1))
