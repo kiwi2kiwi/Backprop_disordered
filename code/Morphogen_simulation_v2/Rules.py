@@ -122,7 +122,7 @@ class Rule():
         if self.rule_type == 3: # create a new cell
             if morphogen_concentration >= self.threshold: # TODO dont to this via child number but via summed morphogen density of nearby cells
                 if self.child_limit < len(executing_cell.children):
-                    self.create_new_cell()
+                    self.create_new_cell(executing_cell)
         if self.rule_type == 4:   # connect to target cell
             # if there is enough concentration of a morphogen
             if morphogen_concentration >= self.threshold:

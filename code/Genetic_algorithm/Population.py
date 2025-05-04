@@ -35,8 +35,9 @@ class Population:
             # directly mutate the morphogens, not the individual
             print("debug 1 manually written rule. Connect from the first input to the first output neuron")
             individual.input_to_output_debug()
-            for rule in individual.c.Rules.values():
-                rule.mutate()
+            rule_keys = list(individual.c.Rules.keys())
+            for rule in rule_keys:
+                individual.c.Rules[rule].mutate()
             individual.morphogenesis_individual()
             individual.running_the_network()
             generation.append([individual, individual.fitness_score])
