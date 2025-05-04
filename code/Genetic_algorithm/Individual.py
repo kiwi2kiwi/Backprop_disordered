@@ -30,7 +30,7 @@ class Individual:
 
     def running_the_network(self):
         print("Creating neural network backbone and importing structure")
-        self.n = Neural_network.Neuron_space.NeuronSpace(Visualization=viz)
+        self.n = Neural_network.Neuron_space.NeuronSpace(Visualization=self.viz)
         self.n.import_network(self.c)
         if self.viz:
             self.n.start_vis()

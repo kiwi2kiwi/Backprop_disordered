@@ -135,7 +135,7 @@ class Rule():
         # create new cell at parameters
         new_cell_coordinates = Coordinates.change_coords(executing_cell.coordinate, self.new_coordinate_shift)
         new_cell = Cell_v2.Cell(Cell_space = self.cell_space, Coordinate=new_cell_coordinates)
-        self.cell_space.Cells.append(new_cell)
+        self.cell_space.Cells[new_cell.name] = new_cell
 
         # when divided, put the child cell address here and create a rule that connects to the address marker of the child cell
 

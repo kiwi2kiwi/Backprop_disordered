@@ -3,10 +3,12 @@ import sys
 sys.path.append('..')
 import Genetic_algorithm.Individual
 import numpy as np
+import pandas as pd
 
 class Population:
     def __init__(self, environment):
         super(Population, self).__init__()
+        self.population_size = 10
         # TODO
         #  this is a collection of all the learners in a generation
         #  give access to all the learners
@@ -19,17 +21,30 @@ class Population:
         #  7. Individual returns its morphogen rule set
 
         # TODO
-        #  for the first generation use the default debug morphogen set and mutate all of them ----
-        #  receive set of individuals from the last population
-        #  remove bottom 50% of individuals
-        #  repopulate with the top 50%
+        #  for the first generation use the default debug morphogen set and mutate all of them - done
+        #  receive set of individuals from the last population - done
+        #  remove bottom 50% of individuals - done
+        #  repopulate with the top 50% -----
         #  for the clones mutate the morphogen rule set of an individual
         self.environment = environment
-        self.first_generation()
+        generation_population = self.first_generation()
+        generation_population = pd.DataFrame(generation_population, columns=["individual", "fitness"])
+        best_fitness = generation_population.iloc[np.argmax(generation_population.iloc[:, 1]),:]
+        # sorting by fitness
+        generation_population = generation_population.sort_values("fitness", ascending=False)
+        selection_pressured = generation_population.iloc[:int(self.population_size/2),:]
+
+        # repopulation
+        # inheritable: Rules
+        morpho_rule_set = pd.Series(name="morpho_rules")
+        for i in selection_pressured.iloc[:, 0]:
+            morpho_rule_set[morpho_rule_set.shape] = i.c.Rules
+
+        print("stop")
 
     def first_generation(self):
         generation = []
-        for counter in np.arange(0, 50):
+        for counter in np.arange(0, self.population_size):
 
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
             # directly mutate the morphogens, not the individual

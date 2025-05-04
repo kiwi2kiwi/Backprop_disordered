@@ -48,7 +48,9 @@ class Cell_space():
 
     def neurogenesis(self):
         print("neurogenesis")
-        for cell in self.Cells.values():
+        cell_keys = self.Cells.keys()
+        for cell_key in list(cell_keys):
+            cell = self.Cells[cell_key]
             if not cell.output:
                 cell.develop()
 
