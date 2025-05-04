@@ -1,7 +1,7 @@
 class Morphogens_v2():
     def __init__(self, amount, cell_space, cell_unique=False):
-        self.name = cell_space.Morphogen_counter
-        cell_space.Morphogen_counter += 1
+        self.name = len(cell_space.Morphogens.keys())#cell_space.Morphogen_counter
+        # cell_space.Morphogen_counter += 1
         cell_space.Morphogens[self.name] = self
         self.cell_space = cell_space
         self.amount = amount

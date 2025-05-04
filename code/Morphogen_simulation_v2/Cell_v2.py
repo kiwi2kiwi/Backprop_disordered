@@ -11,8 +11,8 @@ class Cell():
         self.Axons = {}
         self.address = Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self.Cell_space, cell_unique=True) # the adress is a unique morphogen that each cell always expresses
         self.address.cells.append(self) # add cell ----------------TODO  to morphogen
-        self.name = Cell_space.Cell_counter
-        Cell_space.Cell_counter += 1
+        self.name = len(Cell_space.Cells.keys()) #Cell_space.Cell_counter
+        # Cell_space.Cell_counter += 1
         self.morphogens = {}
         self.morphogen_counter = 0
         self.output = output

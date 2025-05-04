@@ -32,13 +32,19 @@ class Population:
         best_fitness = generation_population.iloc[np.argmax(generation_population.iloc[:, 1]),:]
         # sorting by fitness
         generation_population = generation_population.sort_values("fitness", ascending=False)
-        selection_pressured = generation_population.iloc[:int(self.population_size/2),:]
+        selection_pressured = generation_population.iloc[:int(self.population_size/3),:]
 
         # repopulation
         # inheritable: Rules
-        morpho_rule_set = pd.Series(name="morpho_rules")
+        morpho_rule_set = []#pd.Series(name="morpho_rules")
         for i in selection_pressured.iloc[:, 0]:
-            morpho_rule_set[morpho_rule_set.shape] = i.c.Rules
+            # morpho_rule_set[morpho_rule_set.shape[0]] = i.c.Rules
+            morpho_rule_set.append(i.c.Rules)
+
+        selection_pressured["Morpho_rules"]=morpho_rule_set
+
+        # take the morpho rules and give them to the new generation
+
 
         print("stop")
 
@@ -58,10 +64,12 @@ class Population:
             generation.append([individual, individual.fitness_score])
         return generation
 
-    def generation(self):
+    # take the morpho rules from the previous generation for the next one
+    def generation(self, morphogens_prev_generation):
         generation = []
-        for counter in np.arange(0, 50):
+        for counter in np.arange(0, self.population_size):
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
+            individual.
             generation.append([individual, individual.fitness_score])
         return generation
 

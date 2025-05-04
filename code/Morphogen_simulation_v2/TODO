@@ -29,8 +29,9 @@ output neurons should not execute morphogenesis rules - done
 - metrics return error because output is messy - done
 - create population - done
 - individuals return performance as fitness score - done
-- mutate the individuals
--
+- mutate the individuals - done
+- add the morpho rules from the previous generation to the next one -------------- working on this
+- Problem: not only the rules are needed to build, but also the morphogens (i think, it should be checked!!!!!!!)
 - allow output node bias maby
 - import and export morphogen rules to a file
 -
