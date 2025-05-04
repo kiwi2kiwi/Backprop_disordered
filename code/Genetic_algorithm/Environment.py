@@ -26,14 +26,13 @@ class Environment:
         #  Repopulate the population with the remaining third
         #  Mutate the morphogens of the new learners
         self.data_loading()
-        population_one = Genetic_algorithm.Population.Population(environment = self)
-        population_one.generation()
+        self.population = Genetic_algorithm.Population.Population(environment = self)
+
         print("generation run")
 
     def run_generation(self):
-        for entity in self.population:
-            # TODO entity.run() returns the learning speed
-            entity.run
+        self.population.generation()
+        self.populatio
         print("generation run")
 
     def evaluation(self, population):

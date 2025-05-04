@@ -25,7 +25,7 @@ class Rule():
         self.target_morphogen = random.choice(self.cell_space.Morphogens)
 
 
-    def mutate(self, mutation_rate):
+    def mutate(self, mutation_rate=1):
         """
                 Mutates one of the mutate-able variables by a small random amount based on mutation_rate.
                 """
@@ -47,9 +47,9 @@ class Rule():
             # Mutate coordinate shift with a small random change
 
             # Generate a random shift vector
-            dx = random.uniform(-mutation_rate, mutation_rate)
-            dy = random.uniform(-mutation_rate, mutation_rate)
-            dz = random.uniform(-mutation_rate, mutation_rate)
+            dx = random.uniform(-5, 5)
+            dy = random.uniform(-5, 5)
+            dz = random.uniform(-5, 5)
 
             # Compute the magnitude of the vector
             magnitude = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
@@ -66,7 +66,7 @@ class Rule():
 
         elif target == "threshold":
             # Mutate threshold but keep it between 0 and 10
-            self.threshold = max(0, min(10, self.threshold + random.uniform(-mutation_rate, mutation_rate)))
+            self.threshold = max(0, min(10, self.threshold + random.uniform(-1, 1)))
 
         elif target == "morphogen":
             # Pick a new morphogen randomly

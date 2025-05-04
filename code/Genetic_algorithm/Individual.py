@@ -14,24 +14,29 @@ import Neural_network.nn_execution as nn_exe
 class Individual:
     def __init__(self, environment):
         super(Individual, self).__init__()
-        viz = False # visualization
+        self.viz = False # visualization
         self.environment = environment
         print("creation of input and output cells")
         self.c = Morphogen_simulation_v2.Cell_space.Cell_space()
+
+
+    def morphogenesis_individual(self):
         self.import_morphogens()
         print("neurogenesis")
         self.morphogenesis()
-        if viz:
+        if self.viz:
             self.c.start_vis()
             self.c.draw_image()
+
+    def running_the_network(self):
         print("Creating neural network backbone and importing structure")
-        self.n = Neural_network.Neuron_space.NeuronSpace(Visualization = viz)
+        self.n = Neural_network.Neuron_space.NeuronSpace(Visualization=viz)
         self.n.import_network(self.c)
-        if viz:
+        if self.viz:
             self.n.start_vis()
             self.n.draw_brain()
         print("Training the network")
-        self.fitness_score = nn_exe.running_the_network(individual = self, n = self.n)
+        self.fitness_score = nn_exe.running_the_network(individual=self, n=self.n)
         print("trained the network")
 
     def input_to_output_debug(self):
@@ -54,11 +59,7 @@ class Individual:
         demo_rule_3.rule_type = 4
 
     def import_morphogens(self, rule_set = None):
-        print("debug 1 manually written rule. Connect from the first input to the first output neuron")
-        self.input_to_output_debug()
         print("import morphogens")
-
-
 
     def morphogenesis(self):
         self.c.neurogenesis()
