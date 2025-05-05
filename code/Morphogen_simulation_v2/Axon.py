@@ -6,10 +6,10 @@ class Axon():
         cell_space.Axon_counter += 1
         cell_space.Axons[self.name] = self
         self.parent = parent
-        self.parent.children[child.name] = child
+        self.parent.children[child.name] = child #cell_space.Cells[child]
         self.parent.Axons[self.name]=self
         self.child = child
-        self.child.parents[parent.name] = parent
+        self.child.parents[parent.name] = parent #cell_space.Cells[parent]
         # self.child.Axons[self.name] = self # children dont get axons to parents
         self.excite_inhibit = excite_inhibit # excitatory or inhibitory cell
 

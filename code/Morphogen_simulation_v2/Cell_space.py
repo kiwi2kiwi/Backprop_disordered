@@ -1,6 +1,8 @@
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+import random
+random.seed(1)
 from random import randrange
 from Morphogen_simulation_v2 import *
 import Morphogen_simulation_v2.Coordinates
@@ -47,7 +49,7 @@ class Cell_space():
 
 
     def neurogenesis(self):
-        print("neurogenesis")
+        # print("neurogenesis")
         cell_keys = self.Cells.keys()
         for cell_key in list(cell_keys):
             cell = self.Cells[cell_key]

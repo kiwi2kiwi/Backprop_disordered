@@ -1,5 +1,6 @@
 import numpy as np
 import random
+random.seed(1)
 import Neural_network.Axon
 import time
 import math

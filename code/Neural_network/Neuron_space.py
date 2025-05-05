@@ -48,15 +48,16 @@ class NeuronSpace():
         for a in cell_space.Axons.values():
             # TODO convert axons
             #  implement inhibitory connections
-
-            parent = self.Neuron_dict[a.parent.name]
+            #  prevent axons to input nodes
             child = self.Neuron_dict[a.child.name]
-            weight = round(random.uniform(0.2, 0.8), 2)
-            weight = 0.5
-            new_axon = Neural_network.Axon.Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
-            parent.children_connections[child.name] = new_axon
-            child.parent_connections[parent.name] = new_axon
-            self.Axon_dict[new_axon.name] = new_axon
+            if type(child) != Neural_network.Neuron.Input_Neuron:
+                parent = self.Neuron_dict[a.parent.name]
+                weight = round(random.uniform(0.2, 0.8), 2)
+                weight = 0.5
+                new_axon = Neural_network.Axon.Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
+                parent.children_connections[child.name] = new_axon
+                child.parent_connections[parent.name] = new_axon
+                self.Axon_dict[new_axon.name] = new_axon
 
         # if self.Visualization:
         #     self.start_vis()

@@ -77,7 +77,7 @@ def running_the_network(individual, n, viz = False):
         train_f1.append(bp.iris_evaluation(X_train, y_train, "f1"))
         #n.print_states()
 
-        print("epoch: ", (idx+1), "/", epochs)
+        # print("epoch: ", (idx+1), "/", epochs)
 
     if viz:
         plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_acc,epoch_validation_losses)
@@ -135,5 +135,5 @@ def running_the_network(individual, n, viz = False):
         print("pred: ", pred)
         print("targ: ", y_train)
 
-    print("Simulation done")
+    # print("Simulation done")
     return max(np.average(validation_pre, axis=1))
