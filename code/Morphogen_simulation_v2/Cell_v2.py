@@ -1,43 +1,49 @@
 import Morphogen_simulation_v2.Coordinates
 import copy
 import Morphogen_simulation_v2.Morphogens_v2
+import numpy as np
 
 class Cell():
-    def __init__(self, Cell_space, Coordinate, output = False, input = False):
-        self.name = Cell_space.Cell_counter # len(Cell_space.Cells.keys())
-        Cell_space.Cell_counter += 1
-        self.cell_space = Cell_space
+    def __init__(self, cell_space, Coordinate, output = False, input = False):
+        self.name = cell_space.Cell_counter # len(Cell_space.Cells.keys())
+        cell_space.Cell_counter += 1
+        self.cell_space = cell_space
+        self.cell_space.Cells[self.name] = self
         self.coordinate = Coordinate
         self.children = {}
         self.parents = {}
         self.Axons = {}
         self.address = Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self.cell_space, cell_unique=True) # the adress is a unique morphogen that each cell always expresses
-        self.address.cells.append(self.name) # add cell ----------------TODO  to morphogen
+        self.address.add_cell(self.name) # TODO do this after the cell is added to the cell_space cells
         self.morphogens = {}
-        self.morphogen_counter = 0
         self.output = output
         self.input = input
         # self.replicate_vector = Coordinates.Coordinate(0, 0, -1)
 
-    def new_morphogens(self, new_morphogen):
-        self.morphogens[new_morphogen] = self.cell_space.Morphogens[new_morphogen]
-        self.morphogen_counter += 1
+    def new_morphogens(self, new_morphogen_name):
+        self.morphogens[new_morphogen_name] = self.cell_space.Morphogens[new_morphogen_name]
 
-    def del_morphogen(self, morphogen): # dont remove morphogens that are unique cell addresses
-        if not self.cell_space.Morphogens[morphogen].cell_unique and morphogen in self.morphogens.keys():
-            self.morphogens.pop(morphogen.name)
+    def del_morphogen(self, morphogen_name): # dont remove morphogens that are unique cell addresses
+        if not self.cell_space.Morphogens[morphogen_name].cell_unique and morphogen_name in self.morphogens.keys():
+            try:
+                self.morphogens[morphogen_name].cells.pop(morphogen_name)
+                self.morphogens.pop(morphogen_name)
+            except:
+                print(morphogen_name in self.morphogens.keys())
+                temp_test = self.morphogens[morphogen_name]
+                print("stop")
 
-    def calc_morphogen(self, morphogen):
+    def calc_morphogen(self, morphogen_name):
         # get distance to all other cells and calculate the morphogen * distance
         # for cell in cell_space.Morphogens[morphogen.name].cells:
         concentration = 0
-        morphogen = self.cell_space.Morphogens[morphogen]
-        for cell_name in morphogen.cells:
+        morphogen = self.cell_space.Morphogens[morphogen_name]
+        for cell_name in morphogen.cells.keys():
             cell = self.cell_space.Cells[cell_name]
-            # if cell.name != self.name:
-            distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
-            calculated = morphogen.amount/distance # morphogen with distance falloff
-            concentration += calculated
+            if cell.name != self.name:
+                distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
+                calculated = morphogen.amount/np.log(distance) # morphogen with distance falloff
+                concentration += calculated
         return concentration
 
     def develop(self):

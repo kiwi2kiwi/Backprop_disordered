@@ -142,7 +142,7 @@ class Backpropagation:
         for n in self.base_space.Neuron_dict.values():
             n.reset_neuron_gradient_calculations()
 
-    def iris_evaluation(self, x, y, metric = "acc"):
+    def iris_evaluation(self, x, y, metric = "accuracy"):
         pred = []
         for ds in x:
             try:
@@ -164,8 +164,8 @@ class Backpropagation:
         # target = np.argmax(target, axis=1)
         # pred = np.argmax(pred, axis=1)
         try:
-            if metric == "acc":
-                acc = sklearn.metrics.accuracy_score(target, pred)
+            if metric == "accuracy":
+                acc = sklearn.metrics.accuracy_score(target, pred, zero_division=1, average=None)
                 return acc
             if metric == "recall":
                 recall = sklearn.metrics.recall_score(target, pred, zero_division=1, average=None)
@@ -177,4 +177,4 @@ class Backpropagation:
                 f1 = sklearn.metrics.f1_score(target, pred, zero_division=1, average=None)
                 return f1
         except:
-            return 0
+            return [0]*target.shape[1]

@@ -30,11 +30,14 @@ output neurons should not execute morphogenesis rules - done
 - create population - done
 - individuals return performance as fitness score - done
 - mutate the individuals - done
-- add the morpho rules from the previous generation to the next one -------------- working on this
-- Problem: not only the rules are needed to build, but also the morphogens (i think, it should be checked!!!!!!!)
-- allow output node bias maby
-- import and export morphogen rules to a file
-- maby test out GA by only evolution, no training
+- add the morpho rules from the previous generation to the next one - done
+- Problem: not only the rules are needed to build, but also the morphogens (i think, it should be checked!!!!!!!) - done, only rules are needed
+- prevent connections to input neurons
+- create the ability for multiple conditions, so that we get activators and repressors
+- do morphogenesis multiple times, so iterative rules can be done multiple times - TODO
+- allow output node bias maby - TODO
+- import and export morphogen rules to a file - TODO
+- maby test out GA by only evolution, no training - TODO
 
 
 move the dataset initialization and loading to the population class

@@ -30,7 +30,7 @@ class Rule():
 
     def mutate(self, mutation_rate=1):
         self.mutation_counter += 1
-        print("mutation counter:",self.mutation_counter)
+        # print("mutation counter:",self.mutation_counter)
         """
                 Mutates one of the mutate-able variables by a small random amount based on mutation_rate.
                 """
@@ -53,9 +53,10 @@ class Rule():
             # Mutate coordinate shift with a small random change
 
             # Generate a random shift vector
-            dx = random.uniform(-5, 5)
-            dy = random.uniform(-5, 5)
-            dz = random.uniform(-5, 5)
+            shift_vector_scale = 40
+            dx = random.uniform(-shift_vector_scale, shift_vector_scale)
+            dy = random.uniform(-shift_vector_scale, shift_vector_scale)
+            dz = random.uniform(-shift_vector_scale, shift_vector_scale)
 
             # Compute the magnitude of the vector
             magnitude = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
@@ -124,6 +125,7 @@ class Rule():
         # TODO LET RULES ACTIVATE EACH OTHER so the morphogen removal rule 2 only happens after a condition is met
 
         morphogen_concentration = executing_cell.calc_morphogen(self.logic_morphogen)
+        # TODO change rule 1 to only create a new morphogen. the adding of the morphogen to the cell is done by rule 5
         if self.rule_type == 1: # create a new morphogen and add it to the cell expression
             if morphogen_concentration >= self.threshold:
                 # TODO this should be done by the mutation, not with a rule
@@ -143,13 +145,13 @@ class Rule():
         if self.rule_type == 5: # add an existing morphogen to the cell expression
             if morphogen_concentration >= self.threshold:
                 executing_cell.new_morphogens(self.target_morphogen)
-                self.cell_space.Morphogens[self.target_morphogen].cells.append(self.target_morphogen)
+                self.cell_space.Morphogens[self.target_morphogen].add_cell(cell_name = executing_cell.name)
 
     def create_new_cell(self, executing_cell):
         # create new cell at parameters
         new_cell_coordinates = Coordinates.change_coords(executing_cell.coordinate, self.new_coordinate_shift)
-        new_cell = Cell_v2.Cell(Cell_space = self.cell_space, Coordinate=new_cell_coordinates)
-        self.cell_space.Cells[new_cell.name] = new_cell
+        Cell_v2.Cell(cell_space = self.cell_space, Coordinate=new_cell_coordinates)
+        # self.cell_space.Cells[new_cell.name] = new_cell
 
         # when divided, put the child cell address here and create a rule that connects to the address marker of the child cell
 

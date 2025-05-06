@@ -36,12 +36,12 @@ class Cell_space():
         for i in input_coords:
             new_input_cell = Cell(self, i, input=True)
             self.input_cells.append(new_input_cell)
-            self.Cells[new_input_cell.name] = new_input_cell
+            # self.Cells[new_input_cell.name] = new_input_cell
 
         for o in output_coords:
             new_output_cell = Cell(self, o, output=True)
             self.output_cells.append(new_output_cell)
-            self.Cells[new_output_cell.name] = new_output_cell
+            # self.Cells[new_output_cell.name] = new_output_cell
 
         for i in np.arange(5):
             Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)

@@ -47,7 +47,9 @@ def running_the_network(individual, n, viz = False):
     epoch_losses = []
 
     validation_acc = []
+    validation_rec = []
     validation_pre = []
+    validation_f1 = []
     validation_losses = np.array([])
     epoch_validation_losses = []
 
@@ -61,7 +63,9 @@ def running_the_network(individual, n, viz = False):
         epoch_validation_losses.append(np.average(validation_loss))
         validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
         validation_acc.append(bp.iris_evaluation(X_val, y_val, "accuracy"))
+        validation_rec.append(bp.iris_evaluation(X_val, y_val, "recall"))
         validation_pre.append(bp.iris_evaluation(X_val, y_val, "precision"))
+        validation_f1.append(bp.iris_evaluation(X_val, y_val, "f1"))
 
         #n.print_states()
         for i in n.Axon_dict.values():
@@ -136,4 +140,4 @@ def running_the_network(individual, n, viz = False):
         print("targ: ", y_train)
 
     # print("Simulation done")
-    return max(np.average(validation_pre, axis=1))
+    return [np.average(validation_acc, axis=1)[-1],np.average(validation_pre, axis=1)[-1],np.average(validation_rec, axis=1)[-1],np.average(validation_f1, axis=1)[-1]]

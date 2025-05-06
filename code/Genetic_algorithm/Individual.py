@@ -34,7 +34,7 @@ class Individual:
             self.n.start_vis()
             self.n.draw_brain()
         # print("Training the network")
-        self.fitness_score = nn_exe.running_the_network(individual=self, n=self.n)
+        self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n)
         # print("trained the network")
 
     def input_to_output_debug(self):
