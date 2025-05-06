@@ -75,7 +75,8 @@ class Population:
 
             rule_keys = list(individual.c.Rules.keys())
             for rule in rule_keys:
-                individual.c.Rules[rule].mutate()
+                if rule in individual.c.Rules.keys():
+                    individual.c.Rules[rule].mutate()
             individual.morphogenesis_individual()
             individual.running_the_network()
 

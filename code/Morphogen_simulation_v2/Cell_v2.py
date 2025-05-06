@@ -26,7 +26,7 @@ class Cell():
     def del_morphogen(self, morphogen_name): # dont remove morphogens that are unique cell addresses
         if not self.cell_space.Morphogens[morphogen_name].cell_unique and morphogen_name in self.morphogens.keys():
             try:
-                self.morphogens[morphogen_name].cells.pop(morphogen_name)
+                self.morphogens[morphogen_name].cells.pop(self.name)
                 self.morphogens.pop(morphogen_name)
             except:
                 print(morphogen_name in self.morphogens.keys())
