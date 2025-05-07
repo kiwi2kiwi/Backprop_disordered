@@ -2,7 +2,7 @@ import Morphogen_simulation_v2.Coordinates
 import Morphogen_simulation_v2.Cell_v2
 import Morphogen_simulation_v2.Axon
 import random
-random.seed(1)
+random.seed(2)
 import Morphogen_simulation_v2.Morphogens_v2
 from Morphogen_simulation_v2 import *
 

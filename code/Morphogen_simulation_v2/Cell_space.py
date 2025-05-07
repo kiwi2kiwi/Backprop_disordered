@@ -2,7 +2,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import random
-random.seed(1)
+random.seed(2)
 from random import randrange
 from Morphogen_simulation_v2 import *
 import Morphogen_simulation_v2.Coordinates

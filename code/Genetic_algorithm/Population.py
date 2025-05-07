@@ -4,6 +4,7 @@ import Genetic_algorithm.Individual
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+sys.setrecursionlimit(300)
 
 class Population:
     def __init__(self, environment):
@@ -36,11 +37,13 @@ class Population:
         generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,50):
+        for timestep in np.arange(0,500):
             print("Generation:", timestep)
             generation = self.generation(indiv_fit)
             generations.append(generation)
             indiv_fit = self.selection(pd.concat([generation, indiv_fit]))
+
+
 
         print("stop")
 

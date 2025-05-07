@@ -58,6 +58,11 @@ class Individual:
 
     def morphogenesis(self):
         self.c.neurogenesis()
+        self.c.neurogenesis()
+        self.c.neurogenesis()
+        self.c.neurogenesis()
+        self.c.neurogenesis()
+        self.c.neurogenesis()
         # print("morphogenesis")
 
     def get_data(self):
