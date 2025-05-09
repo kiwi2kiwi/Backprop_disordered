@@ -22,6 +22,8 @@ class Individual:
     def morphogenesis_individual(self):
         # print("morphogenesis")
         self.morphogenesis()
+        self.morphogenesis()
+        self.morphogenesis()
         if self.viz:
             self.c.start_vis()
             self.c.draw_image()
@@ -57,11 +59,6 @@ class Individual:
         demo_rule_3.rule_type = 4
 
     def morphogenesis(self):
-        self.c.neurogenesis()
-        self.c.neurogenesis()
-        self.c.neurogenesis()
-        self.c.neurogenesis()
-        self.c.neurogenesis()
         self.c.neurogenesis()
         # print("morphogenesis")
 

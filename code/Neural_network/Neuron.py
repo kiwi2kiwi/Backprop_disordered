@@ -4,7 +4,8 @@ random.seed(1)
 import Neural_network.Axon
 import time
 import math
-
+global backprop_loop_limit
+backprop_loop_limit = 3
 
 class Neuron():
     def __init__(self, coordinate, base_space, output_neuron = False, name = "not_set", bias = 0):
@@ -19,6 +20,10 @@ class Neuron():
         self.bias = bias
         self.started = False
         self.error_for_output_neuron = 0
+        self.backprops_to_parents = {}
+        # prevent loops
+        self.being_activated = False
+        self.calculating_children = set()
 
         self.coordinate = coordinate
         if name == "not_set":
@@ -37,8 +42,11 @@ class Neuron():
         self.delta_error_through_delta_neuron_net = 0
         self.delta_out_through_delta_net = 0
         self.calculated_gradient = False
+        self.being_activated = False
+        self.calculating_children = set()
         for p in self.parent_connections.keys():
             self.parent_connections[p].new_weights = []
+            self.backprops_to_parents[self.parent_connections[p].parent.name] = 0
         for c in self.children_connections.keys():
             self.children_connections[c].new_weights = []
         pass
@@ -50,8 +58,11 @@ class Neuron():
         self.delta_error_through_delta_neuron_net = 0
         self.delta_out_through_delta_net = 0
         self.calculated_gradient = False
+        self.being_activated = False
+        self.calculating_children = set()
         for p in self.parent_connections.keys():
             self.parent_connections[p].new_weights = []
+            self.backprops_to_parents[self.parent_connections[p].parent.name] = 0
         for c in self.children_connections.keys():
             self.children_connections[c].new_weights = []
 
@@ -113,11 +124,12 @@ class Neuron():
 
         for c in self.children_connections.keys():
             children_connection = self.children_connections[c]
+            if children_connection.child.name not in self.calculating_children:
+                if not children_connection.child.calculated_gradient:
+                    self.calculating_children.add(children_connection.child.name)
+                    children_connection.child.gradient_descent(learning_rate, depth_counter=depth_counter-1)
 
-            if not children_connection.child.calculated_gradient:
-                children_connection.child.gradient_descent(learning_rate, depth_counter=depth_counter-1)
-
-            self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_net
+                self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_net
 
         if self.output_neuron:
             self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
@@ -136,35 +148,40 @@ class Neuron():
 
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
-            #            if self.name == "h11":
-            #                print("stop")
-            if self.base_space.Visualization:
-                pass
-                #self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
+            self.backprops_to_parents[parent_connection.parent.name] += 1
+            global backprop_loop_limit
+            if self.backprops_to_parents[parent_connection.parent.name] < backprop_loop_limit:
 
-                #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
+                #            if self.name == "h11":
+                #                print("stop")
+                if self.base_space.Visualization:
+                    pass
+                    #self.base_space.axon_line_dict[p + self.name][0][0].set_color("red")
 
-            delta_net_through_delta_w = parent_connection.parent.activation()
+                    #error_through_w = self.a_null_w_parent(parent_connection.parent) * self.delta_error_through_delta_neuron_output
 
-            # TODO delta_net_through_delta_w is 0 in second output neuron because output is deleted in neuron_reset
-            # TODO reset_neuron_all and reset_gradient_calculations
-            gradient = self.delta_error_through_delta_neuron_net * delta_net_through_delta_w
+                delta_net_through_delta_w = parent_connection.parent.activation()
+
+                # TODO delta_net_through_delta_w is 0 in second output neuron because output is deleted in neuron_reset
+                # TODO reset_neuron_all and reset_gradient_calculations
+                gradient = self.delta_error_through_delta_neuron_net * delta_net_through_delta_w
 
 
-            # Appending the gradient
-            if gradient != 0:
-                if self.base_space.verbal:
-                    print("Gradient descent to neuron: ", self.name, " gradient: ", gradient)
-                if math.isnan(learning_rate*gradient*depth_counter):
-                    print("pause")
-                self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
-            #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
-            if not parent_connection.parent.started:
-                parent_connection.parent.gradient_descent(learning_rate = learning_rate, depth_counter = depth_counter + 1)
+                # Appending the gradient
+                if gradient != 0:
+                    if self.base_space.verbal:
+                        print("Gradient descent to neuron: ", self.name, " gradient: ", gradient)
+                    if math.isnan(learning_rate*gradient*depth_counter):
+                        print("pause")
+                    self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
+                #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
+                if not parent_connection.parent.started:
+                    parent_connection.parent.gradient_descent(learning_rate = learning_rate, depth_counter = depth_counter + 1)
 
-            if self.base_space.Visualization:
-                self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
-
+                if self.base_space.Visualization:
+                    self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
+            else:
+                print("limit reached")
         if not self.output_neuron:
             # pass
             self.bias = max(-1, min(1, self.bias - round((learning_rate * self.delta_error_through_delta_neuron_net),4)))
@@ -191,10 +208,14 @@ class Neuron():
         if self.activated:
             return self.output
 
+        # prevent loops
+        self.being_activated = True
+
         summation = 0
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
-            summation += parent_connection.parent.activation() * parent_connection.get_weight()
+            if not parent_connection.parent.being_activated:
+                summation += parent_connection.parent.activation() * parent_connection.get_weight()
         self.output = self.activation_function(summation + self.bias)
         self.activated = True
 #        if not self.base_space.fast:
@@ -244,11 +265,18 @@ class Input_Neuron():
         # self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
 
+        # prevent loops
+        self.being_activated = False
+
+
     def reset_neuron(self):
         self.activated = False
         self.output = 0
         self.started = False
         self.input = 0
+        # prevent loops
+        self.being_activated = False
+
 
     def reset_neuron_gradient_calculations(self):
 

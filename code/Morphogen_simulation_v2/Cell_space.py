@@ -11,8 +11,7 @@ import Morphogen_simulation_v2.Rules
 import math
 import numpy as np
 import Morphogen_simulation_v2.Morphogens_v2
-import copy
-import pickle
+
 
 size = 100
 

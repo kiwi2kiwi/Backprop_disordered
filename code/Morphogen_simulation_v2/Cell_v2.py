@@ -18,6 +18,9 @@ class Cell():
         self.morphogens = {}
         self.output = output
         self.input = input
+        self.replication_counter = 0
+        self.integrated = False
+        self.integrated_checking = False
         # self.replicate_vector = Coordinates.Coordinate(0, 0, -1)
 
     def new_morphogens(self, new_morphogen_name):
@@ -42,13 +45,26 @@ class Cell():
             cell = self.cell_space.Cells[cell_name]
             if cell.name != self.name:
                 distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
-                calculated = morphogen.amount/np.log(distance) # morphogen with distance falloff
+                calculated = (morphogen.amount/np.log(distance))/2 # morphogen with distance falloff
                 concentration += calculated
         return concentration
 
     def develop(self):
         for rule in self.cell_space.Rules.values():
             rule.rule(self)
+
+    def check_integration(self):
+        self.integrated_checking = True
+        if self.input == True:
+            self.integrated = True
+            return True
+        else:
+            for cell in self.parents.values():
+                if not cell.integrated_checking:
+                    if cell.check_integration():
+                        self.integrated = True
+            return self.integrated
+
 
 
     # def step(self):

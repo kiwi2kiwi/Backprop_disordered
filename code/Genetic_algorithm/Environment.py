@@ -67,13 +67,13 @@ class Environment:
         self.X_train = std_slc.transform(self.X_train)
         self.X_val = std_slc.transform(self.X_val)
 
-import trace
-
-tracer = trace.Trace(
-    ignoredirs=[sys.prefix, sys.exec_prefix],
-    trace=100,
-    count=0
-)
-tracer.run('Environment()')
+# import trace
+#
+# tracer = trace.Trace(
+#     ignoredirs=[sys.prefix, sys.exec_prefix],
+#     trace=100,
+#     count=0
+# )
+# tracer.run('Environment()')
 
 Environment()

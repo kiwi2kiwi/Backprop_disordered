@@ -2,7 +2,7 @@ import Morphogen_simulation_v2.Coordinates
 import Morphogen_simulation_v2.Cell_v2
 import Morphogen_simulation_v2.Axon
 import random
-random.seed(2)
+random.seed(3)
 import Morphogen_simulation_v2.Morphogens_v2
 from Morphogen_simulation_v2 import *
 
@@ -17,15 +17,16 @@ class Rule():
 
 
         # These variables can be mutated
-        self.new_coordinate_shift = Coordinates.Coordinate(5,0,0) # default is to the right
+        self.new_coordinate_shift = Coordinates.Coordinate(15,0,0) # default is to the right
         self.threshold = 0.5
         self.logic_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))# pick random morphogen from all morphogens
         self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
-        self.child_limit = 0
+        self.child_limit = 2
         self.rule_type = 3
         self.target_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
 
         self.mutation_counter = 0
+        self.execution_counter = 0
 
 
     def mutate(self, mutation_rate=1):
@@ -131,26 +132,34 @@ class Rule():
                 # TODO this should be done by the mutation, not with a rule
                 new_morpho = Morphogens_v2.Morphogens_v2(amount = 1, cell_space = self.cell_space)
                 executing_cell.new_morphogens(new_morpho.name)
+                self.execution_counter += 1
         if self.rule_type == 2: # remove a morphogen from a cell
             if morphogen_concentration >= self.threshold:
                 executing_cell.del_morphogen(self.target_morphogen)
+                self.execution_counter += 1
         if self.rule_type == 3: # create a new cell
             if morphogen_concentration >= self.threshold: # TODO dont to this via child number but via summed morphogen density of nearby cells
-                if self.child_limit < len(executing_cell.children):
+                if self.child_limit > executing_cell.replication_counter:
                     self.create_new_cell(executing_cell)
+                    self.execution_counter += 1
         if self.rule_type == 4:   # connect to target cell
             # if there is enough concentration of a morphogen
             if morphogen_concentration >= self.threshold:
                 self.connect(executing_cell)
+                self.execution_counter += 1
         if self.rule_type == 5: # add an existing morphogen to the cell expression
             if morphogen_concentration >= self.threshold:
                 executing_cell.new_morphogens(self.target_morphogen)
                 self.cell_space.Morphogens[self.target_morphogen].add_cell(cell_name = executing_cell.name)
+                self.execution_counter += 1
 
     def create_new_cell(self, executing_cell):
         # create new cell at parameters
         new_cell_coordinates = Coordinates.change_coords(executing_cell.coordinate, self.new_coordinate_shift)
         Cell_v2.Cell(cell_space = self.cell_space, Coordinate=new_cell_coordinates)
+
+        executing_cell.replication_counter += 1
+
         # self.cell_space.Cells[new_cell.name] = new_cell
 
         # when divided, put the child cell address here and create a rule that connects to the address marker of the child cell

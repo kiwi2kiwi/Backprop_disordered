@@ -34,9 +34,10 @@ class NeuronSpace():
         for o in cell_space.output_cells:
             new_neuron = Neural_network.Neuron.Neuron(o.coordinate, self, output_neuron=True, name = o.name)
             self.output_neuron_dict[new_neuron.name] = new_neuron
+            o.check_integration()
 
         for c in cell_space.Cells.values():
-            if c.name not in self.input_neuron_dict.keys() and c.name not in self.output_neuron_dict.keys():
+            if c.name not in self.input_neuron_dict.keys() and c.name not in self.output_neuron_dict.keys() and c.integrated:
                 new_neuron = Neural_network.Neuron.Neuron(c.coordinate, self, name=c.name)
                 self.hidden_neuron_dict[new_neuron.name] = new_neuron
 
@@ -49,21 +50,22 @@ class NeuronSpace():
             # TODO convert axons
             #  implement inhibitory connections
             #  prevent axons to input nodes
-            child = self.Neuron_dict[a.child.name]
-            if type(child) != Neural_network.Neuron.Input_Neuron:
-                parent = self.Neuron_dict[a.parent.name]
-                weight = round(random.uniform(0.2, 0.8), 2)
-                weight = 0.5
-                new_axon = Neural_network.Axon.Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
-                parent.children_connections[child.name] = new_axon
-                child.parent_connections[parent.name] = new_axon
-                self.Axon_dict[new_axon.name] = new_axon
+            if a.child.integrated:
+                child = self.Neuron_dict[a.child.name]
+                if type(child) != Neural_network.Neuron.Input_Neuron and a.parent.name in self.Neuron_dict.keys():
+                    parent = self.Neuron_dict[a.parent.name]
+                    weight = round(random.uniform(0.2, 0.8), 2)
+                    weight = 0.5
+                    new_axon = Neural_network.Axon.Axon(parent, child, name=a.name, base_space=self, weight=weight, new_weights=[])
+                    parent.children_connections[child.name] = new_axon
+                    child.parent_connections[parent.name] = new_axon
+                    self.Axon_dict[new_axon.name] = new_axon
+                    child.backprops_to_parents[parent.name] = 0
 
         # if self.Visualization:
         #     self.start_vis()
         #     self.draw_brain()
         #     plt.show()
-
 
 
 

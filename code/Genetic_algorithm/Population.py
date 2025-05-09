@@ -39,7 +39,7 @@ class Population:
 
         for timestep in np.arange(0,500):
             print("Generation:", timestep)
-            generation = self.generation(indiv_fit)
+            generation = self.generation(indiv_fit, timestep)
             generations.append(generation)
             indiv_fit = self.selection(pd.concat([generation, indiv_fit]))
 
@@ -64,10 +64,10 @@ class Population:
         return pd.DataFrame(generation, columns=["individual", "fitness"])
 
     # take the morpho rules from the previous generation for the next one
-    def generation(self, individuals_prev_generation):
+    def generation(self, individuals_prev_generation, timestep):
         generation = []
         for counter in np.arange(0, self.population_size-self.survivors):
-            print("Individual:", counter,"/",self.population_size)
+
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
 
             # take the morpho rules and give them to the new generation
@@ -81,6 +81,7 @@ class Population:
                 if rule in individual.c.Rules.keys():
                     individual.c.Rules[rule].mutate()
             individual.morphogenesis_individual()
+            print("Individual:", counter,"/",self.population_size, "\tGeneration", timestep, "neurons:", len(individual.c.Cells.keys()))
             individual.running_the_network()
 
             generation.append([individual, individual.fitness_scores])
@@ -206,4 +207,6 @@ class Population:
         n = Neural_network.Neuron_space.NeuronSpace(Visualization=False)
         n.import_network(generations[-1].iloc[1,0].c)
         nn_exe.running_the_network(individual=generations[-1].iloc[1,0], n=n, viz=True)
+        
+        generations[-1].iloc[-5,0].c.start_vis()
         '''
