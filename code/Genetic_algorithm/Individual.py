@@ -15,12 +15,11 @@ class Individual:
         super(Individual, self).__init__()
         self.viz = False # visualization
         self.environment = environment
-        # print("creation of input and output cells")
         self.c = Morphogen_simulation_v2.Cell_space.Cell_space()
 
 
     def morphogenesis_individual(self):
-        # print("morphogenesis")
+        # the rules should be executed a few times to allow for recursive structure building
         self.morphogenesis()
         self.morphogenesis()
         self.morphogenesis()
@@ -29,15 +28,12 @@ class Individual:
             self.c.draw_image()
 
     def running_the_network(self):
-        # print("Creating neural network backbone and importing structure")
         self.n = Neural_network.Neuron_space.NeuronSpace(Visualization=self.viz)
         self.n.import_network(self.c)
         if self.viz:
             self.n.start_vis()
             self.n.draw_brain()
-        # print("Training the network")
         self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n)
-        # print("trained the network")
 
     def input_to_output_debug(self):
         demo_rule_1 = Morphogen_simulation_v2.Rules.Rule(self.c)
@@ -60,17 +56,9 @@ class Individual:
 
     def morphogenesis(self):
         self.c.neurogenesis()
-        # print("morphogenesis")
 
     def get_data(self):
-        # print("import data")
         return [self.environment.X_train, self.environment.X_val, self.environment.y_train, self.environment.y_val,]
-
-    # def import_morphogens(self):
-    #     print("import morphogens")
-    #
-    # def import_morphogens(self):
-    #     print("import morphogens")
 
     def copy_rules_to(self, individual):
         new_cell_space = individual.c
@@ -88,9 +76,3 @@ class Individual:
             new_rule.mutation_counter = r.mutation_counter
             new_rules[new_rule.name] = new_rule
         new_cell_space.Rule_counter = self.c.Rule_counter
-
-
-# Individual()
-
-
-

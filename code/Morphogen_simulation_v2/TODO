@@ -33,21 +33,21 @@ output neurons should not execute morphogenesis rules - done
 - add the morpho rules from the previous generation to the next one - done
 - Problem: not only the rules are needed to build, but also the morphogens (i think, it should be checked!!!!!!!) - done, only rules are needed
 - move the dataset initialization and loading to the population class - done
-- prevent connections to input neurons
-- create the ability for multiple conditions, so that we get activators and repressors
-- got a loop in the network and i need to fix that asap - TODO
-    - backprop number for each child neuron that limits the recursion loops
+- prevent connections to input neurons - done
+- got a loop in the network and i need to fix that asap - done
+    - backprop number for each child neuron that limits the recursion loops - done
     - reset the counter in the reset neuron function
     - somewhere lots of neurons and axons get generated and i don't know where or why
     - create verbal output of rule_type 3 and which rule executed it
     - also verbal for rule_type 4
-    - make morphogen concentration falloff calculation available to GA
-    - dont import cells and connections to the final nn, that are not connected to the input
-- do morphogenesis multiple times, so iterative rules can be done multiple times - TODO
+    - dont import cells and connections to the final nn that are not connected to the input - done
+- do morphogenesis multiple times, so iterative rules can be done multiple times - done
 - allow output node bias maby - TODO
 - import and export morphogen rules to a file - TODO
 - maby test out GA by only evolution, no training - TODO
 
+- make morphogen concentration falloff calculation available to GA
+- create the ability for multiple conditions, so that we get activators and repressors
 
 
 

@@ -48,6 +48,7 @@ class Rule():
         ]
 
         # Pick a random attribute to mutate
+        # the attributes have weights, so that we can control what is more likely to be mutated
         target = random.choices(mutation_targets, [1,1,1,1,0,1,1,1,1])
 
         if target == "new_coordinate_shift":
@@ -76,10 +77,12 @@ class Rule():
             # Mutate threshold but keep it between 0 and 10
             self.threshold = max(0, min(10, self.threshold + random.uniform(-1, 1)))
 
+        # the logic morphogen is used to compute the signal from another cell
         elif target == "logic morphogen":
             # Pick a new morphogen randomly
             self.logic_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
 
+        # the target morphogen is used to target a specific cell
         elif target == "target morphogen":
             # Pick a new morphogen randomly
             self.target_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
@@ -115,21 +118,13 @@ class Rule():
                 new_rule.rule_type = self.rule_type
 
 
-    # i tried to make a function that is customizable by the genetic algorithm
     # this function should be modifyable by the genetic algorithm and perform various tasks such as creating an action when a morphogen threshold is reached.
     def rule(self, executing_cell):
-            # 2 types of actions
-            # 1. send out new morphogen
-            # 2. if child cells above threshold, stop creating new ones
-            # 3. create Axon to cell with morphogen x
-            #
-        # TODO LET RULES ACTIVATE EACH OTHER so the morphogen removal rule 2 only happens after a condition is met
 
         morphogen_concentration = executing_cell.calc_morphogen(self.logic_morphogen)
         # TODO change rule 1 to only create a new morphogen. the adding of the morphogen to the cell is done by rule 5
         if self.rule_type == 1: # create a new morphogen and add it to the cell expression
             if morphogen_concentration >= self.threshold:
-                # TODO this should be done by the mutation, not with a rule
                 new_morpho = Morphogens_v2.Morphogens_v2(amount = 1, cell_space = self.cell_space)
                 executing_cell.new_morphogens(new_morpho.name)
                 self.execution_counter += 1
@@ -138,7 +133,7 @@ class Rule():
                 executing_cell.del_morphogen(self.target_morphogen)
                 self.execution_counter += 1
         if self.rule_type == 3: # create a new cell
-            if morphogen_concentration >= self.threshold: # TODO dont to this via child number but via summed morphogen density of nearby cells
+            if morphogen_concentration >= self.threshold: # TODO dont do this via child number but via summed morphogen density of nearby cells
                 if self.child_limit > executing_cell.replication_counter:
                     self.create_new_cell(executing_cell)
                     self.execution_counter += 1
@@ -160,15 +155,10 @@ class Rule():
 
         executing_cell.replication_counter += 1
 
-        # self.cell_space.Cells[new_cell.name] = new_cell
-
-        # when divided, put the child cell address here and create a rule that connects to the address marker of the child cell
-
     def connect(self, executing_cell):
 
-        for child in self.cell_space.Morphogens[self.target_morphogen].cells: # TODO morphogens associated with each cell are not updated properly yet
+        for child in self.cell_space.Morphogens[self.target_morphogen].cells:
             if executing_cell.name != child:
-                # print("Rule type 4 activated, connect cell ", executing_cell.name, " to cell ", child.name, " Rule name:", self.name)
                 Axon.Axon(executing_cell, self.cell_space.Cells[child], self.inhibit_excite_type, self.cell_space)
 
 

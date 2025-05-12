@@ -14,22 +14,22 @@ class Population:
         #  this is a collection of all the learners in a generation
         #  give access to all the learners
         #  1. initialize an individual - done
-        #  2. give individual a morphogen rule set
+        #  2. give individual a morphogen rule set - done
         #  3. Morphogenesis - done
         #  4. Give the data to the individual - done
         #  5. Individual trains and predicts - done
         #  6. Individual returns metrics as fitness score - done
-        #  7. Individual returns its morphogen rule set
+        #  7. Individual returns its morphogen rule set - done
 
         # TODO
         #  for the first generation use the default debug morphogen set and mutate all of them - done
         #  receive set of individuals from the last population - done
         #  remove bottom 50% of individuals - done
-        #  problem: the surviving individuals from the last generation get mutated
-        #  only the repopulation should get mutated
-        #  dont run the surviving individuals, just copy their fitness score
-        #  repopulate with the top 50% ----- working on it
-        #  for the clones mutate the morphogen rule set of an individual
+        #  problem: the surviving individuals from the last generation get mutated - fixed
+        #  only the repopulation should get mutated - done
+        #  dont run the surviving individuals, just copy their fitness score - done
+        #  repopulate with the top x% - done
+        #  for the clones mutate the morphogen rule set of an individual - done
         self.environment = environment
         self.survivors = 5
         generations = []
@@ -71,8 +71,6 @@ class Population:
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
 
             # take the morpho rules and give them to the new generation
-            # TODO
-            #  properly copy rules and also the rule counter of the individual cell_space
             individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].copy_rules_to(individual)
             # individual.c.Rules = morphogens_prev_generation.iloc[counter%len(morphogens_prev_generation),0].c.Rules
 
@@ -109,7 +107,6 @@ class Population:
 
         data = generations[1:]
         metric_names = ['Accuracy', 'Precision', 'Recall', 'F1']
-        num_metrics = 4
         generations = list(range(len(data)))
 
         # Initialize structures for all metrics

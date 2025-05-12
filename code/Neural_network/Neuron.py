@@ -14,23 +14,20 @@ class Neuron():
         self.parent_connections = {} # closer to input
         self.children_connections = {} # closer to output
         self.output = 0
-        self.activated = False
         self.output_neuron = output_neuron
+        self.activated = False
         self.calculated_gradient = False
         self.bias = bias
-        self.started = False
         self.error_for_output_neuron = 0
         self.backprops_to_parents = {}
+
         # prevent loops
+        self.started = False
         self.being_activated = False
         self.calculating_children = set()
 
         self.coordinate = coordinate
-        if name == "not_set":
-            self.name = ",".join([str(self.coordinate.x), str(self.coordinate.y), str(self.coordinate.z)]) + str(time.time_ns())
-        # self.hash_val = int(''.join(c for c in self.name if c.isdigit()))
         self.base_space = base_space
-#        print("Hey, im a neuron!")
 
 
     def reset_neuron(self):

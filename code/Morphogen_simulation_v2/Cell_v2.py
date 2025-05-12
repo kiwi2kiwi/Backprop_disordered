@@ -38,7 +38,6 @@ class Cell():
 
     def calc_morphogen(self, morphogen_name):
         # get distance to all other cells and calculate the morphogen * distance
-        # for cell in cell_space.Morphogens[morphogen.name].cells:
         concentration = 0
         morphogen = self.cell_space.Morphogens[morphogen_name]
         for cell_name in morphogen.cells.keys():
@@ -53,6 +52,7 @@ class Cell():
         for rule in self.cell_space.Rules.values():
             rule.rule(self)
 
+    # this markes all cells that are reachable by the neural network, so that we don't consider useless neurons in the computation
     def check_integration(self):
         self.integrated_checking = True
         if self.input == True:
@@ -64,29 +64,3 @@ class Cell():
                     if cell.check_integration():
                         self.integrated = True
             return self.integrated
-
-
-
-    # def step(self):
-    #
-    #
-    #     if not self.executed_morphogens:
-    #         for key in self.morphogens:
-    #             self.morphogens[key][0].rule(self, self.morphogens[key][1])
-    #         self.executed_morphogens = True
-    #     self.replicate()
-    #
-    #
-    #
-    # def replicate(self):
-    #     # print("Cell: " + str(self.name))
-    #     if self.name == 0:
-    #         print("pause")
-    #     if self.mitosis_counter != 0:
-    #         print("Cell: " + str(self.name) + " replicating")
-    #         print(self.morphogens)
-    #         self.mitosis_counter -= 1
-    #         c = self.Cell_space.spawn_cell(self.Coordinate, self.replicate_vector,copy.deepcopy(self.morphogens))
-    #         self.children.append(c)
-    #     if self.mitosis_counter == 0:
-    #         self.executed_morphogens = True

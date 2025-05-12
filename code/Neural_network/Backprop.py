@@ -94,39 +94,6 @@ class Backpropagation:
 
         return loss_array
 
-    def old_evaluation(self, x, y, metric ="accuracy"):
-        pred = []
-        for ds in x:
-            pred.append([int(round(i,0)) for i in self.predict(ds)])
-            # self.reset_neurons() # predict resets the neurons before every call
-
-        target = np.asmatrix(y)
-        pred = np.asmatrix(pred)
-        if metric == "accuracy":
-            accs = []
-            for f in np.arange(0, target.shape[1]):
-                accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))
-
-            return np.mean(accs)
-        if metric == "recall":
-            recalls = []
-            for f in np.arange(0, target.shape[1]):
-                try:
-                    recalls.append(sklearn.metrics.recall_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
-                except:
-                    print("stop")
-            return np.mean(recalls)
-        if metric == "precision":
-            precisions = []
-            for f in np.arange(0, target.shape[1]):
-                precisions.append(sklearn.metrics.precision_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
-            return np.mean(precisions)
-        if metric == "f1":
-            f1s = []
-            for f in np.arange(0, target.shape[1]):
-                f1s.append(sklearn.metrics.f1_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
-            return np.mean(f1s)
-
     def reset_neurons(self):
         for n in self.base_space.Neuron_dict.values():
             n.reset_neuron()
@@ -159,3 +126,36 @@ class Backpropagation:
                 return f1
         except:
             return [0]*target.shape[1]
+
+    def old_evaluation(self, x, y, metric ="accuracy"):
+        pred = []
+        for ds in x:
+            pred.append([int(round(i,0)) for i in self.predict(ds)])
+            # self.reset_neurons() # predict resets the neurons before every call
+
+        target = np.asmatrix(y)
+        pred = np.asmatrix(pred)
+        if metric == "accuracy":
+            accs = []
+            for f in np.arange(0, target.shape[1]):
+                accs.append(sklearn.metrics.accuracy_score(target[:, f], pred[:, f]))
+
+            return np.mean(accs)
+        if metric == "recall":
+            recalls = []
+            for f in np.arange(0, target.shape[1]):
+                try:
+                    recalls.append(sklearn.metrics.recall_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
+                except:
+                    print("stop")
+            return np.mean(recalls)
+        if metric == "precision":
+            precisions = []
+            for f in np.arange(0, target.shape[1]):
+                precisions.append(sklearn.metrics.precision_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
+            return np.mean(precisions)
+        if metric == "f1":
+            f1s = []
+            for f in np.arange(0, target.shape[1]):
+                f1s.append(sklearn.metrics.f1_score(target[:, f], pred[:, f], zero_division=1, average='weighted'))
+            return np.mean(f1s)

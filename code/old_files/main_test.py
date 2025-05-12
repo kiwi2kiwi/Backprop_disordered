@@ -1,4 +1,4 @@
-import Neuron_space_predifined
+from code.old_files import Neuron_space_predifined
 import Backprop
 
 import numpy as np
