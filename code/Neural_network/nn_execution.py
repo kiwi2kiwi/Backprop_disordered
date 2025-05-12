@@ -56,8 +56,6 @@ def running_the_network(individual, n, viz = False):
     for idx,i in enumerate(np.arange(0,epochs)):
         #n.print_states()
 
-        # for axon in n.Axon_dict.values():
-        #     print(axon.name, " ", axon.get_weight(), " ", axon.parent.name, axon.child.name)
 
         validation_loss = bp.get_loss(X_val, y_val)
         epoch_validation_losses.append(np.average(validation_loss))
@@ -74,7 +72,6 @@ def running_the_network(individual, n, viz = False):
         loss = bp.train(X_train, y_train, learning_rate = 0.001)
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if len(losses) else loss
-        # train_acc.append(bp.iris_evaluation(X_train, y_train))
         train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
         train_rec.append(bp.evaluation(X_train, y_train, "recall"))
         train_pre.append(bp.evaluation(X_train, y_train, "precision"))
@@ -124,8 +121,6 @@ def running_the_network(individual, n, viz = False):
         fig1.legend()
         fig1.show()
         print("stop")
-
-        #print("accuraccy: ", bp.evaluation(X_val, y_val.T))
 
         # neurons coloured by their bias
         # axons coloured by their weight

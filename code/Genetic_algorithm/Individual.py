@@ -1,15 +1,9 @@
 import sys
 import os
-# /Morphogen_simulation_v2
-# sys.path.append(os.path.abspath('..'))
 import Morphogen_simulation_v2.Cell_space
-# sys.path.append(os.path.abspath('../Neural_network'))
 import Neural_network.Neuron_space
 import Neural_network.nn_execution as nn_exe
 
-# from Morphogen_simulation_v2 import Cell_space
-
-# from Morphogen_simulation_v2 import
 class Individual:
     def __init__(self, environment):
         super(Individual, self).__init__()
@@ -35,6 +29,7 @@ class Individual:
             self.n.draw_brain()
         self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n)
 
+    # connect input cells to 3 output cells
     def input_to_output_debug(self):
         demo_rule_1 = Morphogen_simulation_v2.Rules.Rule(self.c)
         demo_rule_1.threshold = 0

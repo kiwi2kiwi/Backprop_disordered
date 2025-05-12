@@ -1,6 +1,8 @@
 import sys
 sys.path.append('..')
 import Genetic_algorithm.Individual
+import Neural_network.Neuron_space
+import Neural_network.nn_execution as nn_exe
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -32,15 +34,15 @@ class Population:
         #  for the clones mutate the morphogen rule set of an individual - done
         self.environment = environment
         self.survivors = 5
-        generations = []
+        self.generations = []
         generation = self.first_generation()
-        generations.append(generation)
+        self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
         for timestep in np.arange(0,500):
             print("Generation:", timestep)
             generation = self.generation(indiv_fit, timestep)
-            generations.append(generation)
+            self.generations.append(generation)
             indiv_fit = self.selection(pd.concat([generation, indiv_fit]))
 
 
@@ -52,10 +54,12 @@ class Population:
         for counter in np.arange(0, self.population_size):
             print("Individual:", counter, "/", self.population_size)
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
-            # directly mutate the morphogens, not the individual
+
             # print("debug 1 manually written rule. Connect from the first input to the first output neuron")
-            # individual.input_to_output_debug()
+            individual.input_to_output_debug()
+
             rule_keys = list(individual.c.Rules.keys())
+            # directly mutate the morphogens, not the individual
             for rule in rule_keys:
                 individual.c.Rules[rule].mutate()
             individual.morphogenesis_individual()
@@ -102,10 +106,10 @@ class Population:
         # selection_pressured["Morpho_rules"] = morpho_rule_set
         # return morpho_rule_set
 
-    def plot_metrics_over_generations(self, generations):
-        generations[-1].iloc[1, 0].c.start_vis()
+    def plot_metrics_over_generations(self):
+        self.generations[-1].iloc[1, 0].c.start_vis()
 
-        data = generations[1:]
+        data = self.generations[1:]
         metric_names = ['Accuracy', 'Precision', 'Recall', 'F1']
         generations = list(range(len(data)))
 
@@ -148,62 +152,11 @@ class Population:
         plt.tight_layout(rect=[0, 0, 1, 0.96])
         plt.show()
 
-    def plot_gen_performance(self, generations):
-        data = generations[1:]
-        gens = list(range(len(data)))
-        # Calculate stats per generation
-        means = [df['fitness'].mean() for df in data]
-        stds = [df['fitness'].std() for df in data]
-        mins = [df['fitness'].min() for df in data]
-        maxs = [df['fitness'].max() for df in data]
-        # Plot mean with std shaded
-        plt.figure(figsize=(10, 6))
-        # plt.plot(gens, means, label='Mean Fitness', color='blue')
-        plt.fill_between(gens,
-                         np.array(means) - np.array(stds),
-                         np.array(means) + np.array(stds),
-                         color='blue', alpha=0.2, label='±1 Std Dev')
-        # Optional: Min-max range (can be removed if too noisy)
-        plt.fill_between(gens, mins, maxs, color='gray', alpha=0.1, label='Min–Max Range')
-        plt.xlabel('Generation')
-        plt.ylabel('Fitness')
-        plt.title('Fitness Distribution Across Generations')
-        plt.grid(True)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
-        import matplotlib.pyplot as plt
-        data = generations[1:]
-        gens = list(range(len(data)))
-        # Calculate stats per generation
-        means = [df['fitness'].mean() for df in data]
-        stds = [df['fitness'].std() for df in data]
-        mins = [df['fitness'].min() for df in data]
-        maxs = [df['fitness'].max() for df in data]
-        # Plot mean with std shaded
-        plt.figure(figsize=(10, 6))
-        plt.plot(gens, means, label='Mean Fitness', color='blue')
-        plt.fill_between(gens,
-                         np.array(means) - np.array(stds),
-                         np.array(means) + np.array(stds),
-                         color='blue', alpha=0.2, label='±1 Std Dev')
-        # Optional: Min-max range (can be removed if too noisy)
-        plt.fill_between(gens, mins, maxs, color='gray', alpha=0.1, label='Min–Max Range')
-        plt.xlabel('Generation')
-        plt.ylabel('Fitness')
-        plt.title('Fitness Distribution Across Generations')
-        plt.grid(True)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+    # retrain an individual and plots its training metrics
+    def plot_training_of_individual(self):
 
-
-        '''
-        import Neural_network.Neuron_space
-        import Neural_network.nn_execution as nn_exe
         n = Neural_network.Neuron_space.NeuronSpace(Visualization=False)
-        n.import_network(generations[-1].iloc[1,0].c)
-        nn_exe.running_the_network(individual=generations[-1].iloc[1,0], n=n, viz=True)
+        n.import_network(self.generations[-1].iloc[1,0].c)
+        nn_exe.running_the_network(individual=self.generations[-1].iloc[1,0], n=n, viz=True)
         
-        generations[-1].iloc[-5,0].c.start_vis()
-        '''
+        self.generations[-1].iloc[-1,0].c.start_vis()
