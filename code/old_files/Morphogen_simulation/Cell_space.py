@@ -6,10 +6,8 @@ import Coordinates
 from Cell import Cell
 import Rules
 import math
-import numpy as np
 import Morphogen
 import copy
-import pickle
 
 
 class Cell_space():
@@ -21,7 +19,7 @@ class Cell_space():
         }
 
         self.cells_in_plot = {}
-        Stem_cell = Cell(self, Coordinates.Coordinate(0,0,0), copy.deepcopy(self.morphogens),0,0)
+        Stem_cell = Cell(self, Coordinates.Coordinate(0, 0, 0), copy.deepcopy(self.morphogens), 0, 0)
         self.Cells = [Stem_cell]
         self.cell_count = 0
 
@@ -55,7 +53,7 @@ class Cell_space():
 
     def spawn_cell(self, old_Coordinate, replicate_vector, morphogens):
         self.cell_count += 1
-        new_cell = Cell(self,Coordinates.Coordinate(old_Coordinate.x + replicate_vector.x, old_Coordinate.y + replicate_vector.y, old_Coordinate.z + replicate_vector.z), morphogens,0,self.cell_count)
+        new_cell = Cell(self, Coordinates.Coordinate(old_Coordinate.x + replicate_vector.x, old_Coordinate.y + replicate_vector.y, old_Coordinate.z + replicate_vector.z), morphogens, 0, self.cell_count)
         for key in new_cell.morphogens:
             new_cell.morphogens[key][1] = new_cell.morphogens[key][0].deteriorate(new_cell.morphogens[key][1], new_cell)
 

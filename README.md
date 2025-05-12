@@ -1,3 +1,11 @@
+# This is now my master thesis
+
+To execute the simulation, run Environment.py
+
+
+
+
+'''
 # Backprop_disordered
 Deep feedforward neural network without layer structure\
 Since layer structure is broken i name this BrokeNN.\
@@ -9,3 +17,4 @@ Only fancy libraries needed are numpy for array convenience, sklearn for dataset
 This was not done to create a new fancy advanced network. It's just a funny lil project.
 
 You're not allowed to use this for commercial purposes.
+'''

@@ -62,10 +62,10 @@ def running_the_network(individual, n, viz = False):
         validation_loss = bp.get_loss(X_val, y_val)
         epoch_validation_losses.append(np.average(validation_loss))
         validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
-        validation_acc.append(bp.iris_evaluation(X_val, y_val, "accuracy"))
-        validation_rec.append(bp.iris_evaluation(X_val, y_val, "recall"))
-        validation_pre.append(bp.iris_evaluation(X_val, y_val, "precision"))
-        validation_f1.append(bp.iris_evaluation(X_val, y_val, "f1"))
+        validation_acc.append(bp.evaluation(X_val, y_val, "accuracy"))
+        validation_rec.append(bp.evaluation(X_val, y_val, "recall"))
+        validation_pre.append(bp.evaluation(X_val, y_val, "precision"))
+        validation_f1.append(bp.evaluation(X_val, y_val, "f1"))
 
         #n.print_states()
         for i in n.Axon_dict.values():
@@ -75,10 +75,10 @@ def running_the_network(individual, n, viz = False):
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if len(losses) else loss
         # train_acc.append(bp.iris_evaluation(X_train, y_train))
-        train_acc.append(bp.iris_evaluation(X_train, y_train, "accuracy"))
-        train_rec.append(bp.iris_evaluation(X_train, y_train, "recall"))
-        train_pre.append(bp.iris_evaluation(X_train, y_train, "precision"))
-        train_f1.append(bp.iris_evaluation(X_train, y_train, "f1"))
+        train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
+        train_rec.append(bp.evaluation(X_train, y_train, "recall"))
+        train_pre.append(bp.evaluation(X_train, y_train, "precision"))
+        train_f1.append(bp.evaluation(X_train, y_train, "f1"))
         #n.print_states()
 
         # print("epoch: ", (idx+1), "/", epochs)

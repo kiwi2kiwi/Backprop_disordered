@@ -114,15 +114,15 @@ for idx,i in enumerate(np.arange(0,epochs)):
     validation_loss = bp.get_loss(X_validation, y_validation)
     epoch_validation_losses.append(np.average(validation_loss))
     validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
-    validation_acc.append(bp.evaluation(X_validation, y_validation))
+    validation_acc.append(bp.old_evaluation(X_validation, y_validation))
 
     loss = bp.train(X_train, y_train, learning_rate = 1) #* 0.98**idx)
     epoch_losses.append(np.average(loss))
     losses = np.vstack([losses, loss]) if losses.size else loss
-    train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
-    train_rec.append(bp.evaluation(X_train, y_train, "recall"))
-    train_pre.append(bp.evaluation(X_train, y_train, "precision"))
-    train_f1.append(bp.evaluation(X_train, y_train, "f1"))
+    train_acc.append(bp.old_evaluation(X_train, y_train, "accuracy"))
+    train_rec.append(bp.old_evaluation(X_train, y_train, "recall"))
+    train_pre.append(bp.old_evaluation(X_train, y_train, "precision"))
+    train_f1.append(bp.old_evaluation(X_train, y_train, "f1"))
 
 
     print("epoch: ", (idx+1), "/", epochs)

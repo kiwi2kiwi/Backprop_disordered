@@ -1,5 +1,3 @@
-import time
-
 import numpy as np
 import random
 random.seed(1)
@@ -9,10 +7,6 @@ import matplotlib.pyplot as plt
 import Coordinates
 import Perceptive_neuron, Processing_neuron, Interaction_neuron
 import Axon
-
-
-from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 size = 100
 class NeuronSpace():
