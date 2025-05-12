@@ -38,7 +38,7 @@ def running_the_network(individual, n, viz = False):
     y_train = data_import[2]
     y_val = data_import[3]
 
-    epochs = 10
+    epochs = 20
     train_acc = []
     train_rec = []
     train_pre = []
@@ -60,36 +60,36 @@ def running_the_network(individual, n, viz = False):
         validation_loss = bp.get_loss(X_val, y_val)
         epoch_validation_losses.append(np.average(validation_loss))
         validation_losses = np.vstack([validation_losses, validation_loss]) if validation_losses.size else validation_loss
-        validation_acc.append(bp.evaluation(X_val, y_val, "accuracy"))
-        validation_rec.append(bp.evaluation(X_val, y_val, "recall"))
-        validation_pre.append(bp.evaluation(X_val, y_val, "precision"))
-        validation_f1.append(bp.evaluation(X_val, y_val, "f1"))
+        val_metrics = bp.evaluation(X_val, y_val)
+
+        validation_acc.append(val_metrics[0])
+        validation_rec.append(val_metrics[1])
+        validation_pre.append(val_metrics[2])
+        validation_f1.append(val_metrics[3])
 
         #n.print_states()
-        for i in n.Axon_dict.values():
-            if math.isnan(i.get_weight()):
-                print("pause")
         loss = bp.train(X_train, y_train, learning_rate = 0.001)
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if len(losses) else loss
-        train_acc.append(bp.evaluation(X_train, y_train, "accuracy"))
-        train_rec.append(bp.evaluation(X_train, y_train, "recall"))
-        train_pre.append(bp.evaluation(X_train, y_train, "precision"))
-        train_f1.append(bp.evaluation(X_train, y_train, "f1"))
+        train_metrics = bp.evaluation(X_train, y_train)
+        train_acc.append(train_metrics[0])
+        train_rec.append(train_metrics[1])
+        train_pre.append(train_metrics[2])
+        train_f1.append(train_metrics[3])
         #n.print_states()
 
-        # print("epoch: ", (idx+1), "/", epochs)
+        print("epoch: ", (idx+1), "/", epochs)
 
     if viz:
         plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_acc,epoch_validation_losses)
 
-    preds = []
-    trues = []
-    for i in np.arange(0,len(X_val)):
-        preds.append(np.argmax(bp.predict(X_val[i])))
-        trues.append(np.argmax(y_val[i]))
 
     if viz:
+        preds = []
+        trues = []
+        for i in np.arange(0,len(X_val)):
+            preds.append(np.argmax(bp.predict(X_val[i])))
+            trues.append(np.argmax(y_val[i]))
         cm = confusion_matrix(trues, preds)
 
         plt.figure(figsize=(10, 7))
@@ -135,4 +135,4 @@ def running_the_network(individual, n, viz = False):
         print("targ: ", y_train)
 
     # print("Simulation done")
-    return [np.average(validation_acc, axis=1)[-1],np.average(validation_pre, axis=1)[-1],np.average(validation_rec, axis=1)[-1],np.average(validation_f1, axis=1)[-1]]
+    return [np.average(validation_acc),np.average(validation_pre),np.average(validation_rec),np.average(validation_f1)]

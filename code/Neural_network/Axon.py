@@ -13,12 +13,8 @@ class Axon():
         self.base_space = base_space
         self.weight = weight
         self.new_weights = new_weights
-        if math.isnan(self.weight):
-            print("pause")
 
     def get_weight(self):
-        if math.isnan(self.weight):
-            print("pause")
         return self.weight
 
     def color_me(self, color="black"):

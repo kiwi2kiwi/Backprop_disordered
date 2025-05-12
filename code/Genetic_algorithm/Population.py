@@ -39,7 +39,7 @@ class Population:
         self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,500):
+        for timestep in np.arange(0,1):
             print("Generation:", timestep)
             generation = self.generation(indiv_fit, timestep)
             self.generations.append(generation)

@@ -54,7 +54,7 @@ class Backpropagation:
 
             # resetting the neurons
             self.reset_neurons()
-            self.reset_neuron_gradients()
+            # self.reset_neuron_gradients()
             for input_idx, input_neuron in enumerate(self.base_space.input_neuron_dict.values()):
                 input_neuron.set_input(slice_of_data[input_idx])
             n_out = n.activation()
@@ -102,7 +102,7 @@ class Backpropagation:
         for n in self.base_space.Neuron_dict.values():
             n.reset_neuron_gradient_calculations()
 
-    def evaluation(self, x, y, metric ="accuracy"):
+    def evaluation(self, x, y):
         target = y
         pred = []
         for ds in x:
@@ -112,20 +112,13 @@ class Backpropagation:
             pred.append(pred_temp)
 
         try:
-            if metric == "accuracy":
-                acc = sklearn.metrics.accuracy_score(target, pred, zero_division=1, average=None)
-                return acc
-            if metric == "recall":
-                recall = sklearn.metrics.recall_score(target, pred, zero_division=1, average=None)
-                return recall
-            if metric == "precision":
-                precision = sklearn.metrics.precision_score(target, pred, zero_division=1, average=None)
-                return precision
-            if metric == "f1":
-                f1 = sklearn.metrics.f1_score(target, pred, zero_division=1, average=None)
-                return f1
+            acc = sklearn.metrics.accuracy_score(target, pred)
+            recall = sklearn.metrics.recall_score(target, pred, zero_division=1, average=None)
+            precision = sklearn.metrics.precision_score(target, pred, zero_division=1, average=None)
+            f1 = sklearn.metrics.f1_score(target, pred, zero_division=1, average=None)
+            return acc,recall,precision,f1
         except:
-            return [0]*target.shape[1]
+            return [[0]*target.shape[1]]*target.shape[0]
 
     def old_evaluation(self, x, y, metric ="accuracy"):
         pred = []

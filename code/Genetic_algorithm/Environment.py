@@ -15,7 +15,6 @@ class Environment:
         super(Environment, self).__init__()
         self.population = {}
         self.dataset_type = "mnist"
-        self.running_all()
 
 
     def running_all(self):
@@ -97,4 +96,15 @@ class Environment:
 # )
 # tracer.run('Environment()')
 
-Environment()
+import cProfile, pstats
+
+profiler = cProfile.Profile()
+profiler.enable()
+env = Environment()
+env.running_all()
+profiler.disable()
+stats = pstats.Stats(profiler).sort_stats('ncalls')
+stats.print_stats()
+
+
+print("stop debugger")

@@ -46,7 +46,6 @@ class Neuron():
             self.backprops_to_parents[self.parent_connections[p].parent.name] = 0
         for c in self.children_connections.keys():
             self.children_connections[c].new_weights = []
-        pass
 
     def reset_neuron_gradient_calculations(self):
         self.started = False
@@ -154,8 +153,6 @@ class Neuron():
                 if gradient != 0:
                     if self.base_space.verbal:
                         print("Gradient descent to neuron: ", self.name, " gradient: ", gradient)
-                    if math.isnan(learning_rate*gradient*depth_counter):
-                        print("pause")
                     self.parent_connections[p].new_weights.append(learning_rate * gradient * depth_counter)
                 #   self.parent_connections[p].new_weights.append(self.gradient_normalisation(learning_rate * gradient))
                 if not parent_connection.parent.started:
@@ -263,8 +260,6 @@ class Input_Neuron():
         pass
 
     def set_input(self, input):
-        if math.isnan(input):
-            print("pause")
         self.input = input
 
     def activation_function(self, z):
