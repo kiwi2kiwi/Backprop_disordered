@@ -14,6 +14,7 @@ class Environment:
     def __init__(self):
         super(Environment, self).__init__()
         self.population = {}
+        self.dataset_type = "mnist"
         self.running_all()
 
 
@@ -48,24 +49,44 @@ class Environment:
         print("mutation")
 
     def data_loading(self):
-        iris = datasets.load_iris()
-        X = np.array(iris.data)
-        y = np.array(iris.target)
-        y_oh = np.eye(3)[y]
-        X, y = shuffle(X, y_oh, random_state=42)
-        self.X_train = X[:100]
-        self.X_val = X[100:]
-        self.y_train = np.array(y[:100])
-        self.y_val = np.array(y[100:])
-        # X_train = X[:1]
-        # X_val = X[1:]
-        # y_train = np.array(y[:1])
-        # y_val = np.array(y[1:])
+        if self.dataset_type == "mnist":
+            mnist = datasets.load_digits()
+            X = np.array(mnist.data)
+            y = np.array(mnist.target)
+            y_oh = np.eye(10)[y]
+            X, y = shuffle(X, y_oh, random_state=42)
+            self.X_train = X[:200]
+            self.X_val = X[200:300]
+            self.y_train = np.array(y[:200])
+            self.y_val = np.array(y[200:300])
+            # X_train = X[:1]
+            # X_val = X[1:]
+            # y_train = np.array(y[:1])
+            # y_val = np.array(y[1:])
 
-        std_slc = StandardScaler()
-        std_slc.fit(self.X_train)
-        self.X_train = std_slc.transform(self.X_train)
-        self.X_val = std_slc.transform(self.X_val)
+            std_slc = StandardScaler()
+            std_slc.fit(self.X_train)
+            self.X_train = std_slc.transform(self.X_train)
+            self.X_val = std_slc.transform(self.X_val)
+        if self.dataset_type == "iris":
+            iris = datasets.load_iris()
+            X = np.array(iris.data)
+            y = np.array(iris.target)
+            y_oh = np.eye(3)[y]
+            X, y = shuffle(X, y_oh, random_state=42)
+            self.X_train = X[:100]
+            self.X_val = X[100:]
+            self.y_train = np.array(y[:100])
+            self.y_val = np.array(y[100:])
+            # X_train = X[:1]
+            # X_val = X[1:]
+            # y_train = np.array(y[:1])
+            # y_val = np.array(y[1:])
+
+            std_slc = StandardScaler()
+            std_slc.fit(self.X_train)
+            self.X_train = std_slc.transform(self.X_train)
+            self.X_val = std_slc.transform(self.X_val)
 
 # import trace
 #

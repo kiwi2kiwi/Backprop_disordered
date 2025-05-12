@@ -48,7 +48,7 @@ class Rule():
         ]
 
         # Pick a random attribute to mutate
-        target = random.choice(mutation_targets)
+        target = random.choices(mutation_targets, [1,1,1,1,0,1,1,1,1])
 
         if target == "new_coordinate_shift":
             # Mutate coordinate shift with a small random change

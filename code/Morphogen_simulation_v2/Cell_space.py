@@ -29,8 +29,8 @@ class Cell_space():
         self.input_cells = []
         self.output_cells = []
 
-        input_coords = self.ordered_input_neurons(2,2)
-        output_coords = self.ordered_output_neurons(1,3)
+        input_coords = self.ordered_input_neurons(8,8)
+        output_coords = self.ordered_output_neurons(10,1)
 
         for i in input_coords:
             new_input_cell = Cell(self, i, input=True)
