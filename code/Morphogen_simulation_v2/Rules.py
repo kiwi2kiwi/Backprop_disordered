@@ -19,11 +19,11 @@ class Rule():
         # These variables can be mutated
         self.new_coordinate_shift = Coordinates.Coordinate(20,0,0) # default is to the right
         self.threshold = 0.1
-        self.logic_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))# pick random morphogen from all morphogens
+        self.logic_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)# pick random morphogen from all morphogens
+        self.target_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)
         self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
         self.child_limit = 2
         self.rule_type = random.choice([3,4])
-        self.target_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
 
         self.mutation_counter = 0
         self.execution_counter = 0
@@ -80,12 +80,12 @@ class Rule():
         # the logic morphogen is used to compute the signal from another cell
         elif target == "logic morphogen":
             # Pick a new morphogen randomly
-            self.logic_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
+            self.logic_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)
 
         # the target morphogen is used to target a specific cell
         elif target == "target morphogen":
             # Pick a new morphogen randomly
-            self.target_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
+            self.target_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)
 
         elif target == "inhibit_excite_type":
             # Flip between 0 and 1 with some probability

@@ -43,9 +43,9 @@ class Cell_space():
             self.output_cells.append(new_output_cell)
             # self.Cells[new_output_cell.name] = new_output_cell
 
-        for i in np.arange(5):
-            Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)
-            Morphogen_simulation_v2.Rules.Rule(self)
+        # for i in np.arange(5):
+        #     Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)
+        #     Morphogen_simulation_v2.Rules.Rule(self)
 
 
     def neurogenesis(self):

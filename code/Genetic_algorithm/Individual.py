@@ -106,9 +106,10 @@ class Individual:
     def get_data(self):
         return [self.environment.X_train, self.environment.X_val, self.environment.y_train, self.environment.y_val]
 
-    def copy_rules_to(self, individual):
-        # TODO also copy morphogens
+    def copy_rules_and_morpho_addresses_to(self, individual):
         new_cell_space = individual.c
+        new_cell_space.Morphogen_addresses_of_previous_generation = list(individual.c.Morphogens.keys())
+        # TODO also copy morphogen addresses
         new_rules = {}
         for r in self.c.Rules.values():
             new_rule = Morphogen_simulation_v2.Rules.Rule(new_cell_space)

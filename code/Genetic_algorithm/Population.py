@@ -61,6 +61,7 @@ class Population:
             # print("debug 1 manually written rule. Connect from the first input to the first output neuron")
             # individual.input_to_output_debug()
 
+            individual.c.Morphogen_addresses_of_previous_generation = list(individual.c.Morphogens.keys())
             individual.create_random_rules(100)
 
             rule_keys = list(individual.c.Rules.keys())
@@ -81,18 +82,18 @@ class Population:
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
 
             # take the morpho rules and give them to the new generation
-            individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].copy_rules_to(individual)
+            individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].copy_rules_and_morpho_addresses_to(individual)
             # individual.c.Rules = morphogens_prev_generation.iloc[counter%len(morphogens_prev_generation),0].c.Rules
 
             rule_keys = list(individual.c.Rules.keys())
             for rule in rule_keys:
                 if rule in individual.c.Rules.keys():
                     individual.c.Rules[rule].mutate()
-            print("available morphogen addresses of previous:", individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].c.Morphogens.keys())
-            print("available cells of previous:",
-                  individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].c.Cells.keys())
-            print("available morphogen addresses of current:", individual.c.Morphogens.keys())
-            print("available cells of current:", individual.c.Cells.keys())
+            # print("available morphogen addresses of previous:", individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].c.Morphogens.keys())
+            # print("available cells of previous:",
+            #       individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].c.Cells.keys())
+            # print("available morphogen addresses of current:", individual.c.Morphogens.keys())
+            # print("available cells of current:", individual.c.Cells.keys())
             individual.morphogenesis_individual()
             individual.running_the_network()
 
