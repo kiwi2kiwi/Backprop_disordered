@@ -24,13 +24,14 @@ class Cell_space():
         self.Axon_counter = 0
         self.Morphogens = {}
         self.Morphogen_counter = 0
+        self.Morphogen_addresses_of_previous_generation = []
         self.Rules = {}
         self.Rule_counter = 0
         self.input_cells = []
         self.output_cells = []
 
-        input_coords = self.ordered_input_neurons(8,8)
-        output_coords = self.ordered_output_neurons(10,1)
+        input_coords = self.ordered_input_neurons(2,2)
+        output_coords = self.ordered_output_neurons(3,1)
 
         for i in input_coords:
             new_input_cell = Cell(self, i, input=True)

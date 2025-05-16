@@ -13,3 +13,5 @@ class Axon():
         # self.child.Axons[self.name] = self # children dont get axons to parents
         self.excite_inhibit = excite_inhibit # excitatory or inhibitory cell
 
+        self.ax_parent = parent.name
+        self.ax_child = child.name

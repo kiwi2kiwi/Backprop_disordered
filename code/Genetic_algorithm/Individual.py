@@ -1,5 +1,6 @@
 import sys
 import os
+import numpy as np
 import Morphogen_simulation_v2.Cell_space
 import Neural_network.Neuron_space
 import Neural_network.nn_execution as nn_exe
@@ -16,7 +17,6 @@ class Individual:
         # the rules should be executed a few times to allow for recursive structure building
         self.morphogenesis()
         self.morphogenesis()
-        self.morphogenesis()
         if self.viz:
             self.c.start_vis()
             self.c.draw_image()
@@ -24,38 +24,90 @@ class Individual:
     def running_the_network(self):
         self.n = Neural_network.Neuron_space.NeuronSpace(Visualization=self.viz)
         self.n.import_network(self.c)
+        # rules_list = list(self.c.Rules.values())
+        # print("type:", rules_list[0].rule_type, "logic:", rules_list[0].logic_morphogen, " target:", rules_list[0].target_morphogen)
         if self.viz:
             self.n.start_vis()
             self.n.draw_brain()
-        self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n)
+        self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n, viz = False)
 
-    # connect input cells to 3 output cells
+    # connect input cells to x output cells
     def input_to_output_debug(self):
+        demo_rule_0 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        demo_rule_0.threshold = 0
+        demo_rule_0.logic_morphogen = self.c.input_cells[0].address.name
+        demo_rule_0.target_morphogen = self.c.output_cells[0].address.name
+        demo_rule_0.rule_type = 4
+
         demo_rule_1 = Morphogen_simulation_v2.Rules.Rule(self.c)
         demo_rule_1.threshold = 0
         demo_rule_1.logic_morphogen = self.c.input_cells[0].address.name
-        demo_rule_1.target_morphogen = self.c.output_cells[0].address.name
+        demo_rule_1.target_morphogen = self.c.output_cells[1].address.name
         demo_rule_1.rule_type = 4
 
         demo_rule_2 = Morphogen_simulation_v2.Rules.Rule(self.c)
         demo_rule_2.threshold = 0
         demo_rule_2.logic_morphogen = self.c.input_cells[0].address.name
-        demo_rule_2.target_morphogen = self.c.output_cells[1].address.name
+        demo_rule_2.target_morphogen = self.c.output_cells[2].address.name
         demo_rule_2.rule_type = 4
 
-        demo_rule_3 = Morphogen_simulation_v2.Rules.Rule(self.c)
-        demo_rule_3.threshold = 0
-        demo_rule_3.logic_morphogen = self.c.input_cells[0].address.name
-        demo_rule_3.target_morphogen = self.c.output_cells[2].address.name
-        demo_rule_3.rule_type = 4
+        # demo_rule_3 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_3.threshold = 0
+        # demo_rule_3.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_3.target_morphogen = self.c.output_cells[3].address.name
+        # demo_rule_3.rule_type = 4
+        #
+        # demo_rule_4 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_4.threshold = 0
+        # demo_rule_4.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_4.target_morphogen = self.c.output_cells[4].address.name
+        # demo_rule_4.rule_type = 4
+        #
+        # demo_rule_5 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_5.threshold = 0
+        # demo_rule_5.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_5.target_morphogen = self.c.output_cells[5].address.name
+        # demo_rule_5.rule_type = 4
+        #
+        # demo_rule_6 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_6.threshold = 0
+        # demo_rule_6.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_6.target_morphogen = self.c.output_cells[6].address.name
+        # demo_rule_6.rule_type = 4
+        #
+        # demo_rule_7 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_7.threshold = 0
+        # demo_rule_7.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_7.target_morphogen = self.c.output_cells[7].address.name
+        # demo_rule_7.rule_type = 4
+        #
+        # demo_rule_8 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_8.threshold = 0
+        # demo_rule_8.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_8.target_morphogen = self.c.output_cells[8].address.name
+        # demo_rule_8.rule_type = 4
+        #
+        # demo_rule_9 = Morphogen_simulation_v2.Rules.Rule(self.c)
+        # demo_rule_9.threshold = 0
+        # demo_rule_9.logic_morphogen = self.c.input_cells[0].address.name
+        # demo_rule_9.target_morphogen = self.c.output_cells[9].address.name
+        # demo_rule_9.rule_type = 4
+
+
+
+    def create_random_rules(self, x):
+        for i in np.arange(0,x):
+            demo_rule_3 = Morphogen_simulation_v2.Rules.Rule(self.c)
+            # demo_rule_3.threshold = 0
 
     def morphogenesis(self):
         self.c.neurogenesis()
 
     def get_data(self):
-        return [self.environment.X_train, self.environment.X_val, self.environment.y_train, self.environment.y_val,]
+        return [self.environment.X_train, self.environment.X_val, self.environment.y_train, self.environment.y_val]
 
     def copy_rules_to(self, individual):
+        # TODO also copy morphogens
         new_cell_space = individual.c
         new_rules = {}
         for r in self.c.Rules.values():

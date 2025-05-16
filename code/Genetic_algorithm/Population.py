@@ -39,7 +39,7 @@ class Population:
         self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,1):
+        for timestep in np.arange(0,100):
             print("Generation:", timestep)
             generation = self.generation(indiv_fit, timestep)
             self.generations.append(generation)
@@ -49,14 +49,19 @@ class Population:
 
         print("stop")
 
+    def small_generation_debug(self):
+        individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
+
+
     def first_generation(self):
         generation = []
         for counter in np.arange(0, self.population_size):
-            print("Individual:", counter, "/", self.population_size)
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
 
             # print("debug 1 manually written rule. Connect from the first input to the first output neuron")
-            individual.input_to_output_debug()
+            # individual.input_to_output_debug()
+
+            individual.create_random_rules(100)
 
             rule_keys = list(individual.c.Rules.keys())
             # directly mutate the morphogens, not the individual
@@ -65,6 +70,7 @@ class Population:
             individual.morphogenesis_individual()
             individual.running_the_network()
             generation.append([individual, individual.fitness_scores])
+            print("Individual:", counter, "/", self.population_size, "score", np.mean(individual.fitness_scores))
         return pd.DataFrame(generation, columns=["individual", "fitness"])
 
     # take the morpho rules from the previous generation for the next one
@@ -82,11 +88,16 @@ class Population:
             for rule in rule_keys:
                 if rule in individual.c.Rules.keys():
                     individual.c.Rules[rule].mutate()
+            print("available morphogen addresses of previous:", individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].c.Morphogens.keys())
+            print("available cells of previous:",
+                  individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].c.Cells.keys())
+            print("available morphogen addresses of current:", individual.c.Morphogens.keys())
+            print("available cells of current:", individual.c.Cells.keys())
             individual.morphogenesis_individual()
-            print("Individual:", counter,"/",self.population_size, "\tGeneration", timestep, "neurons:", len(individual.c.Cells.keys()))
             individual.running_the_network()
 
             generation.append([individual, individual.fitness_scores])
+            print("Individual:", counter,"/",self.population_size, "\tGeneration", timestep, "neurons:", len(individual.c.Cells.keys()), "score", np.mean(individual.fitness_scores))
         return pd.concat([individuals_prev_generation,pd.DataFrame(generation, columns=["individual", "fitness"])])
 
     def selection(self, generation_population):
@@ -105,6 +116,7 @@ class Population:
         #
         # selection_pressured["Morpho_rules"] = morpho_rule_set
         # return morpho_rule_set
+
 
     def plot_metrics_over_generations(self):
         self.generations[-1].iloc[1, 0].c.start_vis()
@@ -157,6 +169,6 @@ class Population:
 
         n = Neural_network.Neuron_space.NeuronSpace(Visualization=False)
         n.import_network(self.generations[-1].iloc[1,0].c)
-        nn_exe.running_the_network(individual=self.generations[-1].iloc[1,0], n=n, viz=True)
+        nn_exe.running_the_network(individual=self.generations[-1].iloc[1,0], n=n, viz=True, epochs = 50)
         
         self.generations[-1].iloc[-1,0].c.start_vis()

@@ -51,7 +51,7 @@ class Backpropagation:
         for idx, n in enumerate(self.base_space.output_neuron_dict.values()):
             if self.base_space.verbal:
                 print("Backprop from output neuron: ", n.name)
-
+            # print("Backprop from output neuron: ", n.name)
             # resetting the neurons
             self.reset_neurons()
             # self.reset_neuron_gradients()

@@ -2,7 +2,7 @@ import Morphogen_simulation_v2.Coordinates
 import Morphogen_simulation_v2.Cell_v2
 import Morphogen_simulation_v2.Axon
 import random
-random.seed(3)
+random.seed(0)
 import Morphogen_simulation_v2.Morphogens_v2
 from Morphogen_simulation_v2 import *
 
@@ -17,12 +17,12 @@ class Rule():
 
 
         # These variables can be mutated
-        self.new_coordinate_shift = Coordinates.Coordinate(15,0,0) # default is to the right
-        self.threshold = 0.5
+        self.new_coordinate_shift = Coordinates.Coordinate(20,0,0) # default is to the right
+        self.threshold = 0.1
         self.logic_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))# pick random morphogen from all morphogens
         self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
         self.child_limit = 2
-        self.rule_type = 3
+        self.rule_type = random.choice([3,4])
         self.target_morphogen = random.choice(list(self.cell_space.Morphogens.keys()))
 
         self.mutation_counter = 0
@@ -49,7 +49,7 @@ class Rule():
 
         # Pick a random attribute to mutate
         # the attributes have weights, so that we can control what is more likely to be mutated
-        target = random.choices(mutation_targets, [1,1,1,1,0,1,1,1,1])
+        target = random.choices(mutation_targets, [0,1,1,1,0,0,1,1,1])[0]
 
         if target == "new_coordinate_shift":
             # Mutate coordinate shift with a small random change
@@ -158,7 +158,7 @@ class Rule():
     def connect(self, executing_cell):
 
         for child in self.cell_space.Morphogens[self.target_morphogen].cells:
-            if executing_cell.name != child:
+            if executing_cell.name != child and not self.cell_space.Cells[child].input and child not in executing_cell.children.keys():
                 Axon.Axon(executing_cell, self.cell_space.Cells[child], self.inhibit_excite_type, self.cell_space)
 
 

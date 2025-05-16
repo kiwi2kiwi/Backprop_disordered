@@ -44,7 +44,7 @@ class Cell():
             cell = self.cell_space.Cells[cell_name]
             if cell.name != self.name:
                 distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
-                calculated = (morphogen.amount/np.log(distance)) # morphogen with distance falloff
+                calculated = (morphogen.amount/np.log(distance))/1 # morphogen with distance falloff
                 concentration += calculated
         return concentration
 
@@ -55,11 +55,16 @@ class Cell():
     # this markes all cells that are reachable by the neural network, so that we don't consider useless neurons in the computation
     def check_integration(self):
         self.integrated_checking = True
+        if self.integrated:
+            return True
         if self.input == True:
             self.integrated = True
             return True
         else:
             for cell in self.parents.values():
+                if cell.integrated:
+                    self.integrated = True
+                    return True
                 if not cell.integrated_checking:
                     if cell.check_integration():
                         self.integrated = True

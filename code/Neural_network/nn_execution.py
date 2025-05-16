@@ -29,7 +29,10 @@ def plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_
     fig.legend()
     fig.show()
 
-def running_the_network(individual, n, viz = False):
+def running_the_network(individual, n, viz = False, epochs = 15):
+    if len(n.Axon_dict.keys()) == 0:
+        return [0, 0, 0, 0]
+
     bp = Neural_network.Backprop.Backpropagation(n)
 
     data_import = individual.get_data()
@@ -38,7 +41,7 @@ def running_the_network(individual, n, viz = False):
     y_train = data_import[2]
     y_val = data_import[3]
 
-    epochs = 20
+
     train_acc = []
     train_rec = []
     train_pre = []
@@ -68,7 +71,7 @@ def running_the_network(individual, n, viz = False):
         validation_f1.append(val_metrics[3])
 
         #n.print_states()
-        loss = bp.train(X_train, y_train, learning_rate = 0.001)
+        loss = bp.train(X_train, y_train, learning_rate = 0.01)
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if len(losses) else loss
         train_metrics = bp.evaluation(X_train, y_train)
