@@ -6,7 +6,7 @@ random.seed(2)
 from random import randrange
 from Morphogen_simulation_v2 import *
 import Morphogen_simulation_v2.Coordinates
-from Morphogen_simulation_v2.Cell_v2 import Cell
+import Morphogen_simulation_v2.Cell_v2
 import Morphogen_simulation_v2.Rules
 import math
 import numpy as np
@@ -30,16 +30,16 @@ class Cell_space():
         self.input_cells = []
         self.output_cells = []
 
-        input_coords = self.ordered_input_neurons(2,2)
-        output_coords = self.ordered_output_neurons(3,1)
+        input_coords = self.ordered_input_neurons(8,8)
+        output_coords = self.ordered_output_neurons(10,1)
 
         for i in input_coords:
-            new_input_cell = Cell(self, i, input=True)
+            new_input_cell = Morphogen_simulation_v2.Cell_v2.Cell(self, i, input=True)
             self.input_cells.append(new_input_cell)
             # self.Cells[new_input_cell.name] = new_input_cell
 
         for o in output_coords:
-            new_output_cell = Cell(self, o, output=True)
+            new_output_cell = Morphogen_simulation_v2.Cell_v2.Cell(self, o, output=True)
             self.output_cells.append(new_output_cell)
             # self.Cells[new_output_cell.name] = new_output_cell
 

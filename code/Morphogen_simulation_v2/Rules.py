@@ -2,7 +2,7 @@ import Morphogen_simulation_v2.Coordinates
 import Morphogen_simulation_v2.Cell_v2
 import Morphogen_simulation_v2.Axon
 import random
-random.seed(0)
+random.seed(2)
 import Morphogen_simulation_v2.Morphogens_v2
 from Morphogen_simulation_v2 import *
 
@@ -18,7 +18,7 @@ class Rule():
 
         # These variables can be mutated
         self.new_coordinate_shift = Coordinates.Coordinate(20,0,0) # default is to the right
-        self.threshold = 0.1
+        self.threshold = 0.4
         self.logic_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)# pick random morphogen from all morphogens
         self.target_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)
         self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
@@ -120,45 +120,59 @@ class Rule():
 
     # this function should be modifyable by the genetic algorithm and perform various tasks such as creating an action when a morphogen threshold is reached.
     def rule(self, executing_cell):
-
-        morphogen_concentration = executing_cell.calc_morphogen(self.logic_morphogen)
-        # TODO change rule 1 to only create a new morphogen. the adding of the morphogen to the cell is done by rule 5
-        if self.rule_type == 1: # create a new morphogen and add it to the cell expression
-            if morphogen_concentration >= self.threshold:
-                new_morpho = Morphogens_v2.Morphogens_v2(amount = 1, cell_space = self.cell_space)
-                executing_cell.new_morphogens(new_morpho.name)
-                self.execution_counter += 1
-        if self.rule_type == 2: # remove a morphogen from a cell
-            if morphogen_concentration >= self.threshold:
-                executing_cell.del_morphogen(self.target_morphogen)
-                self.execution_counter += 1
-        if self.rule_type == 3: # create a new cell
-            if morphogen_concentration >= self.threshold: # TODO dont do this via child number but via summed morphogen density of nearby cells
-                if self.child_limit > executing_cell.replication_counter:
-                    self.create_new_cell(executing_cell)
+        if self.execution_counter < 5:
+            morphogen_concentration = executing_cell.calc_morphogen(self.logic_morphogen)
+            # TODO change rule 1 to only create a new morphogen. the adding of the morphogen to the cell is done by rule 5
+            if self.rule_type == 1: # create a new morphogen and add it to the cell expression
+                if morphogen_concentration >= self.threshold:
+                    new_morpho = Morphogens_v2.Morphogens_v2(amount = 1, cell_space = self.cell_space)
+                    executing_cell.new_morphogens(new_morpho.name)
                     self.execution_counter += 1
-        if self.rule_type == 4:   # connect to target cell
-            # if there is enough concentration of a morphogen
-            if morphogen_concentration >= self.threshold:
-                self.connect(executing_cell)
-                self.execution_counter += 1
-        if self.rule_type == 5: # add an existing morphogen to the cell expression
-            if morphogen_concentration >= self.threshold:
-                executing_cell.new_morphogens(self.target_morphogen)
-                self.cell_space.Morphogens[self.target_morphogen].add_cell(cell_name = executing_cell.name)
-                self.execution_counter += 1
+            if self.rule_type == 2: # remove a morphogen from a cell
+                if morphogen_concentration >= self.threshold:
+                    executing_cell.del_morphogen(self.target_morphogen)
+                    self.execution_counter += 1
+            if self.rule_type == 3: # create a new cell
+                if morphogen_concentration >= self.threshold: # TODO dont do this via child number but via summed morphogen density of nearby cells
+                    if self.child_limit > executing_cell.replication_counter:
+                        self.create_new_cell(executing_cell)
+                        self.execution_counter += 1
+            if self.rule_type == 4:   # connect to target cell
+                # if there is enough concentration of a morphogen
+                if morphogen_concentration >= self.threshold:
+                    self.connect(executing_cell)
+                    self.execution_counter += 1
+            if self.rule_type == 5: # add a morphogen to the cell expression
+                if morphogen_concentration >= self.threshold:
+                    if self.target_morphogen in self.cell_space.Morphogens.keys():
+                        executing_cell.new_morphogens(self.target_morphogen)
+                        self.cell_space.Morphogens[self.target_morphogen].add_cell(cell_name = executing_cell.name)
+                        self.execution_counter += 1
+                    else:
+                        # referenced morphogen was not created yet
+                        pass
 
     def create_new_cell(self, executing_cell):
         # create new cell at parameters
         new_cell_coordinates = Coordinates.change_coords(executing_cell.coordinate, self.new_coordinate_shift)
-        Cell_v2.Cell(cell_space = self.cell_space, Coordinate=new_cell_coordinates)
 
-        executing_cell.replication_counter += 1
+        # check for clashes
+        occupied = False
+        for comp_cell in self.cell_space.Cells.values():
+            if Coordinates.distance_finder(new_cell_coordinates, comp_cell.coordinate) < 5:
+                occupied = True
+
+        if not occupied:
+            Cell_v2.Cell(cell_space = self.cell_space, Coordinate=new_cell_coordinates)
+            executing_cell.replication_counter += 1
 
     def connect(self, executing_cell):
 
-        for child in self.cell_space.Morphogens[self.target_morphogen].cells:
-            if executing_cell.name != child and not self.cell_space.Cells[child].input and child not in executing_cell.children.keys():
-                Axon.Axon(executing_cell, self.cell_space.Cells[child], self.inhibit_excite_type, self.cell_space)
-
+        try:
+            for child in self.cell_space.Morphogens[self.target_morphogen].cells:
+                if executing_cell.name != child and not self.cell_space.Cells[child].input and child not in executing_cell.children.keys():
+                    Axon.Axon(executing_cell, self.cell_space.Cells[child], self.inhibit_excite_type, self.cell_space)
+        except:
+            # the called morphogens is not yet created
+            pass
 

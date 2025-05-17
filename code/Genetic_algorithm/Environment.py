@@ -14,7 +14,7 @@ class Environment:
     def __init__(self):
         super(Environment, self).__init__()
         self.population = {}
-        self.dataset_type = "iris"
+        self.dataset_type = "mnist"
 
 
     def running_all(self):

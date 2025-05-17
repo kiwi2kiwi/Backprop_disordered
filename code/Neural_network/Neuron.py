@@ -104,21 +104,23 @@ class Neuron():
         return self.parent_connections[parent + self].get_weight()
 
     def gradient_descent(self, learning_rate, depth_counter):
+        if depth_counter > 20 or depth_counter < -20:
+            print("stop")
         if self.base_space.verbal:
             print("Start gradient descent to neuron", self.name)
 
         self.started = True
 
-        # call the gradient descent function on all children
-        for c in self.children_connections.keys():
-            children_connection = self.children_connections[c]
-            if children_connection.child.name not in self.calculating_children:
-                # don't call the children that have already been called by the neuron in another loop
-                if not children_connection.child.calculated_gradient:
-                    self.calculating_children.add(children_connection.child.name)
-                    children_connection.child.gradient_descent(learning_rate, depth_counter=depth_counter-1)
-
-                self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_net
+        # # call the gradient descent function on all children
+        # for c in self.children_connections.keys():
+        #     children_connection = self.children_connections[c]
+        #     if children_connection.child.name not in self.calculating_children:
+        #         # don't call the children that have already been called by the neuron in another loop
+        #         if not children_connection.child.calculated_gradient:
+        #             self.calculating_children.add(children_connection.child.name)
+        #             children_connection.child.gradient_descent(learning_rate, depth_counter=depth_counter-1)
+        #
+        #         self.delta_error_through_delta_neuron_output += children_connection.child.delta_error_through_delta_neuron_net
 
         if self.output_neuron:
             self.delta_error_through_delta_neuron_output = self.error_for_output_neuron
@@ -161,7 +163,8 @@ class Neuron():
                 if self.base_space.Visualization:
                     self.base_space.axon_line_dict[p + self.name][0][0].set_color("gray")
             else:
-                print("limit reached")
+                # print("limit reached")
+                pass
         if not self.output_neuron:
             self.bias = max(-1, min(1, self.bias - round((learning_rate * self.delta_error_through_delta_neuron_net),4)))
             if not self.base_space.fast:

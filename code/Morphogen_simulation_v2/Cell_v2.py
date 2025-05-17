@@ -25,28 +25,36 @@ class Cell():
 
     def new_morphogens(self, new_morphogen_name):
         self.morphogens[new_morphogen_name] = self.cell_space.Morphogens[new_morphogen_name]
+        self.cell_space.Morphogens[new_morphogen_name].cells[self.name] = self
 
     def del_morphogen(self, morphogen_name): # dont remove morphogens that are unique cell addresses
-        if not self.cell_space.Morphogens[morphogen_name].cell_unique and morphogen_name in self.morphogens.keys():
-            try:
-                self.morphogens[morphogen_name].cells.pop(self.name)
-                self.morphogens.pop(morphogen_name)
-            except:
-                print(morphogen_name in self.morphogens.keys())
-                temp_test = self.morphogens[morphogen_name]
-                print("stop")
+        try:
+            if not self.cell_space.Morphogens[morphogen_name].cell_unique and morphogen_name in self.morphogens.keys():
+                try:
+                    self.morphogens[morphogen_name].cells.pop(self.name)
+                    self.morphogens.pop(morphogen_name)
+                except:
+                    print(morphogen_name in self.morphogens.keys())
+                    temp_test = self.morphogens[morphogen_name]
+                    print("stop")
+        except:
+            # referenced morphogen was not created yet
+            pass
 
     def calc_morphogen(self, morphogen_name):
         # get distance to all other cells and calculate the morphogen * distance
-        concentration = 0
-        morphogen = self.cell_space.Morphogens[morphogen_name]
-        for cell_name in morphogen.cells.keys():
-            cell = self.cell_space.Cells[cell_name]
-            if cell.name != self.name:
-                distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
-                calculated = (morphogen.amount/np.log(distance))/1 # morphogen with distance falloff
-                concentration += calculated
-        return concentration
+        if morphogen_name in self.cell_space.Morphogens.keys():
+            morphogen = self.cell_space.Morphogens[morphogen_name]
+            concentration = 0
+            for cell_name in morphogen.cells.keys():
+                cell = self.cell_space.Cells[cell_name]
+                if cell.name != self.name:
+                    distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
+                    calculated = (morphogen.amount/np.log(distance))/3 # morphogen with distance falloff
+                    concentration += calculated
+            return concentration
+        else:
+            return 0
 
     def develop(self):
         for rule in self.cell_space.Rules.values():

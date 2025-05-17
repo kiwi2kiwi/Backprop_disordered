@@ -17,6 +17,8 @@ class Individual:
         # the rules should be executed a few times to allow for recursive structure building
         self.morphogenesis()
         self.morphogenesis()
+        self.morphogenesis()
+        self.morphogenesis()
         if self.viz:
             self.c.start_vis()
             self.c.draw_image()
@@ -108,8 +110,8 @@ class Individual:
 
     def copy_rules_and_morpho_addresses_to(self, individual):
         new_cell_space = individual.c
-        new_cell_space.Morphogen_addresses_of_previous_generation = list(individual.c.Morphogens.keys())
-        # TODO also copy morphogen addresses
+        # copy morphogen addresses
+        new_cell_space.Morphogen_addresses_of_previous_generation = list(self.c.Morphogens.keys()) # list(individual.c.Morphogens.keys())
         new_rules = {}
         for r in self.c.Rules.values():
             new_rule = Morphogen_simulation_v2.Rules.Rule(new_cell_space)

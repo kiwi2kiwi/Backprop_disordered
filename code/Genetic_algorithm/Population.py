@@ -11,7 +11,7 @@ sys.setrecursionlimit(300)
 class Population:
     def __init__(self, environment):
         super(Population, self).__init__()
-        self.population_size = 20
+        self.population_size = 15
         # TODO
         #  this is a collection of all the learners in a generation
         #  give access to all the learners
@@ -39,7 +39,118 @@ class Population:
         self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,100):
+        for timestep in np.arange(0,10000):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             print("Generation:", timestep)
             generation = self.generation(indiv_fit, timestep)
             self.generations.append(generation)
@@ -62,7 +173,7 @@ class Population:
             # individual.input_to_output_debug()
 
             individual.c.Morphogen_addresses_of_previous_generation = list(individual.c.Morphogens.keys())
-            individual.create_random_rules(100)
+            individual.create_random_rules(200)
 
             rule_keys = list(individual.c.Rules.keys())
             # directly mutate the morphogens, not the individual

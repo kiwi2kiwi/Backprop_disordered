@@ -29,7 +29,7 @@ def plot_metrics(train_acc,train_rec,train_pre,train_f1,epoch_losses,validation_
     fig.legend()
     fig.show()
 
-def running_the_network(individual, n, viz = False, epochs = 15):
+def running_the_network(individual, n, viz = False, epochs = 10):
     if len(n.Axon_dict.keys()) == 0:
         return [0, 0, 0, 0]
 
