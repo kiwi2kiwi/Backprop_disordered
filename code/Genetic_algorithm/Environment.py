@@ -14,26 +14,19 @@ class Environment:
     def __init__(self):
         super(Environment, self).__init__()
         self.population = {}
-        self.dataset_type = "mnist"
+        self.dataset_type = "iris"
+        self.data_loading()
+
 
 
     def running_all(self):
 
-        # TODO call the population
-        #  Run the simulation for one generation
-        #  Evaluate the fitness of all learners
-        #  Eliminate two thirds of the most unfit learners
-        #  Repopulate the population with the remaining third
-        #  Mutate the morphogens of the new learners
-        self.data_loading()
         self.population = Genetic_algorithm.Population.Population(environment = self)
+        self.population.run_simulation_from_start()
+        self.population.continue_simulation_from_file(filepath_to_rules="../../Morphogen_rule_saves/current.genes")
 
         print("generation run")
 
-    def run_generation(self):
-        self.population.generation()
-        self.populatio
-        print("generation run")
 
 
     def data_loading(self):
@@ -45,17 +38,17 @@ class Environment:
             X, y = shuffle(X, y, random_state=1)
 
             # only select the datapoints with the labels 1,2,3
-            # X = X[np.isin(y, [0, 1, 2])]
-            # y = y[np.isin(y, [0, 1, 2])]
+            X = X[np.isin(y, [0, 1, 2, 3, 4, 5])]
+            y = y[np.isin(y, [0, 1, 2, 3, 4, 5])]
 
             # normalize the 0-255 scale to 0-1
             X = X / 255
             y = np.eye(10)[y]
 
             self.X_train = X[:100]
-            self.X_val = X[100:150]
+            self.X_val = X[100:200]
             self.y_train = np.array(y[:100])
-            self.y_val = np.array(y[100:150])
+            self.y_val = np.array(y[100:200])
 
             # X_train = X[:1]
             # X_val = X[1:]

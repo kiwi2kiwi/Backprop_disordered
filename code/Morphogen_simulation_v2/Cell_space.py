@@ -30,22 +30,17 @@ class Cell_space():
         self.input_cells = []
         self.output_cells = []
 
-        input_coords = self.ordered_input_neurons(8,8)
-        output_coords = self.ordered_output_neurons(10,1)
+        input_coords = self.ordered_input_neurons(2,2)
+        output_coords = self.ordered_output_neurons(3,1)
 
         for i in input_coords:
             new_input_cell = Morphogen_simulation_v2.Cell_v2.Cell(self, i, input=True)
             self.input_cells.append(new_input_cell)
-            # self.Cells[new_input_cell.name] = new_input_cell
 
         for o in output_coords:
             new_output_cell = Morphogen_simulation_v2.Cell_v2.Cell(self, o, output=True)
             self.output_cells.append(new_output_cell)
-            # self.Cells[new_output_cell.name] = new_output_cell
 
-        # for i in np.arange(5):
-        #     Morphogen_simulation_v2.Morphogens_v2.Morphogens_v2(1, self, cell_unique=False)
-        #     Morphogen_simulation_v2.Rules.Rule(self)
 
 
     def neurogenesis(self):

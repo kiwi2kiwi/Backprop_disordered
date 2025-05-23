@@ -4,6 +4,8 @@ import numpy as np
 import Morphogen_simulation_v2.Cell_space
 import Neural_network.Neuron_space
 import Neural_network.nn_execution as nn_exe
+global epochs
+epochs = 15
 
 class Individual:
     def __init__(self, environment):
@@ -31,7 +33,8 @@ class Individual:
         if self.viz:
             self.n.start_vis()
             self.n.draw_brain()
-        self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n, viz = False)
+        global epochs
+        self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n, viz = False, epochs = epochs)
 
     # connect input cells to x output cells
     def input_to_output_debug(self):
@@ -94,7 +97,6 @@ class Individual:
         # demo_rule_9.logic_morphogen = self.c.input_cells[0].address.name
         # demo_rule_9.target_morphogen = self.c.output_cells[9].address.name
         # demo_rule_9.rule_type = 4
-
 
 
     def create_random_rules(self, x):

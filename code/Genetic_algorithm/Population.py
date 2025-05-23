@@ -1,8 +1,12 @@
 import sys
+from fileinput import filename
+
 sys.path.append('..')
+import json
 import Genetic_algorithm.Individual
 import Neural_network.Neuron_space
 import Neural_network.nn_execution as nn_exe
+import Morphogen_simulation_v2.Cell_space
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,153 +16,41 @@ class Population:
     def __init__(self, environment):
         super(Population, self).__init__()
         self.population_size = 15
-        # TODO
-        #  this is a collection of all the learners in a generation
-        #  give access to all the learners
-        #  1. initialize an individual - done
-        #  2. give individual a morphogen rule set - done
-        #  3. Morphogenesis - done
-        #  4. Give the data to the individual - done
-        #  5. Individual trains and predicts - done
-        #  6. Individual returns metrics as fitness score - done
-        #  7. Individual returns its morphogen rule set - done
-
-        # TODO
-        #  for the first generation use the default debug morphogen set and mutate all of them - done
-        #  receive set of individuals from the last population - done
-        #  remove bottom 50% of individuals - done
-        #  problem: the surviving individuals from the last generation get mutated - fixed
-        #  only the repopulation should get mutated - done
-        #  dont run the surviving individuals, just copy their fitness score - done
-        #  repopulate with the top x% - done
-        #  for the clones mutate the morphogen rule set of an individual - done
         self.environment = environment
         self.survivors = 5
         self.generations = []
+
+    def run_simulation_from_start(self):
         generation = self.first_generation()
         self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,10000):
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for timestep in np.arange(0,5):
             print("Generation:", timestep)
             generation = self.generation(indiv_fit, timestep)
             self.generations.append(generation)
             indiv_fit = self.selection(pd.concat([generation, indiv_fit]))
 
-
+        self.save(filename="../../Morphogen_rule_saves/current.genes", individuals=indiv_fit["individual"], timestep=timestep)
 
         print("stop")
+
+    def continue_simulation_from_file(self, filepath_to_rules):
+        # load all individuals from the file
+        individuals, generation_timestep = self.load(filename=filepath_to_rules)
+
+        generation = self.generation(individuals, generation_timestep, loaded = True)
+        self.generations.append(generation)
+        indiv_fit = self.selection(generation)
+
+        for timestep in np.arange(0,5):
+            print("Generation:", timestep + generation_timestep)
+            generation = self.generation(indiv_fit, timestep)
+            self.generations.append(generation)
+            indiv_fit = self.selection(pd.concat([generation, indiv_fit]))
+
+        pass
+
 
     def small_generation_debug(self):
         individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
@@ -173,7 +65,7 @@ class Population:
             # individual.input_to_output_debug()
 
             individual.c.Morphogen_addresses_of_previous_generation = list(individual.c.Morphogens.keys())
-            individual.create_random_rules(200)
+            individual.create_random_rules(400)
 
             rule_keys = list(individual.c.Rules.keys())
             # directly mutate the morphogens, not the individual
@@ -186,15 +78,17 @@ class Population:
         return pd.DataFrame(generation, columns=["individual", "fitness"])
 
     # take the morpho rules from the previous generation for the next one
-    def generation(self, individuals_prev_generation, timestep):
+    def generation(self, individuals_prev_generation, timestep, loaded = False):
         generation = []
         for counter in np.arange(0, self.population_size-self.survivors):
 
             individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
 
             # take the morpho rules and give them to the new generation
-            individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].copy_rules_and_morpho_addresses_to(individual)
-            # individual.c.Rules = morphogens_prev_generation.iloc[counter%len(morphogens_prev_generation),0].c.Rules
+            if loaded:
+                individuals_prev_generation[counter % len(individuals_prev_generation)].copy_rules_and_morpho_addresses_to(individual)
+            else:
+                individuals_prev_generation.iloc[counter % len(individuals_prev_generation), 0].copy_rules_and_morpho_addresses_to(individual)
 
             rule_keys = list(individual.c.Rules.keys())
             for rule in rule_keys:
@@ -210,6 +104,8 @@ class Population:
 
             generation.append([individual, individual.fitness_scores])
             print("Individual:", counter,"/",self.population_size, "\tGeneration", timestep, "neurons:", len(individual.c.Cells.keys()), "score", np.mean(individual.fitness_scores))
+        if loaded:
+            return pd.DataFrame(generation, columns=["individual", "fitness"])
         return pd.concat([individuals_prev_generation,pd.DataFrame(generation, columns=["individual", "fitness"])])
 
     def selection(self, generation_population):
@@ -229,6 +125,45 @@ class Population:
         # selection_pressured["Morpho_rules"] = morpho_rule_set
         # return morpho_rule_set
 
+
+
+    # ../../Morphogen_rule_saves
+    def save(self, filename, individuals, timestep = 0):
+        """
+        individuals: list of objects, each with a .cell_space attribute
+        """
+        all_data = []
+
+        for individual in individuals:
+            cs = individual.c
+            data = {
+                'Morphogen_addresses_of_previous_generation': cs.Morphogen_addresses_of_previous_generation,
+                'Rules': [rule.to_dict() for rule in cs.Rules.values()],
+                # 'Rule_counter': cell_space.Rule_counter
+            }
+            all_data.append(data)
+
+        with open(filename, 'w') as f:
+            json.dump({'individuals': all_data, "generation" : timestep}, f, indent=2)
+
+    def load(self, filename):
+        with open(filename, 'r') as f:
+            file_data = json.load(f)
+
+        individuals = []
+        for data in file_data['individuals']:
+            individual = Genetic_algorithm.Individual.Individual(environment=self.environment)
+            cs = individual.c
+            cs.Morphogen_addresses_of_previous_generation = data['Morphogen_addresses_of_previous_generation']
+            # cs.Rule_counter = data['Rule_counter']
+            # cs.Rules = {}
+
+            for rule_data in data['Rules']:
+                Morphogen_simulation_v2.Rules.Rule(cs, from_data=rule_data)
+
+            individuals.append(individual)
+
+        return individuals, file_data['generation']
 
     def plot_metrics_over_generations(self):
         self.generations[-1].iloc[1, 0].c.start_vis()
@@ -282,5 +217,5 @@ class Population:
         n = Neural_network.Neuron_space.NeuronSpace(Visualization=False)
         n.import_network(self.generations[-1].iloc[1,0].c)
         nn_exe.running_the_network(individual=self.generations[-1].iloc[1,0], n=n, viz=True, epochs = 50)
-        
+
         self.generations[-1].iloc[-1,0].c.start_vis()

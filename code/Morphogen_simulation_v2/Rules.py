@@ -7,26 +7,42 @@ import Morphogen_simulation_v2.Morphogens_v2
 from Morphogen_simulation_v2 import *
 
 import math
+global exec_limit
+exec_limit = 20
 
 class Rule():
-    def __init__(self, cell_space):
+    def __init__(self, cell_space, from_data=None):
         self.cell_space = cell_space
-        self.name = self.cell_space.Rule_counter
-        self.cell_space.Rule_counter += 1
+
+        if from_data:
+            self.name = from_data['name']
+            self.new_coordinate_shift = Coordinates.Coordinate(*from_data['new_coordinate_shift'])
+            self.threshold = from_data['threshold']
+            self.logic_morphogen = from_data['logic_morphogen']
+            self.target_morphogen = from_data['target_morphogen']
+            self.inhibit_excite_type = from_data['inhibit_excite_type']
+            self.child_limit = from_data['child_limit']
+            self.rule_type = from_data['rule_type']
+            self.mutation_counter = from_data['mutation_counter']
+            self.execution_counter = from_data['execution_counter']
+        else:
+            self.name = self.cell_space.Rule_counter
+            self.cell_space.Rule_counter += 1
+
+
+            # These variables can be mutated
+            self.new_coordinate_shift = Coordinates.Coordinate(20,0,0) # default is to the right
+            self.threshold = 0.4
+            self.logic_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)# pick random morphogen from all morphogens
+            self.target_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)
+            self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
+            self.child_limit = 2
+            self.rule_type = random.choice([3,4])
+
+            self.mutation_counter = 0
+            self.execution_counter = 0
+
         self.cell_space.Rules[self.name] = self
-
-
-        # These variables can be mutated
-        self.new_coordinate_shift = Coordinates.Coordinate(20,0,0) # default is to the right
-        self.threshold = 0.4
-        self.logic_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)# pick random morphogen from all morphogens
-        self.target_morphogen = random.choice(self.cell_space.Morphogen_addresses_of_previous_generation)
-        self.inhibit_excite_type = 1 # 1 = excite, 0 = inhibit
-        self.child_limit = 2
-        self.rule_type = random.choice([3,4])
-
-        self.mutation_counter = 0
-        self.execution_counter = 0
 
 
     def mutate(self, mutation_rate=1):
@@ -120,7 +136,8 @@ class Rule():
 
     # this function should be modifyable by the genetic algorithm and perform various tasks such as creating an action when a morphogen threshold is reached.
     def rule(self, executing_cell):
-        if self.execution_counter < 5:
+        global exec_limit
+        if self.execution_counter < exec_limit:
             morphogen_concentration = executing_cell.calc_morphogen(self.logic_morphogen)
             # TODO change rule 1 to only create a new morphogen. the adding of the morphogen to the cell is done by rule 5
             if self.rule_type == 1: # create a new morphogen and add it to the cell expression
@@ -176,3 +193,17 @@ class Rule():
             # the called morphogens is not yet created
             pass
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'new_coordinate_shift': [self.new_coordinate_shift.x, self.new_coordinate_shift.y,
+                                     self.new_coordinate_shift.z],
+            'threshold': self.threshold,
+            'logic_morphogen': self.logic_morphogen,
+            'target_morphogen': self.target_morphogen,
+            'inhibit_excite_type': self.inhibit_excite_type,
+            'child_limit': self.child_limit,
+            'rule_type': self.rule_type,
+            'mutation_counter': self.mutation_counter,
+            'execution_counter': self.execution_counter
+        }

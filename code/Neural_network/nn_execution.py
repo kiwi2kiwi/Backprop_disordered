@@ -71,7 +71,7 @@ def running_the_network(individual, n, viz = False, epochs = 10):
         validation_f1.append(val_metrics[3])
 
         #n.print_states()
-        loss = bp.train(X_train, y_train, learning_rate = 0.01)
+        loss = bp.train(X_train, y_train, learning_rate = 0.05)
         epoch_losses.append(np.average(loss))
         losses = np.vstack([losses, loss]) if len(losses) else loss
         train_metrics = bp.evaluation(X_train, y_train)

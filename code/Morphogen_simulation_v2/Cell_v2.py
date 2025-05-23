@@ -50,7 +50,7 @@ class Cell():
                 cell = self.cell_space.Cells[cell_name]
                 if cell.name != self.name:
                     distance = max(1, Morphogen_simulation_v2.Coordinates.distance_finder(self.coordinate, cell.coordinate))
-                    calculated = (morphogen.amount/np.log(distance))/3 # morphogen with distance falloff
+                    calculated = (morphogen.amount/np.log(distance))/2 # morphogen with distance falloff
                     concentration += calculated
             return concentration
         else:
