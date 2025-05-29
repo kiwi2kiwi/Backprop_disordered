@@ -120,7 +120,7 @@ class Cell_space():
         self.ax.set_ylim(-(self.size / 2), self.size / 2)
         self.ax.set_zlim(-(self.size / 2), self.size / 2)
         for c in self.Cells.values():
-            self.cells_in_plot[c.name] = [(self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="grey",
+            self.cells_in_plot[c.name] = [(self.ax.scatter(c.coordinate.x, c.coordinate.y, c.coordinate.z, c="red",
                                                            s=10)), c]
 
         for a in self.Axons.values():

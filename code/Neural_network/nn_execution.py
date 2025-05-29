@@ -33,6 +33,9 @@ def running_the_network(individual, n, viz = False, epochs = 10):
     if len(n.Axon_dict.keys()) == 0:
         return [0, 0, 0, 0]
 
+    # matrix, neuron_names = n.create_contact_matrix()
+    # print(matrix)
+
     bp = Neural_network.Backprop.Backpropagation(n)
 
     data_import = individual.get_data()

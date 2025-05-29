@@ -158,7 +158,6 @@ class Rule():
                 # if there is enough concentration of a morphogen
                 if morphogen_concentration >= self.threshold:
                     self.connect(executing_cell)
-                    self.execution_counter += 1
             if self.rule_type == 5: # add a morphogen to the cell expression
                 if morphogen_concentration >= self.threshold:
                     if self.target_morphogen in self.cell_space.Morphogens.keys():
@@ -188,7 +187,9 @@ class Rule():
         try:
             for child in self.cell_space.Morphogens[self.target_morphogen].cells:
                 if executing_cell.name != child and not self.cell_space.Cells[child].input and child not in executing_cell.children.keys():
-                    Axon.Axon(executing_cell, self.cell_space.Cells[child], self.inhibit_excite_type, self.cell_space)
+                    if child not in executing_cell.parents.keys() and not executing_cell.output:
+                        Axon.Axon(executing_cell, self.cell_space.Cells[child], self.inhibit_excite_type, self.cell_space)
+                        self.execution_counter += 1
         except:
             # the called morphogens is not yet created
             pass

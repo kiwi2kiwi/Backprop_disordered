@@ -47,7 +47,7 @@ output neurons should not execute morphogenesis rules - done
 - import and export morphogen rules to a file - done
     - dont need rule counter in save file - done
     - continually print the total number of rules - TODO
-- turn nn into a matrix
+- turn nn into a matrix - working on it
 - allow output node bias maby - TODO
 - maby test out GA by only evolution, no training - TODO
 

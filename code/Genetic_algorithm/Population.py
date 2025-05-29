@@ -25,13 +25,13 @@ class Population:
         self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,5):
+        for timestep in np.arange(0,50):
             print("Generation:", timestep)
             generation = self.generation(indiv_fit, timestep)
             self.generations.append(generation)
             indiv_fit = self.selection(pd.concat([generation, indiv_fit]))
 
-        self.save(filename="../../Morphogen_rule_saves/current.genes", individuals=indiv_fit["individual"], timestep=timestep)
+        # self.save(filename="../../Morphogen_rule_saves/current.genes", individuals=indiv_fit["individual"], timestep=timestep)
 
         print("stop")
 
@@ -43,7 +43,7 @@ class Population:
         self.generations.append(generation)
         indiv_fit = self.selection(generation)
 
-        for timestep in np.arange(0,5):
+        for timestep in np.arange(0,2):
             print("Generation:", timestep + generation_timestep)
             generation = self.generation(indiv_fit, timestep)
             self.generations.append(generation)

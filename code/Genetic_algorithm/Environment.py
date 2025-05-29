@@ -23,7 +23,7 @@ class Environment:
 
         self.population = Genetic_algorithm.Population.Population(environment = self)
         self.population.run_simulation_from_start()
-        self.population.continue_simulation_from_file(filepath_to_rules="../../Morphogen_rule_saves/current.genes")
+        # self.population.continue_simulation_from_file(filepath_to_rules="../../Morphogen_rule_saves/current.genes")
 
         print("generation run")
 

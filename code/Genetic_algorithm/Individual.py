@@ -4,6 +4,7 @@ import numpy as np
 import Morphogen_simulation_v2.Cell_space
 import Neural_network.Neuron_space
 import Neural_network.nn_execution as nn_exe
+import Neural_network.pytorch_network as py_net
 global epochs
 epochs = 15
 
@@ -34,7 +35,9 @@ class Individual:
             self.n.start_vis()
             self.n.draw_brain()
         global epochs
-        self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n, viz = False, epochs = epochs)
+        conn, ne_na = self.n.create_contact_matrix()
+        # self.fitness_scores = nn_exe.running_the_network(individual=self, n=self.n, viz = False, epochs = epochs)
+        self.fitness_scores = py_net.running_pytorch_network(individual = self, neuron_space = self.n, connectivity = conn)
 
     # connect input cells to x output cells
     def input_to_output_debug(self):

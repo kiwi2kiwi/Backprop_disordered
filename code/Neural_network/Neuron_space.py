@@ -42,9 +42,9 @@ class NeuronSpace():
                 self.hidden_neuron_dict[new_neuron.name] = new_neuron
 
         self.Neuron_dict = {}
+        self.Neuron_dict.update(self.input_neuron_dict)
         self.Neuron_dict.update(self.hidden_neuron_dict)
         self.Neuron_dict.update(self.output_neuron_dict)
-        self.Neuron_dict.update(self.input_neuron_dict)
 
         for a in cell_space.Axons.values():
             if a.child.integrated:
@@ -63,6 +63,34 @@ class NeuronSpace():
         #     self.start_vis()
         #     self.draw_brain()
 
+    def create_contact_matrix(self):
+        """
+        Creates a contact matrix from the Neuron_dict and Axon_dict in a NeuronSpace.
+
+        Args:
+            neuron_space: An instance of the NeuronSpace class.
+
+        Returns:
+            A NumPy array representing the contact matrix.
+        """
+        neuron_names = list(self.Neuron_dict.keys())
+        num_neurons = len(neuron_names)
+        contact_matrix = np.zeros((num_neurons, num_neurons), dtype=int)
+
+        name_to_index = {name: i for i, name in enumerate(neuron_names)}
+
+        for axon_name, axon in self.Axon_dict.items():
+            parent_name = axon.parent.name
+            child_name = axon.child.name
+
+            if parent_name in name_to_index and child_name in name_to_index:
+                parent_index = name_to_index[parent_name]
+                child_index = name_to_index[child_name]
+                # Assuming a directed graph, from parent to child
+                contact_matrix[parent_index, child_index] = 1
+
+        return contact_matrix, neuron_names
+
     def start_vis(self):
         # plt.style.use('fivethirtyeight')
         plt.ion()
@@ -74,7 +102,7 @@ class NeuronSpace():
         self.ax.set_ylim(-(size / 2), size / 2)
         self.ax.set_zlim(-(size / 2), size / 2)
         for i in self.input_neuron_dict.values():  # plot perceptive neurons
-            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="grey",
+            self.neuron_dot_dict[i.name] = [(self.ax.scatter(i.coordinate.x, i.coordinate.y, i.coordinate.z, c="red",
                                                              s=10)), i]
         #    for c in i.connections:
         #        ax.plot3D([c.neuron1.coordinats.x, c.neuron2.coordinats.x], [c.neuron1.coordinats.y, c.neuron2.coordinats.y], [c.neuron1.coordinats.z, c.neuron2.coordinats.z], 'b')
