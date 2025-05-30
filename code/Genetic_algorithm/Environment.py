@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('..')
+# sys.path.append('..')
 import Genetic_algorithm.Population
 
 import numpy as np

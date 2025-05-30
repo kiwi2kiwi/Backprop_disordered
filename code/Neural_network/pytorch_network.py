@@ -55,8 +55,10 @@ def compute_metrics(y_true, y_pred):
     y_true_idx = torch.argmax(y_true, dim=1).cpu().numpy()
     y_pred_idx = torch.argmax(y_pred, dim=1).cpu().numpy()
 
-    return [accuracy_score(y_true_idx, y_pred_idx),precision_score(y_true_idx, y_pred_idx, average='macro', zero_division=0),
-        recall_score(y_true_idx, y_pred_idx, average='macro', zero_division=0),f1_score(y_true_idx, y_pred_idx, average='macro', zero_division=0)]
+    return [accuracy_score(y_true_idx, y_pred_idx),
+            precision_score(y_true_idx, y_pred_idx, average='macro', zero_division=0),
+            recall_score(y_true_idx, y_pred_idx, average='macro', zero_division=0),
+            f1_score(y_true_idx, y_pred_idx, average='macro', zero_division=0)]
 
     return {
         'accuracy': accuracy_score(y_true_idx, y_pred_idx),
@@ -92,12 +94,12 @@ def running_pytorch_network(individual, neuron_space, connectivity):
 
     conn_tensor = torch.tensor(connectivity)
     model = CustomNetwork(adjacency_matrix= conn_tensor, steps=conn_tensor.shape[0])
-    optimizer = optim.Adam(model.parameters(), lr=1.1)
+    optimizer = optim.Adam(model.parameters(), lr=0.1)
     criterion = nn.MSELoss()
     losses = []
 
     # Training loop
-    for epoch in range(1000):
+    for epoch in range(200):
         model.train()
         optimizer.zero_grad()
         output = model(X_train_tensor)
@@ -112,8 +114,10 @@ def running_pytorch_network(individual, neuron_space, connectivity):
             recall = recall_score(y_train_tensor.argmax(1), output.argmax(1), average='macro')
             precision = precision_score(y_train_tensor.argmax(1), output.argmax(1), average='macro')
             f1 = f1_score(y_train_tensor.argmax(1), output.argmax(1), average='macro')
-            print(
-                f"Epoch {epoch + 1}, Loss: {loss.item():.4f}, acc: {acc:.4f}, recall: {recall:.4f}, precision: {precision:.4f}, f1: {f1:.4f}")
+    # print(
+    #     f"Epoch {epoch + 1}, Loss: {loss.item():.4f}, acc: {acc:.4f}, recall: {recall:.4f}, precision: {precision:.4f}, f1: {f1:.4f}")
+
+    print(f"Loss: {loss.item():.4f}, acc: {acc:.4f}, recall: {recall:.4f}, precision: {precision:.4f}, f1: {f1:.4f}")
 
     return compute_metrics(model(X_val_tensor),y_val_tensor)
     # # Final prediction
